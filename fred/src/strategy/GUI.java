@@ -1,6 +1,7 @@
 package strategy;
 
 import communication.ports.interfaces.PropellerEquipedRobotPort;
+import communication.ports.robotPorts.Diag4RobotPort;
 import strategy.actions.Behave;
 import strategy.actions.other.DefendGoal;
 import strategy.actions.other.GoToSafeLocation;
@@ -11,6 +12,7 @@ import strategy.drives.FourWheelHolonomicDrive;
 import strategy.points.basicPoints.*;
 import strategy.controllers.essentials.MotionController;
 import communication.ports.robotPorts.FredRobotPort;
+import strategy.robots.Diag4;
 import strategy.robots.Fred;
 import strategy.robots.RobotBase;
 import vision.RobotAlias;
@@ -144,6 +146,16 @@ public class GUI extends JFrame implements KeyListener{
                 ((FredRobotPort)this.robot.port).propeller(0);
                 ((FredRobotPort)this.robot.port).propeller(0);
             }
+            else if (this.robot instanceof Diag4)
+            {
+                ((Diag4)this.robot).SPINNERKICK_CONTROLLER.setActive(false);
+                ((Diag4)this.robot).SPINNERKICK_CONTROLLER.disengageSpinner(true);
+                ((Diag4)this.robot).SPINNERKICK_CONTROLLER.disengageSpinner(true);
+                ((Diag4)this.robot).SPINNERKICK_CONTROLLER.disengageSpinner(true);
+//                ((Diag4RobotPort)this.robot.port).spinnerKick(0, 0);
+//                ((Diag4RobotPort)this.robot.port).spinnerKick(0, 0);
+//                ((Diag4RobotPort)this.robot.port).spinnerKick(0, 0);
+            }
             this.robot.port.sdpPort.commandSender("f");
             this.robot.port.sdpPort.commandSender("f");
             this.robot.port.sdpPort.commandSender("f");
@@ -223,6 +235,15 @@ public class GUI extends JFrame implements KeyListener{
                         ((PropellerEquipedRobotPort) this.robot.port).propeller(0);
                         ((PropellerEquipedRobotPort) this.robot.port).propeller(0);
                         ((PropellerEquipedRobotPort) this.robot.port).propeller(0);
+                    }
+                    else if(this.robot instanceof Diag4){
+                        ((Diag4)this.robot).SPINNERKICK_CONTROLLER.setActive(false);
+                        ((Diag4)this.robot).SPINNERKICK_CONTROLLER.disengageSpinner(true);
+                        ((Diag4)this.robot).SPINNERKICK_CONTROLLER.disengageSpinner(true);
+                        ((Diag4)this.robot).SPINNERKICK_CONTROLLER.disengageSpinner(true);
+//                        ((Diag4RobotPort) this.robot.port).spinnerKick(0, 0);
+//                        ((Diag4RobotPort) this.robot.port).spinnerKick(0, 0);
+//                        ((Diag4RobotPort) this.robot.port).spinnerKick(0, 0);
                     }
                     this.robot.ACTION_CONTROLLER.setAction(new Waiting(this.robot));
                     break;

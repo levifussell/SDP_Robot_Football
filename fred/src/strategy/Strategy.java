@@ -1,11 +1,13 @@
 package strategy;
 
+import communication.ports.robotPorts.Diag4RobotPort;
 import strategy.actions.Behave;
 import strategy.actions.other.*;
 import strategy.actions.offense.OffensiveKick;
 import strategy.actions.offense.ShuntKick;
 import communication.ports.robotPorts.FredRobotPort;
 import strategy.points.basicPoints.*;
+import strategy.robots.Diag4;
 import strategy.robots.Fred;
 import communication.PortListener;
 import strategy.robots.RobotBase;
@@ -60,8 +62,10 @@ public class Strategy implements VisionListener, PortListener, ActionListener {
          */
         this.robots = new RobotBase [] {new Fred(RobotType.FRIEND_2)};
 
-        Fred fred = (Fred) this.robots[0];
-        FredRobotPort port = (FredRobotPort) fred.port;
+//        Fred fred = (Fred) this.robots[0];
+//        FredRobotPort port = (FredRobotPort) fred.port;
+        Diag4 diag4 = (Diag4)this.robots[0];
+        Diag4RobotPort port = (Diag4RobotPort)diag4.port;
 
         final Strategy semiStrategy = this;
         semiStrategy.vision = new Vision(args);
@@ -72,7 +76,8 @@ public class Strategy implements VisionListener, PortListener, ActionListener {
 
         this.action = "";
         GUI.gui.doesNothingButIsNecessarySoDontDelete();
-        GUI.gui.setRobot(fred);
+//        GUI.gui.setRobot(fred);
+        GUI.gui.setRobot(diag4);
         this.timer = new Timer(100, this);
         this.timer.start();
 
@@ -87,101 +92,111 @@ public class Strategy implements VisionListener, PortListener, ActionListener {
             System.out.print(">> ");
             this.action = this.readLine();
             if(this.action.equals("exit")){
-                fred.PROPELLER_CONTROLLER.setActive(false);
-                port.propeller(0);
-                port.propeller(0);
-                port.propeller(0);
+                diag4.SPINNERKICK_CONTROLLER.setActive(false);
+                diag4.SPINNERKICK_CONTROLLER.disengageSpinner(true);
+                diag4.SPINNERKICK_CONTROLLER.disengageSpinner(true);
+                diag4.SPINNERKICK_CONTROLLER.disengageSpinner(true);
+//                port.spinnerKick(0, 0);
+//                port.spinnerKick(0, 0);
+//                port.spinnerKick(0, 0);
                 break;
             }
             switch(this.action){
                 case "a":
-                    fred.setControllersActive(true);
+                    diag4.setControllersActive(true);
                     break;
                 case "stop":
-                    fred.ACTION_CONTROLLER.setAction(new Stop(fred));
+                    diag4.ACTION_CONTROLLER.setAction(new Stop(diag4));
                     break;
                 case "!":
                     System.out.print("Action: ");
-                    System.out.print(fred.ACTION_CONTROLLER.isActive());
+                    System.out.print(diag4.ACTION_CONTROLLER.isActive());
                     System.out.print(" Motion: ");
-                    System.out.print(fred.MOTION_CONTROLLER.isActive());
+                    System.out.print(diag4.MOTION_CONTROLLER.isActive());
                     System.out.print(" Propeller: ");
-                    System.out.println(fred.PROPELLER_CONTROLLER.isActive());
+                    System.out.println(diag4.SPINNERKICK_CONTROLLER.isActive());
                     break;
                 case "?":
-                    fred.ACTION_CONTROLLER.printDescription();
+                    diag4.ACTION_CONTROLLER.printDescription();
                     break;
                 case "hold":
-                    fred.ACTION_CONTROLLER.setAction(new HoldPosition(fred, new MidFoePoint()));
+                    diag4.ACTION_CONTROLLER.setAction(new HoldPosition(diag4, new MidFoePoint()));
                     break;
                 case "kick":
-                    fred.ACTION_CONTROLLER.setAction(new OffensiveKick(fred));
+                    diag4.ACTION_CONTROLLER.setAction(new OffensiveKick(diag4));
                     break;
                 case "h":
-                    fred.ACTION_CONTROLLER.setAction(new Waiting(fred));
-                    fred.MOTION_CONTROLLER.setDestination(null);
-                    fred.MOTION_CONTROLLER.setHeading(null);
+                    diag4.ACTION_CONTROLLER.setAction(new Waiting(diag4));
+                    diag4.MOTION_CONTROLLER.setDestination(null);
+                    diag4.MOTION_CONTROLLER.setHeading(null);
                     port.halt();
                     port.halt();
                     port.halt();
-                    fred.PROPELLER_CONTROLLER.setActive(false);
-                    port.propeller(0);
-                    port.propeller(0);
-                    port.propeller(0);
+                    diag4.SPINNERKICK_CONTROLLER.setActive(false);
+                    diag4.SPINNERKICK_CONTROLLER.disengageSpinner(true);
+                    diag4.SPINNERKICK_CONTROLLER.disengageSpinner(true);
+                    diag4.SPINNERKICK_CONTROLLER.disengageSpinner(true);
+//                  port.spinnerKick(0, 0);
+//                  port.spinnerKick(0, 0);
+//                  port.spinnerKick(0, 0);
                     break;
                 case "reset":
-                    fred.ACTION_CONTROLLER.setAction(new Goto(fred, new ConstantPoint(0,0)));
+                    diag4.ACTION_CONTROLLER.setAction(new Goto(diag4, new ConstantPoint(0,0)));
                     break;
                 case "remote":
-                    System.out.println(fred.ACTION_CONTROLLER.isActive());
-                    fred.ACTION_CONTROLLER.setAction(new RemoteControl(fred));
+                    System.out.println(diag4.ACTION_CONTROLLER.isActive());
+                    diag4.ACTION_CONTROLLER.setAction(new RemoteControl(diag4));
                     break;
                 case "behave":
                     Status.fixedBehaviour = null;
-                    fred.ACTION_CONTROLLER.setAction(new Behave(fred));
+                    diag4.ACTION_CONTROLLER.setAction(new Behave(diag4));
                     break;
                 case "AUTO":
                     Status.fixedBehaviour = null;
                     break;
                 case "safe":
-                    fred.ACTION_CONTROLLER.setAction(new GoToSafeLocation(fred));
+                    diag4.ACTION_CONTROLLER.setAction(new GoToSafeLocation(diag4));
                     break;
                 case "shunt":
-                    fred.ACTION_CONTROLLER.setAction(new ShuntKick(fred));
+                    diag4.ACTION_CONTROLLER.setAction(new ShuntKick(diag4));
                     break;
                 case "demo":
-                    fred.ACTION_CONTROLLER.setAction(new Demo(fred));
+                    diag4.ACTION_CONTROLLER.setAction(new Demo(diag4));
                     break;
                 case "def":
-                    fred.ACTION_CONTROLLER.setAction(new DefendGoal(fred));
+                    diag4.ACTION_CONTROLLER.setAction(new DefendGoal(diag4));
                     break;
                 case "annoy":
-                    fred.ACTION_CONTROLLER.setAction(null);
-                    fred.MOTION_CONTROLLER.setDestination(new InFrontOfRobot(RobotAlias.FELIX));
-                    fred.MOTION_CONTROLLER.setHeading(new RobotPoint(RobotAlias.FELIX));
+                    diag4.ACTION_CONTROLLER.setAction(null);
+                    diag4.MOTION_CONTROLLER.setDestination(new InFrontOfRobot(RobotAlias.FELIX));
+                    diag4.MOTION_CONTROLLER.setHeading(new RobotPoint(RobotAlias.FELIX));
                     break;
                 case "rot":
-                    fred.PROPELLER_CONTROLLER.setActive(false);
-                    ((FredRobotPort) fred.port).propeller(0);
-                    ((FredRobotPort) fred.port).propeller(0);
-                    ((FredRobotPort) fred.port).propeller(0);
-                    fred.ACTION_CONTROLLER.setActive(false);
-                    fred.MOTION_CONTROLLER.setDestination(new Rotate());
-                    fred.MOTION_CONTROLLER.setHeading(new BallPoint());
+                    diag4.SPINNERKICK_CONTROLLER.setActive(false);
+                    diag4.SPINNERKICK_CONTROLLER.disengageSpinner(true);
+                    diag4.SPINNERKICK_CONTROLLER.disengageSpinner(true);
+                    diag4.SPINNERKICK_CONTROLLER.disengageSpinner(true);
+//                    ((FredRobotPort) fred.port).propeller(0);
+//                    ((FredRobotPort) fred.port).propeller(0);
+//                    ((FredRobotPort) fred.port).propeller(0);
+                    diag4.ACTION_CONTROLLER.setActive(false);
+                    diag4.MOTION_CONTROLLER.setDestination(new Rotate());
+                    diag4.MOTION_CONTROLLER.setHeading(new BallPoint());
                     break;
                 case "p":
-                    boolean act = fred.PROPELLER_CONTROLLER.isActive();
-                    fred.PROPELLER_CONTROLLER.setActive(!act);
+                    boolean act = diag4.SPINNERKICK_CONTROLLER.isActive();
+                    diag4.SPINNERKICK_CONTROLLER.setActive(!act);
                     if(!act){
-                        ((FredRobotPort) fred.port).propeller(0);
-                        ((FredRobotPort) fred.port).propeller(0);
-                        ((FredRobotPort) fred.port).propeller(0);
+                        diag4.SPINNERKICK_CONTROLLER.disengageSpinner(true);
+//                        ((FredRobotPort) fred.port).propeller(0);
+//                        ((FredRobotPort) fred.port).propeller(0);
+//                        ((FredRobotPort) fred.port).propeller(0);
                     }
-                    System.out.println(fred.PROPELLER_CONTROLLER.isActive());
+                    System.out.println(diag4.SPINNERKICK_CONTROLLER.isActive());
                     break;
                 case "test":
-                    fred.MOTION_CONTROLLER.setHeading(new EnemyGoal());
-                    fred.MOTION_CONTROLLER.setDestination(new EnemyGoal());
+                    diag4.MOTION_CONTROLLER.setHeading(new EnemyGoal());
+                    diag4.MOTION_CONTROLLER.setDestination(new EnemyGoal());
                     break;
             }
         }
