@@ -139,6 +139,31 @@ void kicker(){
   }
 }
 
+void spinnerkick(){
+
+    int spin = atoi(sCmd.next());
+    int engaged = atoi(sCmd.next());
+
+    if(spin == -1)
+    {
+        //TURN OFF SPINNER
+    }
+    else if(spin == 1)
+    {
+        //TURN ON SPINNER
+    }
+
+    if(engaged == -1)
+    {
+        //MOVE SPINNER DOWN TO TOUCH BALL
+    }
+    else if(engaged == 1)
+    {
+        //MOVE SPINNER UP OFF THE BALL
+    }
+
+}
+
 void completeHalt(){
   motorAllStop();
   motorControl(FRONT, 0);
@@ -157,6 +182,7 @@ void setup(){
   sCmd.addCommand("ping", pingMethod); 
   sCmd.addCommand("kick", kicker); 
   sCmd.addCommand("mux", muxTest); 
+  sCmd.addCommand("spinkick", spinnerkick);
   SDPsetup();
   helloWorld();
 }
