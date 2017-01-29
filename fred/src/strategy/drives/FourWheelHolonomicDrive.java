@@ -2,6 +2,7 @@ package strategy.drives;
 
 import communication.ports.interfaces.FourWheelHolonomicRobotPort;
 import communication.ports.interfaces.RobotPort;
+import sun.nio.cs.ext.MacHebrew;
 import vision.tools.DirectedPoint;
 import vision.tools.VectorGeometry;
 
@@ -22,6 +23,10 @@ public class FourWheelHolonomicDrive implements DriveInterface{
         factor = Math.min(1, factor);
 
         double lim = this.MAX_MOTION - Math.abs(rotation* this.MAX_ROTATION *factor);
+
+        //rotate the Fred orientation by 45 degrees to create diagonal drive
+        // (otherwise all remains the same)
+        dir = dir.rotate(Math.PI / 4.0f);
 
         double front = dir.y;
         double left = -dir.x;
