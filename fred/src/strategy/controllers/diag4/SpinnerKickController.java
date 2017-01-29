@@ -12,6 +12,8 @@ import vision.RobotType;
  */
 public class SpinnerKickController extends ControllerBase {
 
+  private final boolean ableToMoveSpinner = false;
+
   //wait 1 second after the spinner has started before engaging it (for now)
   private final long delayMilliToEngageSpinnerkick = 1000;
   private long startTimeMilliSpinnerkick;
@@ -96,15 +98,21 @@ public class SpinnerKickController extends ControllerBase {
 
         if(robotTypeWithBall == OUR_ROBOT)
         {
-          long currentTimeMilli = System.currentTimeMillis();
-
-          if(this.startTimeMilliSpinnerkick == -1)
+          if(!ableToMoveSpinner)
           {
-            this.runSpinnerToPrepareEngage(false);
+            if(Strategy.world.getRobot(OUR_ROBOT).getHasBall()){
+              this.runSpinnerToPrepareEngage(false);
+            }
           }
-          else if(currentTimeMilli - this.startTimeMilliSpinnerkick > this.delayMilliToEngageSpinnerkick)
+          else
           {
-            this.engageSpinner(false);
+            long currentTimeMilli = System.currentTimeMillis();
+
+            if (this.startTimeMilliSpinnerkick == -1) {
+              this.runSpinnerToPrepareEngage(false);
+            } else if (currentTimeMilli - this.startTimeMilliSpinnerkick > this.delayMilliToEngageSpinnerkick) {
+              this.engageSpinner(false);
+            }
           }
         }
         else

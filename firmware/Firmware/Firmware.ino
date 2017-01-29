@@ -121,7 +121,15 @@ void rationalMotors(){
 }
 
 void pingMethod(){
-  Serial.println("pang");
+  Serial.println("diag4");
+}
+
+void sendIRon(){
+    Serial.println("IRon");
+}
+
+void sendIRoff(){
+    Serial.println("IRoff");
 }
 
 void kicker(){

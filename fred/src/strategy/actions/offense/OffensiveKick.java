@@ -3,6 +3,7 @@ package strategy.actions.offense;
 import strategy.actions.ActionException;
 import strategy.actions.ActionBase;
 import strategy.points.basicPoints.BallPoint;
+import strategy.robots.Diag4;
 import strategy.robots.Fred;
 import strategy.robots.RobotBase;
 
@@ -22,6 +23,10 @@ public class OffensiveKick extends ActionBase {
         if(newState == 0){
             if(this.robot instanceof Fred){
                 ((Fred)this.robot).PROPELLER_CONTROLLER.setActive(true);
+            }
+            else if(this.robot instanceof Diag4)
+            {
+                ((Diag4)this.robot).SPINNERKICK_CONTROLLER.setActive(true);
             }
         }
         this.state = 0;

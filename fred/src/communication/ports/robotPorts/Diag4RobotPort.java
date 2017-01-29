@@ -3,15 +3,19 @@ package communication.ports.robotPorts;
 import communication.ports.interfaces.FourWheelHolonomicRobotPort;
 import communication.ports.interfaces.SpinnerKickRobotPort;
 import communication.ports.interfaces.RobotPort;
+import strategy.Strategy;
+import vision.Robot;
+import vision.RobotType;
 
 /**
  * Created by levif
  */
-public class Diag4RobotPort extends RobotPort implements SpinnerKickRobotPort, FourWheelHolonomicRobotPort{
+public class Diag4RobotPort extends RobotPort implements SpinnerKickRobotPort, FourWheelHolonomicRobotPort
+{
 
   public Diag4RobotPort()
   {
-    super("pang");
+    super("diag4");
   }
 
   @Override
@@ -33,4 +37,20 @@ public class Diag4RobotPort extends RobotPort implements SpinnerKickRobotPort, F
     // spin == -1, turn off the spinner
     this.sdpPort.commandSender("spinkick", spin, engaged);
   }
+
+  @Override
+  public void receivedStringHandler(String portMessage)
+  {
+    if(portMessage != null) {
+      RobotType OUR_ROBOT = RobotType.FRIEND_2;
+      Robot r = Strategy.world.getRobot(OUR_ROBOT);
+
+      if (portMessage.equals("IRon")) {
+        r.setHasBall(true);
+      } else if (portMessage.equals("IRoff")) {
+        r.setHasBall(false);
+      }
+    }
+  }
+
 }
