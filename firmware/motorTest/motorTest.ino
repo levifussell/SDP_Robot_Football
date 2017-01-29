@@ -9,32 +9,32 @@
 #define LEFT 0
 #define KICKERS 1
 
+#define sensor A3
 
 int run = 0;
+int grabberUp = 1;
 
 SerialCommand sCmd;
 
-
-
 void loop(){
-  motorControl(FRONT, 100);
-  motorControl(BACK, -100);
-  motorControl(LEFT, 100);
-  motorControl(RIGHT,-100);
-  delay(2500);
-  motorControl(FRONT, 100);
-  motorControl(BACK, -100);
-  motorControl(LEFT, 100);
-  motorControl(RIGHT,-100);
-  delay(2500);
-  motorControl(FRONT, 100);
-  motorControl(BACK, -100);
-  motorControl(LEFT, 100);
-  motorControl(RIGHT,-100);
-  delay(2500);
+  
+  float irReading = analogRead(sensor)*0.0048828125;  // value from sensor * (5/1024)
+  //delay(50); // slow down serial port for printing
+  //Serial.println(irReading);   // print the distance
+  
+  if (irReading > 2 && grabberUp) {
+    grabberUp = 0;
+    
+    //grabber down
+    motorControl(2,-100);
+    delay(300);
+  
+    //stop grabber
+    completeHalt();
+    delay(600);
+  }  
   
 }
-
 
 void test(){
   run = 1;
@@ -102,5 +102,12 @@ void setup(){
   sCmd.addCommand("kick", kicker); 
   SDPsetup();
   helloWorld();
+  
+  //set grabber
+  //grabber up
+  motorControl(2,100);
+  delay(300);
+  //stop grabber
+  completeHalt();
 }
 
