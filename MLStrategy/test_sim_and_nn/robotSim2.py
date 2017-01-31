@@ -8,7 +8,7 @@ import math, sys, random
 
 from State import State
 
-REWARD_DIST = 300000
+REWARD_DIST = 3000000
 REWARD_TIME = -0.1
 REWARD_HIT_BALL = 10000
 
@@ -99,21 +99,25 @@ def selectBestActionProb(actionVector, probChoosingRandom):
     else:
         return actionVector.index(max(actionVector))
 
-def makeMove(state, action):
+def makeMove(action):
     # move left
     if action == 0:
+        print("MOVE LEFT")
         moveRobotLeft()
 
     # move right
     elif action == 1:
+        print("MOVE RIGHT")
         moveRobotRight()
 
     # move forward
     elif action == 2:
+        print("MOVE FORWARD")
         moveRobotForward()
 
     # move backward
     elif action == 3:
+        print("MOVE BACK")
         moveRobotBackward()
 
 
@@ -167,21 +171,19 @@ def runAndDrawOneGameFrame():
     pygame.display.flip()
     clock.tick(50)
     currentRewardVal = getReward(State(getCurrentStateVector()))
-    pygame.display.set_caption("state: " + str(currentRewardVal))
+    pygame.display.set_caption("state:{}".format(currentRewardVal)  + "| time_neg_reward:{}".format(rewardTimerTicks))
 
-# Initialise the first state of the world
-createWorld()
 
-while running:
-    for event in pygame.event.get():
-        if event.type == QUIT:
-            running = False
-        elif event.type == KEYDOWN and event.type == K_ESCAPE:
-            running = False
-        elif event.type == KEYDOWN and event.key == K_p:
-            pygame.image.save(screen, "bounding_balls.png")
+# while running:
+    # for event in pygame.event.get():
+        # if event.type == QUIT:
+            # running = False
+        # elif event.type == KEYDOWN and event.type == K_ESCAPE:
+            # running = False
+        # elif event.type == KEYDOWN and event.key == K_p:
+            # pygame.image.save(screen, "bounding_balls.png")
 
-    # update reward penalty for taking too long to find the ball
-    rewardTimerTicks += 1
+    # # update reward penalty for taking too long to find the ball
+    # rewardTimerTicks += 1
 
-    runAndDrawOneGameFrame()
+    # runAndDrawOneGameFrame()
