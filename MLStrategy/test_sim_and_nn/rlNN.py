@@ -12,7 +12,7 @@ import robotSim2 as sim
 from State import State
 
 learning_rate = 0.01
-training_epochs = 100
+training_epochs = 500
 batch_size = 100
 display_step = 1
 prob_of_choosing_random_action = 0.9
@@ -114,12 +114,10 @@ with tf.Session() as sess:
         print("NN-out best output: {}".format((best_prediction[0])))
         # print(sess.run(pred[tf.argmax(pred, 1)], feed_dict={x: s_t[0]}))
 
-        # get the reward associated with this prediction
-        r_t = sim.getReward(State(s_t[0]))
 
         #randomly either choose the best value or a random move
         randPoss = np.random.rand()
-        if randPoss > prob_of_choosing_random_action:
+        if randPoss < prob_of_choosing_random_action:
             rand = np.random.randint(0, 3)
             print("RANDOM ACTION CHOSEN: {}".format(rand))
             best_prediction[0] = rand
@@ -130,6 +128,10 @@ with tf.Session() as sess:
         # run the BEST action through the network
         sim.makeMove(best_prediction[0])
 
+        # get the reward associated with this prediction
+        r_t = sim.getReward(State(s_t[0]))
+        print("reward for our action:{}".format(r_t))
+
         # get the 2nd gen. state
         s_t_2 = np.array([sim.getCurrentStateVector()])
 
@@ -138,15 +140,15 @@ with tf.Session() as sess:
         # run 2nd gen state through the network again
         #  and get the BEST
         best_prediction_2 = a_t_out.eval({x: s_t_2})
-        s_2_out = sess.run(pred, feed_dict={x: s_t_2})[0]
-        print("NN2 out1:{}".format(s_2_out))
+        a_2_out = sess.run(pred, feed_dict={x: s_t_2})[0]
+        print("NN2 out1:{}".format(a_2_out))
         best_prediction_2 = a_t_out.eval({x: s_t_2})
         print("NN-out best output 2: {}".format((best_prediction_2[0])))
 
         # get the reward associated with this prediction
         r_t_2 = sim.getReward(State(s_t_2[0]))
 
-        target_a_t = r_t + 0.9 * s_2_out[best_prediction_2[0]]
+        target_a_t = r_t + 0.5 * a_2_out[best_prediction_2[0]]
         print("target val:{}".format(target_a_t))
 
         target_array = np.copy(s_1_out)

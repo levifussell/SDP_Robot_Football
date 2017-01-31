@@ -8,12 +8,13 @@ import math, sys, random
 
 from State import State
 
-REWARD_DIST = 3000000
-REWARD_TIME = -0.1
+REWARD_DIST = 30
+REWARD_TIME = -0.01
 REWARD_HIT_BALL = 10000
 
 pygame.init()
-screen = pygame.display.set_mode((600, 600))
+screenSize = 600
+screen = pygame.display.set_mode((screenSize, screenSize))
 clock = pygame.time.Clock()
 running = True
 
