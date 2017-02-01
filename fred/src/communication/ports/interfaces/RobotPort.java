@@ -15,7 +15,7 @@ public class RobotPort implements PortListener {
     public final SDPPort sdpPort = new SDPPort();
 
 
-    public RobotPort(String expectedPingResponse){
+    public RobotPort(final String expectedPingResponse){
         (new Thread() {
             public void run() {
                 sdpPort.connect(null, expectedPingResponse);
