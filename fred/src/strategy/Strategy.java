@@ -60,7 +60,7 @@ public class Strategy implements VisionListener, PortListener, ActionListener {
          * Create your robots in the following line. All these robots will be instantly connected to the
          * navigation system and all its controllers will be launched every cycle.
          */
-        this.robots = new RobotBase [] {new Fred(RobotType.FRIEND_2)};
+        this.robots = new RobotBase [] {new Diag4(RobotType.FRIEND_2)};
 
 //        Fred fred = (Fred) this.robots[0];
 //        FredRobotPort port = (FredRobotPort) fred.port;
@@ -92,7 +92,6 @@ public class Strategy implements VisionListener, PortListener, ActionListener {
             System.out.print(">> ");
             this.action = this.readLine();
             if(this.action.equals("exit")){
-                diag4.SPINNERKICK_CONTROLLER.setActive(false);
                 diag4.SPINNERKICK_CONTROLLER.disengageSpinner(true);
                 diag4.SPINNERKICK_CONTROLLER.disengageSpinner(true);
                 diag4.SPINNERKICK_CONTROLLER.disengageSpinner(true);

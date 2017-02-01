@@ -127,6 +127,7 @@ public class MotionController extends ControllerBase {
 
         VectorGeometry robotHeading = VectorGeometry.fromAngular(us.location.direction, 10, null);
         VectorGeometry robotToPoint = VectorGeometry.fromTo(us.location, heading);
+        //robotHeading = robotHeading.add(robotHeading.rotate(Math.PI / 4));
         double factor = 1;
         double rotation = VectorGeometry.signedAngle(robotToPoint, robotHeading);
         // Can throw null without check because null check takes SourceGroup into consideration.

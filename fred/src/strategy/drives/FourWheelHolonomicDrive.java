@@ -32,6 +32,10 @@ public class FourWheelHolonomicDrive implements DriveInterface{
         double left = -dir.x;
         double back = -dir.y;
         double right = dir.x;
+        //double front = -dir.x;
+        //double left = dir.y;
+        //double back = dir.x;
+        //double right = -dir.y;
         double normalizer = Math.max(Math.max(Math.abs(left), Math.abs(right)), Math.max(Math.abs(front), Math.abs(back)));
 
         normalizer = lim/normalizer*factor;

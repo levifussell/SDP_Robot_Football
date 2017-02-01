@@ -34,7 +34,7 @@ public class SpinnerKickController extends ControllerBase {
   @Override
   public void setActive(boolean active)
   {
-    super.setActive(active);
+    super.setActive(true);
     this.startTimeMilliSpinnerkick = System.currentTimeMillis();
   }
 

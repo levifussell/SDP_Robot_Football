@@ -35,7 +35,7 @@ public class Diag4RobotPort extends RobotPort implements SpinnerKickRobotPort, F
     // spin == 1, run the spinner at full force (for now)
     // spin == 0, don't change the spinner's state
     // spin == -1, turn off the spinner
-    this.sdpPort.commandSender("spinkick", spin, engaged);
+    //this.sdpPort.commandSender("spinkick", spin, engaged);
   }
 
   @Override

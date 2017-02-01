@@ -94,7 +94,7 @@ public class GUI extends JFrame implements KeyListener{
         c.add(label);
         this.maxSpeed = new JTextField();
         this.maxSpeed.setBounds(220,140,300,30);
-        this.maxSpeed.setText("200");
+        this.maxSpeed.setText("100");
         c.add(this.maxSpeed);
         this.maxSpeed.addKeyListener(this);
 
