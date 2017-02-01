@@ -45,9 +45,10 @@ public class Diag4RobotPort extends RobotPort implements SpinnerKickRobotPort, F
       RobotType OUR_ROBOT = RobotType.FRIEND_2;
       Robot r = Strategy.world.getRobot(OUR_ROBOT);
 
-      if (portMessage.equals("IRon")) {
+      if (portMessage.equals("B1")) {
         r.setHasBall(true);
-      } else if (portMessage.equals("IRoff")) {
+        System.out.println("!!!!!!!-----DIAG4 HAS BALL");
+      } else if (portMessage.equals("B0")) {
         r.setHasBall(false);
       }
     }

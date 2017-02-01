@@ -13,7 +13,7 @@ import vision.tools.VectorGeometry;
 public class FourWheelHolonomicDrive implements DriveInterface{
 
     public int MAX_ROTATION = 30;
-    public int MAX_MOTION = 200;
+    public int MAX_MOTION = 100;
 
     public void move(RobotPort port, DirectedPoint location, VectorGeometry force, double rotation, double factor){
         assert(port instanceof FourWheelHolonomicRobotPort);
@@ -26,7 +26,7 @@ public class FourWheelHolonomicDrive implements DriveInterface{
 
         //rotate the Fred orientation by 45 degrees to create diagonal drive
         // (otherwise all remains the same)
-        dir = dir.rotate(Math.PI / 4.0f);
+        //dir = dir.rotate(Math.PI / 4.0f);
 
         double front = dir.y;
         double left = -dir.x;
