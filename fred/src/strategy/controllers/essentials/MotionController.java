@@ -78,28 +78,34 @@ public class MotionController extends ControllerBase {
 
             destination = new VectorGeometry(this.destination.getX(), this.destination.getY());
 
-            boolean intersects = false;
-
-
-            for(Obstacle o : this.obstacles){
-                intersects = intersects || o.intersects(us.location, destination);
-            }
-
-            for(Robot r : Strategy.world.getRobots()){
-                if(r != null && r.type != RobotType.FRIEND_2){
-                    intersects = intersects || VectorGeometry.vectorToClosestPointOnFiniteLine(us.location, destination, r.location).minus(r.location).length() < 30;
-                }
-            }
-
-            if(intersects || us.location.distance(destination) > 30){
-                navigation = new AStarNavigation();
-                GUI.gui.searchType.setText("A*");
-            } else {
-                navigation = new PotentialFieldNavigation();
-                GUI.gui.searchType.setText("Potential Fields");
-            }
-
+            //for now we do not care about maneuvering around obstacles (navigating)
+            navigation = new PotentialFieldNavigation();
+            GUI.gui.searchType.setText("Potential Fields");
             navigation.setDestination(new VectorGeometry(destination.x, destination.y));
+
+
+
+//            boolean intersects = false;
+
+//            for(Obstacle o : this.obstacles){
+//                intersects = intersects || o.intersects(us.location, destination);
+//            }
+//
+//            for(Robot r : Strategy.world.getRobots()){
+//                if(r != null && r.type != RobotType.FRIEND_2){
+//                    intersects = intersects || VectorGeometry.vectorToClosestPointOnFiniteLine(us.location, destination, r.location).minus(r.location).length() < 30;
+//                }
+//            }
+//
+//            if(intersects || us.location.distance(destination) > 30){
+//                navigation = new AStarNavigation();
+//                GUI.gui.searchType.setText("A*");
+//            } else {
+//                navigation = new PotentialFieldNavigation();
+//                GUI.gui.searchType.setText("Potential Fields");
+//            }
+//
+//            navigation.setDestination(new VectorGeometry(destination.x, destination.y));
 
 
         } else {
@@ -113,9 +119,9 @@ public class MotionController extends ControllerBase {
 
 
 
-        if(this.obstacles != null){
-            navigation.setObstacles(this.obstacles);
-        }
+//        if(this.obstacles != null){
+//            navigation.setObstacles(this.obstacles);
+//        }
 
 
 

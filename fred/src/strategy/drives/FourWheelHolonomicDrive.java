@@ -20,7 +20,10 @@ public class FourWheelHolonomicDrive implements DriveInterface{
 
         VectorGeometry dir = new VectorGeometry();
         force.copyInto(dir).coordinateRotation(force.angle() - location.direction);
-        factor = Math.min(1, factor);
+//        factor = Math.min(1, factor);
+        // we do not care how close we get to the target,
+        //  just go straight to it with no limits
+        factor = 0;
 
         double lim = this.MAX_MOTION - Math.abs(rotation* this.MAX_ROTATION *factor);
 
