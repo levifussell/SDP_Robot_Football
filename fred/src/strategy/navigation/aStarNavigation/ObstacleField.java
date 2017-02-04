@@ -49,18 +49,6 @@ public class ObstacleField {
         return this;
     }
 
-    public ObstacleField addEnemyDefence(){
-        double halfWidth = vision.constants.Constants.PITCH_WIDTH/2;
-        this.addAStarObstacle(new Rectangle(new VectorGeometry(halfWidth - 60, 60), new VectorGeometry(halfWidth, -60)));
-        return this;
-    }
-
-    public ObstacleField addFriendDefence(){
-        double halfWidth = vision.constants.Constants.PITCH_WIDTH/2;
-        this.addAStarObstacle(new Rectangle(new VectorGeometry(-halfWidth, 60), new VectorGeometry(-halfWidth + 60, -60)));
-        return this;
-    }
-
     public static ObstacleField worldToObstacleField(DynamicWorld world){
         ObstacleField field = new ObstacleField();
         field.addWalls();
@@ -68,13 +56,6 @@ public class ObstacleField {
             if(r != null && r.type != RobotType.FRIEND_2){
                 field.addAStarObstacle(new Circle((int)r.location.x, (int)r.location.y, 30));
             }
-        }
-
-        Robot us = world.getRobot(RobotType.FRIEND_2);
-        field.addEnemyDefence();
-        Robot friend = world.getRobot(RobotType.FRIEND_1);
-        if(friend != null && WorldTools.isPointInFriendDefenceArea(friend.location) && us != null && !WorldTools.isPointInFriendDefenceArea(us.location) ){
-            field.addFriendDefence();
         }
 
         return field;

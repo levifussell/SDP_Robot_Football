@@ -52,7 +52,13 @@ public class VectorGeometry {
         return this;
     }
 
+  /**
+   * Scale UP the vector by 1 + the given factor
+   * @param factor
+   * @return
+   */
     public VectorGeometry factor(double factor){
+//        this.multiply(1 + factor);
         this.x = this.x*(1 + factor);
         this.y = this.y*(1 + factor);
         return this;
@@ -63,8 +69,12 @@ public class VectorGeometry {
     }
 
 
-
-    public VectorGeometry multiply(double factor){
+  /**
+   * scale the vector by the given factor
+   * @param factor
+   * @return
+   */
+  public VectorGeometry multiply(double factor){
         this.x = this.x * factor;
         this.y = this.y * factor;
         return this;

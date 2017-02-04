@@ -121,7 +121,15 @@ void rationalMotors(){
 }
 
 void pingMethod(){
-  Serial.println("pang");
+  Serial.println("diag4");
+}
+
+void sendIRon(){
+    Serial.println("IRon");
+}
+
+void sendIRoff(){
+    Serial.println("IRoff");
 }
 
 void kicker(){
@@ -137,6 +145,31 @@ void kicker(){
     motorBackward(KICKERS, 100);
     kickerStatus = -1;
   }
+}
+
+void spinnerkick(){
+
+    int spin = atoi(sCmd.next());
+    int engaged = atoi(sCmd.next());
+
+    if(spin == -1)
+    {
+        //TURN OFF SPINNER
+    }
+    else if(spin == 1)
+    {
+        //TURN ON SPINNER
+    }
+
+    if(engaged == -1)
+    {
+        //MOVE SPINNER DOWN TO TOUCH BALL
+    }
+    else if(engaged == 1)
+    {
+        //MOVE SPINNER UP OFF THE BALL
+    }
+
 }
 
 void completeHalt(){
@@ -157,6 +190,7 @@ void setup(){
   sCmd.addCommand("ping", pingMethod); 
   sCmd.addCommand("kick", kicker); 
   sCmd.addCommand("mux", muxTest); 
+  sCmd.addCommand("spinkick", spinnerkick);
   SDPsetup();
   helloWorld();
 }

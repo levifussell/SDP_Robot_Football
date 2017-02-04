@@ -59,24 +59,6 @@ public class PotentialField {
         return this;
     }
 
-    public PotentialField addEnemyDefence(){
-        double halfWidth = vision.constants.Constants.PITCH_WIDTH/2;
-//        this.addSource(new LineSource(new VectorGeometry(halfWidth, 60), new VectorGeometry(halfWidth - 60, 60), false, WALL_FIELD_FORMULA).setSize(WALL_SIZE).setYFactor(WALL_Y_FACTOR));
-//        this.addSource(new LineSource(new VectorGeometry(halfWidth, -60), new VectorGeometry(halfWidth - 60, -60), false, WALL_FIELD_FORMULA).setSize(WALL_SIZE).setYFactor(WALL_Y_FACTOR));
-//        this.addSource(new LineSource(new VectorGeometry(halfWidth - 60, 60), new VectorGeometry(halfWidth - 60, -60), false, WALL_FIELD_FORMULA).setSize(WALL_SIZE).setYFactor(WALL_Y_FACTOR));
-        this.addSource(new LineSource(new VectorGeometry(halfWidth - 30, 30), new VectorGeometry(halfWidth - 30, -30), false, WALL_FIELD_FORMULA).setSize(WALL_SIZE + 15).setYFactor(WALL_Y_FACTOR));
-        return this;
-    }
-
-    public PotentialField addFriendDefence(){
-        double halfWidth = vision.constants.Constants.PITCH_WIDTH/2;
-        this.addSource(new LineSource(new VectorGeometry(-halfWidth + 30, 30), new VectorGeometry(-halfWidth + 30, -30), false, WALL_FIELD_FORMULA).setSize(WALL_SIZE + 15).setYFactor(WALL_Y_FACTOR));
-//        this.addSource(new LineSource(new VectorGeometry(-halfWidth, 60), new VectorGeometry(-halfWidth + 60, 60), false, WALL_FIELD_FORMULA).setSize(WALL_SIZE).setYFactor(WALL_Y_FACTOR));
-//        this.addSource(new LineSource(new VectorGeometry(-halfWidth, -60), new VectorGeometry(-halfWidth + 60, -60), false, WALL_FIELD_FORMULA).setSize(WALL_SIZE).setYFactor(WALL_Y_FACTOR));
-//        this.addSource(new LineSource(new VectorGeometry(-halfWidth + 60, 60), new VectorGeometry(-halfWidth + 60, -60), false, WALL_FIELD_FORMULA).setSize(WALL_SIZE).setYFactor(WALL_Y_FACTOR));
-        return this;
-    }
-
     public static PotentialField worldToPotentialField(DynamicWorld world){
         PotentialField field = new PotentialField();
         field.addWalls();
@@ -84,13 +66,6 @@ public class PotentialField {
             if(r != null && r.type != RobotType.FRIEND_2){
                 field.addSource(new PointSource(r.location.clone(), false, FieldFormula.ONE_OVER_X2).setSize(35));
             }
-        }
-
-        Robot us = world.getRobot(RobotType.FRIEND_2);
-        field.addEnemyDefence();
-        Robot friend = world.getRobot(RobotType.FRIEND_1);
-        if(friend != null && WorldTools.isPointInFriendDefenceArea(friend.location) && us != null && !WorldTools.isPointInFriendDefenceArea(us.location) ){
-            field.addFriendDefence();
         }
 
         return field;
