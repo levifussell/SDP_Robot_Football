@@ -13,7 +13,7 @@ import VisualiseData as vd
 from State import State
 
 learning_rate = 0.0001
-training_epochs = 10
+training_epochs = 300
 batch_size = 100
 display_step = 1
 prob_of_choosing_random_action = 1.0
@@ -65,7 +65,8 @@ pred = createNN(x, weights, biases)
 
 # cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=pred, labels=y))
 cost = tf.reduce_mean(tf.squared_difference(pred, y))
-optimiser = tf.train.RMSPropOptimizer(learning_rate=learning_rate, decay=0.9).minimize(cost)
+# optimiser = tf.train.RMSPropOptimizer(learning_rate=learning_rate, decay=0.9).minimize(cost)
+optimiser = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(cost)
 
 #initialise the variables
 init = tf.global_variables_initializer()
@@ -122,7 +123,7 @@ with tf.Session() as sess:
             # sim.runAndDrawOneGameFrame()
 
             # get the current state of the world
-            s_t = np.array([sim.getCurrentStateVector()])
+            s_t = np.array([sim.getCurrentStateVectorMean0()])
             if debug:
                 print("state1: {}".format(s_t[0]))
 
@@ -161,6 +162,7 @@ with tf.Session() as sess:
 
             # get the 2nd gen. state
             s_t_2 = np.array([sim.getCurrentStateVector()])
+            s_t_2_mean0 = np.array([sim.getCurrentStateVectorMean0()])
 
             # get the reward associated with this first action's state
             r_t = sim.getReward2(State(s_t_2[0]))
@@ -168,15 +170,15 @@ with tf.Session() as sess:
             if debug:
                 print("reward for our action:{}".format(r_t))
 
-                print("state2: {}".format(s_t_2[0]))
+                print("state2: {}".format(s_t_2_mean0[0]))
 
             # run 2nd gen state through the network again
             #  and get the BEST
-            best_prediction_2 = a_t_out.eval({x: s_t_2})
-            a_2_out = sess.run(pred, feed_dict={x: s_t_2})[0]
+            # best_prediction_2 = a_t_out.eval({x: s_t_2_mean0})
+            a_2_out = sess.run(pred, feed_dict={x: s_t_2_mean0})[0]
             if debug:
                 print("NN2 out1:{}".format(a_2_out))
-            best_prediction_2 = a_t_out.eval({x: s_t_2})
+            best_prediction_2 = a_t_out.eval({x: s_t_2_mean0})
             if debug:
                 print("NN-out best output 2: {}".format((best_prediction_2[0])))
 
@@ -205,6 +207,8 @@ with tf.Session() as sess:
 
             # train the network
             _, c = sess.run([optimiser, cost], {x: s_t, y: [target_array]})
+
+            vd.learningErrorOverTime.append(c)
 
             # in each epoch we want to train one state of the game
             # (for now). We will not be using a batch implementation until later

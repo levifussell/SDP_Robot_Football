@@ -110,6 +110,17 @@ def getCurrentStateVector():
     stateVec = (robotX, robotY, velocX, velocY, ballX, ballY)
     return stateVec
 
+def getCurrentStateVectorMean0():
+    # return the new state
+    (robotX, robotY) = robots_bodies[0].position
+    veloc = robots_bodies[0].velocity
+    velocX = veloc.x
+    velocY = veloc.y
+    (ballX, ballY) = balls_bodies[0].position
+
+    stateVec = (robotX / screenSize, robotY / screenSize, velocX, velocY, ballX / screenSize, ballY / screenSize);
+    return stateVec
+
 def selectBestActionProb(actionVector, probChoosingRandom):
     prob = random.randfloat(0, 1)
 
