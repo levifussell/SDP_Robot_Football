@@ -96,10 +96,13 @@ function [M, patchCorners] = process_image(m, debug)
     % add the active patches to the final image
     for i=1:size(active_patches_row_centred)
         %m_overlay(active_patches_row_centred(i), active_patches_col_centred(i), :) = [255, 255, 255];
-        m_overlay(patchCorners(1, 1, i), patchCorners(1, 2, i), :) = [255, 255, 255];
-        m_overlay(patchCorners(1, 1, i), patchCorners(2, 1, i), :) = [255, 255, 255];
-        m_overlay(patchCorners(2, 2, i), patchCorners(1, 2, i), :) = [255, 255, 255];
-        m_overlay(patchCorners(2, 2, i), patchCorners(2, 1, i), :) = [255, 255, 255];
+        drawCornerMarkers = true;
+        if drawCornerMarkers
+            m_overlay(patchCorners(1, 1, i), patchCorners(1, 2, i), :) = [255, 255, 255];
+            m_overlay(patchCorners(1, 1, i), patchCorners(2, 1, i), :) = [255, 255, 255];
+            m_overlay(patchCorners(2, 2, i), patchCorners(1, 2, i), :) = [255, 255, 255];
+            m_overlay(patchCorners(2, 2, i), patchCorners(2, 1, i), :) = [255, 255, 255];
+        end
     end
 
     if debug
