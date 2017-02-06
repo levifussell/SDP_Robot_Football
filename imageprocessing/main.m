@@ -14,10 +14,10 @@ for j=1:size(patches, 3)
     %figure(j + 1000)
     %imagesc(ImPatch);
     %ImPatch = ImPatch .* repmat(var(ImPatch, 1, 3) > 2000, [1, 1, 3]);
-    patchRGB(1, i) = sum(sum(ImPatch(:, :, 1)));
-    patchRGB(2, i) = sum(sum(ImPatch(:, :, 2)));
-    patchRGB(3, i) = sum(sum(ImPatch(:, :, 3)));
-    patchSizes(i) = size(ImPatch, 1) .* size(ImPatch, 2);
+    patchRGB(1, j) = sum(sum(ImPatch(:, :, 1)));
+    patchRGB(2, j) = sum(sum(ImPatch(:, :, 2)));
+    patchRGB(3, j) = sum(sum(ImPatch(:, :, 3)));
+    patchSizes(j) = size(ImPatch, 1) .* size(ImPatch, 2);
 
     % run each image patch through a circle search
     % red circle
@@ -28,8 +28,8 @@ for j=1:size(patches, 3)
     % blue circles have a slight green edge
     %  (because they are in the middle of the robot)
     blueCircle = zeros(3, 3, 3);
-    blueCircle(:, :, 2) = [255 255 255; 255 0 255; 255 0 255];
-    blueCircle(:, :, 3) = [0 0 0; 0 255 0; 0 255 0];
+    %blueCircle(:, :, 2) = [255 255 255; 255 0 255; 255 0 255];
+    blueCircle(:, :, 3) = [255 255 255; 255 255 255; 255 255 255];
     yellowCircle = double(zeros(3, 3, 3));
     % yellow circles have a slight green edge
     %  (because they are in the middle of the robot)
@@ -89,7 +89,7 @@ for j=1:size(patches, 3)
 
     distThresholdRed = 1400;
     distThresholdGreen = 2000;
-    distThresholdBlue = 2200;
+    distThresholdBlue = 2700;
     distThresholdYellow = 2100;
     redCircleCount = 0;
     greenCircleCount = 0;
@@ -99,7 +99,7 @@ for j=1:size(patches, 3)
 
     bestBlueCirclePos = [1; 1];
     bestBlueCircleDist = 1000000;
-    bestYellowCirclePos = [1, 1];
+    bestYellowCirclePos = [1; 1];
     bestYellowCircleDist = 1000000;
 
     for r=1:(size(ImPatch, 1) - size(redCircle, 1))
@@ -135,7 +135,7 @@ for j=1:size(patches, 3)
                 yellowCircleCount += 1;
                 if distSeg < bestYellowCircleDist
                     bestYellowCircleDist = distSeg;
-                    bestYellowCirclePos = [r; c];
+                    bestYellowCirclePos = [r; c]
                 end
             end
 
@@ -148,12 +148,13 @@ for j=1:size(patches, 3)
         end
     end
     ImPatch(bestBlueCirclePos(1, 1), bestBlueCirclePos(2, 1), :) = [255, 255, 255];
+    ImPatch(bestYellowCirclePos(1, 1), bestYellowCirclePos(2, 1), :) = [255, 255, 255];
 
     figure(j + 1000)
     imagesc(ImPatch);
 
-    %fprintf('redcircles: %d\n', redCircleCount);
-    %fprintf('greencircles: %d\n', greenCircleCount);
+    fprintf('redcircles: %d\n', redCircleCount);
+    fprintf('greencircles: %d\n', greenCircleCount);
     fprintf('bluecircles: %d\n', blueCircleCount);
     fprintf('yellowcircles: %d\n\n', yellowCircleCount);
     
