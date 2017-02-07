@@ -20,7 +20,7 @@ function [M, patchCorners] = process_image(m, debug)
     end
 
     % perform max-pooling on the image (for now we choose 15x15 pooling)
-    max_pool_size = 10;
+    max_pool_size = 9;
     m_var_half_max = max_pooling(m_var_half, max_pool_size);
 
     if debug
@@ -30,7 +30,7 @@ function [M, patchCorners] = process_image(m, debug)
     end
 
     % find the areas of interest
-    activeThreshold = 900;
+    activeThreshold = 300;
     m_var_half_max_active = find_maxs(m_var_half_max, activeThreshold);
 
 
@@ -88,7 +88,7 @@ function [M, patchCorners] = process_image(m, debug)
     size(m_scale)
     size(m_var_half)
     diffSize = size(m_var_half) - size(m_scale);
-    edgeB = floor(diffSize ./ 1)
+    edgeB = floor(diffSize ./ 1) + 1
     cut_dim1 = size(m_scale, 1) + edgeB(1) - 1
     cut_dim2 = size(m_scale, 2) + edgeB(2) - 1
     m_overlay = repmat(m_scale(1:(cut_dim1 - edgeB(1) + 1), 1:(cut_dim2 - edgeB(2) + 1), :) > 0, [1, 1, 3]) .* m_half(edgeB(1):cut_dim1, edgeB(2):cut_dim2, :);

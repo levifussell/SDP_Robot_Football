@@ -1,7 +1,8 @@
 I1 = imread("imgs/snap-unknown-20170126-134652-1.jpeg");
 %I1 = imread("imgs/snap-unknown-20170126-134705-1.jpeg");
+I1 = imread("imgs/snap-unknown-20170206-180525-1.jpeg");
 
-[I1p, patches] = process_image(I1, false);
+[I1p, patches] = process_image(I1, true);
 figure(20)
 imagesc(I1p)
 %patches
@@ -88,7 +89,7 @@ for j=1:size(patches, 3)
     end
 
     distThresholdRed = 1400;
-    distThresholdGreen = 2000;
+    distThresholdGreen = 2500;
     distThresholdBlue = 2700;
     distThresholdYellow = 2100;
     redCircleCount = 0;
