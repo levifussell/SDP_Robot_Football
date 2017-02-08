@@ -65,10 +65,10 @@ function [M, patchCorners] = process_image(m, debug)
         m_var_half_max_active(up, right) = 10000;
 
         % convert patch corners to points
-        patchCorners(1, 1, i) =  down .* max_pool_size .+ (max_pool_size / 2) .- 1;
-        patchCorners(1, 2, i) =  left .* max_pool_size .- (max_pool_size) .+ 1;
-        patchCorners(2, 1, i) =  right .* max_pool_size .+ (max_pool_size / 2) .- 1;
-        patchCorners(2, 2, i) =  up .* max_pool_size .- (max_pool_size) .+ 1;
+        patchCorners(1, 1, i) =  ceil(down .* max_pool_size);% .+ (max_pool_size / 2) .- 1);
+        patchCorners(1, 2, i) =  ceil(left .* max_pool_size .- (max_pool_size) .+ 1);
+        patchCorners(2, 1, i) =  ceil(right .* max_pool_size);% .+ (max_pool_size / 2) .- 1);
+        patchCorners(2, 2, i) =  ceil(up .* max_pool_size .- (max_pool_size) .+ 1);
     end
 
     %[active_patches_row, active_patches_col] = find(m_var_half_max_active);
@@ -85,23 +85,27 @@ function [M, patchCorners] = process_image(m, debug)
 
     % scale the image back to its normal size
     m_scale = scale_image(m_var_half_max_active, m_var_half);
-    size(m_scale)
-    size(m_var_half)
+    size(m_scale) % processed image
+    size(m_var_half) % goal image
     diffSize = size(m_var_half) - size(m_scale);
-    edgeB = floor(diffSize ./ 1) + 1
-    cut_dim1 = size(m_scale, 1) + edgeB(1) - 1
-    cut_dim2 = size(m_scale, 2) + edgeB(2) - 1
-    m_overlay = repmat(m_scale(1:(cut_dim1 - edgeB(1) + 1), 1:(cut_dim2 - edgeB(2) + 1), :) > 0, [1, 1, 3]) .* m_half(edgeB(1):cut_dim1, edgeB(2):cut_dim2, :);
+    edgeLow = floor(diffSize ./ 2);
+    edgeHigh = ceil(diffSize ./ 2);
+    start_dim1 = edgeLow(1) + 1
+    end_dim1 = size(m_half, 1) - edgeHigh(1)
+    start_dim2 = edgeLow(2) + 1
+    end_dim2 = size(m_half, 2) - edgeHigh(2)
+    m_overlay = repmat(m_scale > 0, [1, 1, 3]) .* m_half(start_dim1:end_dim1, start_dim2:end_dim2, :);
 
     % add the active patches to the final image
     for i=1:size(active_patches_row_centred)
         %m_overlay(active_patches_row_centred(i), active_patches_col_centred(i), :) = [255, 255, 255];
         drawCornerMarkers = true;
         if drawCornerMarkers
-            m_overlay(patchCorners(1, 1, i), patchCorners(1, 2, i), :) = [255, 255, 255];
-            m_overlay(patchCorners(1, 1, i), patchCorners(2, 1, i), :) = [255, 255, 255];
-            m_overlay(patchCorners(2, 2, i), patchCorners(1, 2, i), :) = [255, 255, 255];
-            m_overlay(patchCorners(2, 2, i), patchCorners(2, 1, i), :) = [255, 255, 255];
+            color = [255, 0, 0];
+            m_overlay(patchCorners(1, 1, i), patchCorners(1, 2, i), :) = color;
+            m_overlay(patchCorners(1, 1, i), patchCorners(2, 1, i), :) = color;
+            m_overlay(patchCorners(2, 2, i), patchCorners(1, 2, i), :) = color;
+            m_overlay(patchCorners(2, 2, i), patchCorners(2, 1, i), :) = color;
         end
     end
 
