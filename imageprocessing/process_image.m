@@ -20,7 +20,7 @@ function [M, patchCorners] = process_image(m, debug)
     end
 
     % perform max-pooling on the image (for now we choose 15x15 pooling)
-    max_pool_size = 9;
+    max_pool_size = 11;
     m_var_half_max = max_pooling(m_var_half, max_pool_size);
 
     if debug
@@ -30,8 +30,8 @@ function [M, patchCorners] = process_image(m, debug)
     end
 
     % find the areas of interest
-    activeThreshold = 300;
-    m_var_half_max_active = find_maxs(m_var_half_max, activeThreshold);
+    activeThreshold = 1600;
+    m_var_half_max_active = find_maxs(m_var_half_max, activeThreshold)
 
 
     % calculate the areas positions
@@ -53,16 +53,18 @@ function [M, patchCorners] = process_image(m, debug)
         right = min(active_patches_col(i) + 1, size(m_var_half_max_active, 2));
 
         % assign sides of the patches
-        m_var_half_max_active(down, active_patches_col(i)) = 10000;
-        m_var_half_max_active(up, active_patches_col(i)) = 10000;
-        m_var_half_max_active(active_patches_row(i), right) = 10000;
-        m_var_half_max_active(active_patches_row(i), left) = 10000;
+        m_var_half_max_active(down, active_patches_col(i)) = 5000;
+        m_var_half_max_active(up, active_patches_col(i)) = 5000;
+        m_var_half_max_active(active_patches_row(i), right) = 5000;
+        m_var_half_max_active(active_patches_row(i), left) = 5000;
         
         % asssign corners of the patches
-        m_var_half_max_active(down, left) = 10000;
-        m_var_half_max_active(down, right) = 10000;
-        m_var_half_max_active(up, left) = 10000;
-        m_var_half_max_active(up, right) = 10000;
+        m_var_half_max_active(down, left) = 2500;
+        m_var_half_max_active(down, right) = 2500;
+        m_var_half_max_active(up, left) = 2500;
+        m_var_half_max_active(up, right) = 2500;
+
+        m_var_half_max_active(active_patches_row(i), active_patches_col(i)) = 10000;
 
         % convert patch corners to points
         patchCorners(1, 1, i) =  ceil(down .* max_pool_size);% .+ (max_pool_size / 2) .- 1);
