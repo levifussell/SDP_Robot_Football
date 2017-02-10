@@ -3,8 +3,8 @@ I1 = imread("imgs/snap-unknown-20170126-134652-1.jpeg");
 I1 = imread("imgs/snap-unknown-20170206-180525-1.jpeg");
 
 [I1p, patches] = process_image(I1, false);
-figure(20)
-imagesc(I1p)
+%figure(20)
+%imagesc(I1p)
 %patches
 patchRGB = zeros(3, size(patches, 3));
 patchSizes = zeros(1, size(patches, 3));
@@ -139,8 +139,8 @@ for j=1:3%size(patches, 3)
 
     roboSeg(best_pink(1, 1), best_pink(1, 2), :) = [255, 0, 150];
 
-    figure(j + 2000)
-    imagesc(roboSeg)
+    %figure(j + 2000)
+    %imagesc(roboSeg)
     %ImPatch(bestBlueCirclePos(1, 1), bestBlueCirclePos(2, 1), :) = [0, 0, 255];
     %ImPatch(bestYellowCirclePos(1, 1), bestYellowCirclePos(2, 1), :) = [255, 255, 0];
     %ImPatch(bestPinkCirclePos(1, 1), bestPinkCirclePos(2, 1), :) = [255, 0, 150];
@@ -213,8 +213,8 @@ for j=1:3%size(patches, 3)
     %figure(j + 2000)
     %imagesc(roboSeg)
     
-    figure(j + 1000)
-    imagesc(ImPatch);
+    %figure(j + 1000)
+    %imagesc(ImPatch);
 
     %robotLayoutMin = 0;
     %robotLayoutDistMin = 10000000;
