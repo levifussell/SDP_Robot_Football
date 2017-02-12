@@ -146,6 +146,9 @@ public class MotionController extends ControllerBase {
 //            return;
 //        }
 
+        if(us == null)
+            return;
+
         double rotation = 0.0; //we don't care about this parameter right now
         double factor = 0.0; //we don't care about this parameter right now
         VectorGeometry ourRobotLocation = new VectorGeometry(us.location.x, us.location.y);
