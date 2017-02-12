@@ -20,36 +20,40 @@ public class HorizVertSimpleDrive implements DriveInterface {
 
     VectorGeometry distTo = new VectorGeometry(location.x - force.x, location.y - force.y);
 
-    double front = 0;
-    double left = 0;
-    double back = 0;
-    double right = 0;
+    double fieldSize = 400.0f;
+    double dimX = MAX_MOTION * (distTo.x / fieldSize);
+    double dimY = MAX_MOTION * (distTo.y / fieldSize);
 
-    //move left
-    if(distTo.x < 0)
-    {
-      front = -MAX_MOTION;
-      back = MAX_MOTION;
-    }
-    //move right
-    else if(distTo.x > 0)
-    {
-      front = MAX_MOTION;
-      back = -MAX_MOTION;
-    }
+    double front = dimX;
+    double left = -dimY;
+    double back = -dimX;
+    double right = dimY;
 
-    //move forward
-    if(distTo.y < 0)
-    {
-      left = -MAX_MOTION;
-      right = MAX_MOTION;
-    }
-    //move backward
-    else if(distTo.y > 0)
-    {
-      left = MAX_MOTION;
-      right = -MAX_MOTION;
-    }
+//    //move left
+//    if(distTo.x < 0)
+//    {
+//      front = -MAX_MOTION;
+//      back = MAX_MOTION;
+//    }
+//    //move right
+//    else if(distTo.x > 0)
+//    {
+//      front = MAX_MOTION;
+//      back = -MAX_MOTION;
+//    }
+//
+//    //move forward
+//    if(distTo.y < 0)
+//    {
+//      left = -MAX_MOTION;
+//      right = MAX_MOTION;
+//    }
+//    //move backward
+//    else if(distTo.y > 0)
+//    {
+//      left = MAX_MOTION;
+//      right = -MAX_MOTION;
+//    }
 
     ((FourWheelHolonomicRobotPort) port).fourWheelHolonomicMotion(front, back, left, right);
   }
