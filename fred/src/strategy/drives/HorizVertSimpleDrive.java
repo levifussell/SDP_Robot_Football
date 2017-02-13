@@ -43,7 +43,7 @@ public class HorizVertSimpleDrive implements DriveInterface {
     System.out.println("EXP: " + expectedAngle);
     System.out.println("OUR: " + ourAngle);
 
-    if (Math.abs(distToAngle) < Math.PI / 30.0) return powerVec;
+    if (Math.abs(distToAngle) < Math.PI / 10.0) return powerVec;
 
     double k = 15.0 / Math.PI;
     double powerConst = 25 + Math.abs(distToAngle) * k;
@@ -68,11 +68,11 @@ public class HorizVertSimpleDrive implements DriveInterface {
     if(DEBUG_MODE)
       System.out.println("DIST TO ANGLE: " + distToRadius);
 
-    double k = distToRadius * 1.0;
+    double k = Math.abs(distToRadius) * 1.0;
     double powerConst = 40 * k;
-    double power = distToRadius < 0 ? -powerConst : powerConst;
+    double power = distToRadius < 0 ? powerConst : -powerConst;
 
-    double[] powerVec = {0, 0, power, power};
+    double[] powerVec = {0, 0, power, -power};
 
     return powerVec;
   }
@@ -139,17 +139,17 @@ public class HorizVertSimpleDrive implements DriveInterface {
     double[] powerToGoal = this.calcPowerToRotateToOrigin(us, origin);
 
     //drive our robot towards the target radius from the origin (enemy goal)
-    double targetRadius = 200.0; //TODO: this is just a random radius for testing (future note: move robot away from ball and move behind)
+    double targetRadius = 120.0; //TODO: this is just a random radius for testing (future note: move robot away from ball and move behind)
     double[] powerToRadius = this.goToRadius(us, origin, targetRadius);
 
     //drive our robot towards the target angle from the origin (enemy goal)
-    double targetAngle = Math.PI / 2; //TODO: this is just a random angle for testing (future note: move robot away from ball and move behind)
-    double[] powerToAngle = this.goToAngle(us, origin, targetAngle);
+//    double targetAngle = Math.PI / 2; //TODO: this is just a random angle for testing (future note: move robot away from ball and move behind)
+//    double[] powerToAngle = this.goToAngle(us, origin, targetAngle);
 
     //sum all the powers (?)
     double[] totalPowerDrive = new double[4];
     for(int i = 0; i < totalPowerDrive.length; ++i)
-      totalPowerDrive[i] = powerToGoal[i] + powerToRadius[i] + powerToAngle[i];
+      totalPowerDrive[i] = powerToRadius[i]; //+ powerToAngle[i];
 
     //send drive to wheels
     ((FourWheelHolonomicRobotPort) port).
