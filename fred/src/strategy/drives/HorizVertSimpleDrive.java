@@ -20,6 +20,7 @@ public class HorizVertSimpleDrive implements DriveInterface {
 
   private static final boolean DEBUG_MODE = true;
 
+  //converts a cartesian point, given an origin, to polar coordinates
   public VectorGeometry toPolarCoord(VectorGeometry origin, VectorGeometry position)
   {
     VectorGeometry diff = new VectorGeometry(origin.x - position.x, origin.y - position.y);
@@ -29,7 +30,8 @@ public class HorizVertSimpleDrive implements DriveInterface {
     return new VectorGeometry(radius, angle);
   }
 
-  public double[] calcPowerToRotateToOrigin(Robot us, VectorGeometry origin)
+  //polar coordinate origin calculator
+  public double[] goToOriginPolarCoord(Robot us, VectorGeometry origin)
   {
     double[] powerVec = {0.0, 0.0, 0.0, 0.0};
 
@@ -55,7 +57,8 @@ public class HorizVertSimpleDrive implements DriveInterface {
     return powerVec;
   }
 
-  public double[] goToRadius(Robot us, VectorGeometry origin, double targetRadius)
+  //polar coordinate angle calculator
+  public double[] goToRadiusPolarCoord(Robot us, VectorGeometry origin, double targetRadius)
   {
     //polar coords: (radius, angle)
     VectorGeometry polarCoords = this.toPolarCoord(us.location, origin);
@@ -76,7 +79,8 @@ public class HorizVertSimpleDrive implements DriveInterface {
     return powerVec;
   }
 
-  public double[] goToAngle(Robot us, VectorGeometry origin, double targetAngle)
+  //polar coordinate angle calculator
+  public double[] goToAnglePolarCoord(Robot us, VectorGeometry origin, double targetAngle)
   {
     //polar coords: (radius, angle)
     VectorGeometry polarCoords = this.toPolarCoord(us.location, origin);
@@ -103,6 +107,30 @@ public class HorizVertSimpleDrive implements DriveInterface {
     double[] powerVec = {-wheelPowerFront, wheelPowerBack, 0.0, 0.0};
 
     return powerVec;
+  }
+
+  //merge all 3 drive dimensions
+  public double[] performPolarCoordPowerCalc(
+          double[] originPower, double[] radiusPower, double[] anglePower,  double angleForRotatePriority)
+  {
+    double[] totalPowerDrive = new double[4];
+
+    for(int i = 0; i < 4; ++i) {
+      // if not within 45 degrees of target only rotate
+      if (Math.abs(angleForRotatePriority) > Math.PI / 2.0) {
+        totalPowerDrive[i] = originPower[i];
+      } else {
+        totalPowerDrive[i] = (originPower[i] + radiusPower[i] + anglePower[i]) / 3.0;
+      }
+
+      if (totalPowerDrive[i] > 0) {
+        totalPowerDrive[i] += 40;
+      } else if (totalPowerDrive[i] < 0) {
+        totalPowerDrive[i] -= 40;
+      }
+    }
+
+    return totalPowerDrive;
   }
 
   @Override
@@ -134,7 +162,7 @@ public class HorizVertSimpleDrive implements DriveInterface {
     VectorGeometry origin = new VectorGeometry(enem.getX(), enem.getY());
 
     //always keep our robot rotated towards the goal
-    double[] powerToGoal = this.calcPowerToRotateToOrigin(us, origin);
+    double[] powerToGoal = this.goToOriginPolarCoord(us, origin);
 
     // HACK
     double rotOffset = 0;
@@ -151,28 +179,28 @@ public class HorizVertSimpleDrive implements DriveInterface {
 
     //drive our robot towards the target radius from the origin (enemy goal)
     double targetRadius = 120.0; //TODO: this is just a random radius for testing (future note: move robot away from ball and move behind)
-    double[] powerToRadius = this.goToRadius(us, origin, targetRadius);
+    double[] powerToRadius = this.goToRadiusPolarCoord(us, origin, targetRadius);
 
     //drive our robot towards the target angle from the origin (enemy goal)
     double targetAngle = Math.PI / 2; //TODO: this is just a random angle for testing (future note: move robot away from ball and move behind)
-    double[] powerToAngle = this.goToAngle(us, origin, targetAngle);
+    double[] powerToAngle = this.goToAnglePolarCoord(us, origin, targetAngle);
 
     //sum all the powers (?)
-    double[] totalPowerDrive = new double[4];
-    for(int i = 0; i < 4; ++i) {
-      // if not within 45 degrees of target only rotate
-      if (Math.abs(rotOffset) > Math.PI / 2.0) {
-        totalPowerDrive[i] = powerToGoal[i];
-      } else {
-        totalPowerDrive[i] = (powerToGoal[i] + powerToRadius[i] + powerToAngle[i]) / 3.0;
-      }
-
-      if (totalPowerDrive[i] > 0) {
-        totalPowerDrive[i] += 40;
-      } else if (totalPowerDrive[i] < 0) {
-        totalPowerDrive[i] -= 40;
-      }
-    }
+    double[] totalPowerDrive = performPolarCoordPowerCalc(powerToGoal, powerToRadius, powerToAngle, rotOffset);
+//    for(int i = 0; i < 4; ++i) {
+//      // if not within 45 degrees of target only rotate
+//      if (Math.abs(rotOffset) > Math.PI / 2.0) {
+//        totalPowerDrive[i] = powerToGoal[i];
+//      } else {
+//        totalPowerDrive[i] = (powerToGoal[i] + powerToRadius[i] + powerToAngle[i]) / 3.0;
+//      }
+//
+//      if (totalPowerDrive[i] > 0) {
+//        totalPowerDrive[i] += 40;
+//      } else if (totalPowerDrive[i] < 0) {
+//        totalPowerDrive[i] -= 40;
+//      }
+//    }
 
     //send drive to wheels
     ((FourWheelHolonomicRobotPort) port).
