@@ -16,6 +16,97 @@ public class HorizVertSimpleDrive implements DriveInterface {
 
   private int MAX_MOTION = 100;
 
+  private static final double SIZE_OF_ROBOT_IN_PIXELS = 100.0;
+
+  private static final boolean DEBUG_MODE = true;
+
+  public VectorGeometry toPolarCoord(VectorGeometry origin, VectorGeometry position)
+  {
+    VectorGeometry diff = new VectorGeometry(origin.x - position.x, origin.y - position.y);
+    double radius = Math.sqrt(diff.x*diff.x + diff.y*diff.y);
+    double angle = Math.atan2(diff.y, diff.x);
+
+    return new VectorGeometry(radius, angle);
+  }
+
+  public double[] calcPowerToRotateToOrigin(Robot us, VectorGeometry origin)
+  {
+    double[] powerVec = {0.0, 0.0, 0.0, 0.0};
+
+    double ourAngle = us.location.direction;
+    ourAngle = (Math.PI + Math.PI *2 + ourAngle) % (Math.PI * 2);
+
+    VectorGeometry distToGoal = new VectorGeometry(origin.x - us.location.x, origin.y - us.location.y);
+
+    double expectedAngle = (Math.atan2(distToGoal.y, distToGoal.x) + Math.PI) % (Math.PI * 2);
+    double distToAngle = expectedAngle - ourAngle;
+    System.out.println("EXP: " + expectedAngle);
+    System.out.println("OUR: " + ourAngle);
+
+    if (Math.abs(distToAngle) < Math.PI / 30.0) return powerVec;
+
+    double k = 15.0 / Math.PI;
+    double powerConst = 25 + Math.abs(distToAngle) * k;
+    double power = distToAngle < 0 ? -powerConst : powerConst;
+
+    for(int i = 0; i < powerVec.length; ++i)
+      powerVec[i] = power;
+
+    return powerVec;
+  }
+
+  public double[] goToRadius(Robot us, VectorGeometry origin, double targetRadius)
+  {
+    //polar coords: (radius, angle)
+    VectorGeometry polarCoords = this.toPolarCoord(us.location, origin);
+
+    if(DEBUG_MODE)
+      System.out.println("POlAR COORDS: " + polarCoords.toString());
+
+    double distToRadius = polarCoords.x - targetRadius;
+
+    if(DEBUG_MODE)
+      System.out.println("DIST TO ANGLE: " + distToRadius);
+
+    double k = distToRadius * 1.0;
+    double powerConst = 40 * k;
+    double power = distToRadius < 0 ? -powerConst : powerConst;
+
+    double[] powerVec = {0, 0, power, power};
+
+    return powerVec;
+  }
+
+  public double[] goToAngle(Robot us, VectorGeometry origin, double targetAngle)
+  {
+    //polar coords: (radius, angle)
+    VectorGeometry polarCoords = this.toPolarCoord(us.location, origin);
+
+    if(DEBUG_MODE)
+      System.out.println("POlAR COORDS: " + polarCoords.toString());
+
+    double distToAngle = polarCoords.y - targetAngle;
+
+    if(DEBUG_MODE)
+      System.out.println("DIST TO ANGLE: " + distToAngle);
+
+    double k = distToAngle * 1.0;
+    double powerConst = 40 * k;
+    double power = distToAngle < 0 ? -powerConst : powerConst;
+
+    //front wheel runs slower relative to the radius
+    double wheelPowerFront =
+        (polarCoords.x - SIZE_OF_ROBOT_IN_PIXELS / 2) / (polarCoords.x + SIZE_OF_ROBOT_IN_PIXELS / 2)
+            * power;
+    //back wheel runs faster relative to the radius
+    double wheelPowerBack =
+        (polarCoords.x + SIZE_OF_ROBOT_IN_PIXELS / 2) / (polarCoords.x - SIZE_OF_ROBOT_IN_PIXELS / 2)
+            * power;
+    double[] powerVec = {wheelPowerFront, wheelPowerFront, 0.0, 0.0};
+
+    return powerVec;
+  }
+
   @Override
   public void move(RobotPort port, DirectedPoint location, VectorGeometry force, double rotation, double factor) {
     assert(port instanceof FourWheelHolonomicRobotPort);
@@ -32,30 +123,37 @@ public class HorizVertSimpleDrive implements DriveInterface {
 //    double left = -dimY;
 //    double back = dimX;
 //    double right = dimY;
-    EnemyGoal enem = new EnemyGoal();
-    enem.recalculate();
 
+    //try to get our robot from the world
     Robot us = Strategy.world.getRobot(RobotType.FRIEND_2);
     if(us == null)
       return;
 
-    double ourAngle = us.location.direction;
-    ourAngle = (Math.PI + Math.PI *2 + ourAngle) % (Math.PI * 2);
+    //our origin for the polar coordinates is the enemy goal always
+    // (for now)
+    EnemyGoal enem = new EnemyGoal();
+    enem.recalculate();
+    VectorGeometry origin = new VectorGeometry(enem.getX(), enem.getY());
 
-    VectorGeometry distToGoal = new VectorGeometry(enem.getX() - us.location.x, enem.getY() - us.location.y);
+    //always keep our robot rotated towards the goal
+    double[] powerToGoal = this.calcPowerToRotateToOrigin(us, origin);
 
-    double expectedAngle = (Math.atan2(distToGoal.y, distToGoal.x) + Math.PI) % (Math.PI * 2);
-    double distToAngle = expectedAngle - ourAngle;
-    System.out.println("EXP: " + expectedAngle);
-    System.out.println("OUR: " + ourAngle);
+    //drive our robot towards the target radius from the origin (enemy goal)
+    double targetRadius = 200.0; //TODO: this is just a random radius for testing (future note: move robot away from ball and move behind)
+    double[] powerToRadius = this.goToRadius(us, origin, targetRadius);
 
-    if (Math.abs(distToAngle) < Math.PI / 30.0) return;
+    //drive our robot towards the target angle from the origin (enemy goal)
+    double targetAngle = Math.PI / 2; //TODO: this is just a random angle for testing (future note: move robot away from ball and move behind)
+    double[] powerToAngle = this.goToAngle(us, origin, targetAngle);
 
-    double k = 15.0 / Math.PI;
-    double powerConst = 25 + Math.abs(distToAngle) * k;
-    double power = distToAngle < 0 ? -powerConst : powerConst;
+    //sum all the powers (?)
+    double[] totalPowerDrive = new double[4];
+    for(int i = 0; i < totalPowerDrive.length; ++i)
+      totalPowerDrive[i] = powerToGoal[i] + powerToRadius[i] + powerToAngle[i];
 
-    ((FourWheelHolonomicRobotPort) port).fourWheelHolonomicMotion(power, power, power, power);
+    //send drive to wheels
+    ((FourWheelHolonomicRobotPort) port).
+        fourWheelHolonomicMotion(totalPowerDrive[0], totalPowerDrive[1], totalPowerDrive[2], totalPowerDrive[3]);
 
     //rotate counterclockwise
 
