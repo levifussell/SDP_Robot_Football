@@ -16,7 +16,7 @@ public class HorizVertSimpleDrive implements DriveInterface {
 
   private int MAX_MOTION = 100;
 
-  private static final double SIZE_OF_ROBOT_IN_PIXELS = 100.0;
+  private static final double SIZE_OF_ROBOT_IN_PIXELS = 20.0;
 
   private static final boolean DEBUG_MODE = true;
 
@@ -45,8 +45,8 @@ public class HorizVertSimpleDrive implements DriveInterface {
 
     if (Math.abs(distToAngle) < Math.PI / 10.0) return powerVec;
 
-    double k = 15.0 / Math.PI;
-    double powerConst = 25 + Math.abs(distToAngle) * k;
+    double k = 20.0 / Math.PI;
+    double powerConst = Math.max(20.0, Math.abs(distToAngle) * k);
     double power = distToAngle < 0 ? -powerConst : powerConst;
 
     for(int i = 0; i < powerVec.length; ++i)
@@ -68,8 +68,7 @@ public class HorizVertSimpleDrive implements DriveInterface {
     if(DEBUG_MODE)
       System.out.println("DIST TO ANGLE: " + distToRadius);
 
-    double k = Math.abs(distToRadius) * 1.0;
-    double powerConst = 40 * k;
+    double powerConst = Math.max(60.0, 60.0 * (Math.abs(distToRadius) / 120.0));
     double power = distToRadius < 0 ? powerConst : -powerConst;
 
     double[] powerVec = {0, 0, power, -power};
@@ -90,8 +89,7 @@ public class HorizVertSimpleDrive implements DriveInterface {
     if(DEBUG_MODE)
       System.out.println("DIST TO ANGLE: " + distToAngle);
 
-    double k = distToAngle * 1.0;
-    double powerConst = 40 * k;
+    double powerConst = Math.max(100.0, 100.0 * (distToAngle / Math.PI));
     double power = distToAngle < 0 ? -powerConst : powerConst;
 
     //front wheel runs slower relative to the radius
@@ -102,7 +100,7 @@ public class HorizVertSimpleDrive implements DriveInterface {
     double wheelPowerBack =
         (polarCoords.x + SIZE_OF_ROBOT_IN_PIXELS / 2) / (polarCoords.x - SIZE_OF_ROBOT_IN_PIXELS / 2)
             * power;
-    double[] powerVec = {wheelPowerFront, wheelPowerFront, 0.0, 0.0};
+    double[] powerVec = {-wheelPowerFront, wheelPowerBack, 0.0, 0.0};
 
     return powerVec;
   }
@@ -115,7 +113,7 @@ public class HorizVertSimpleDrive implements DriveInterface {
 
 //    VectorGeometry distTo = new VectorGeometry(location.x - force.x, location.y - force.y);
 //
-//    double fieldSize = 100.0f;
+//    double fieldSize = 100.0f;wheelPowerFront
 //    double dimX = MAX_MOTION * (distTo.x / fieldSize);
 //    double dimY = MAX_MOTION * (distTo.y / fieldSize);
 //
@@ -143,13 +141,19 @@ public class HorizVertSimpleDrive implements DriveInterface {
     double[] powerToRadius = this.goToRadius(us, origin, targetRadius);
 
     //drive our robot towards the target angle from the origin (enemy goal)
-//    double targetAngle = Math.PI / 2; //TODO: this is just a random angle for testing (future note: move robot away from ball and move behind)
-//    double[] powerToAngle = this.goToAngle(us, origin, targetAngle);
+    double targetAngle = Math.PI / 2; //TODO: this is just a random angle for testing (future note: move robot away from ball and move behind)
+    double[] powerToAngle = this.goToAngle(us, origin, targetAngle);
 
     //sum all the powers (?)
     double[] totalPowerDrive = new double[4];
-    for(int i = 0; i < totalPowerDrive.length; ++i)
-      totalPowerDrive[i] = powerToRadius[i]; //+ powerToAngle[i];
+    for(int i = 0; i < 4; ++i) {
+      totalPowerDrive[i] = powerToAngle[i]; //(powerToGoal[i] + powerToRadius[i]) / 2.0; //+ powerToAngle[i];
+      /*if (totalPowerDrive[i] > 0) {
+        totalPowerDrive[i] += 40;
+      } else if (totalPowerDrive[i] < 0) {
+        totalPowerDrive[i] -= 40;
+      }*/
+    }
 
     //send drive to wheels
     ((FourWheelHolonomicRobotPort) port).
