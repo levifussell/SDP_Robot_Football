@@ -89,7 +89,7 @@ public class HorizVertSimpleDrive implements DriveInterface {
     if(DEBUG_MODE)
       System.out.println("DIST TO ANGLE: " + distToAngle);
 
-    double powerConst = Math.max(100.0, 100.0 * (distToAngle / Math.PI));
+    double powerConst = Math.max(60.0, 60.0 * (distToAngle / Math.PI));
     double power = distToAngle < 0 ? -powerConst : powerConst;
 
     //front wheel runs slower relative to the radius
@@ -136,6 +136,19 @@ public class HorizVertSimpleDrive implements DriveInterface {
     //always keep our robot rotated towards the goal
     double[] powerToGoal = this.calcPowerToRotateToOrigin(us, origin);
 
+    // HACK
+    double rotOffset = 0;
+    {
+      double ourAngle = us.location.direction;
+      ourAngle = (Math.PI + Math.PI * 2 + ourAngle) % (Math.PI * 2);
+
+      VectorGeometry distToGoal = new VectorGeometry(origin.x - us.location.x, origin.y - us.location.y);
+
+      double expectedAngle = (Math.atan2(distToGoal.y, distToGoal.x) + Math.PI) % (Math.PI * 2);
+      rotOffset = expectedAngle - ourAngle;
+    }
+    // END OF HACK
+
     //drive our robot towards the target radius from the origin (enemy goal)
     double targetRadius = 120.0; //TODO: this is just a random radius for testing (future note: move robot away from ball and move behind)
     double[] powerToRadius = this.goToRadius(us, origin, targetRadius);
@@ -147,12 +160,18 @@ public class HorizVertSimpleDrive implements DriveInterface {
     //sum all the powers (?)
     double[] totalPowerDrive = new double[4];
     for(int i = 0; i < 4; ++i) {
-      totalPowerDrive[i] = powerToAngle[i]; //(powerToGoal[i] + powerToRadius[i]) / 2.0; //+ powerToAngle[i];
-      /*if (totalPowerDrive[i] > 0) {
+      // if not within 45 degrees of target only rotate
+      if (Math.abs(rotOffset) > Math.PI / 2.0) {
+        totalPowerDrive[i] = powerToGoal[i];
+      } else {
+        totalPowerDrive[i] = (powerToGoal[i] + powerToRadius[i] + powerToAngle[i]) / 3.0;
+      }
+
+      if (totalPowerDrive[i] > 0) {
         totalPowerDrive[i] += 40;
       } else if (totalPowerDrive[i] < 0) {
         totalPowerDrive[i] -= 40;
-      }*/
+      }
     }
 
     //send drive to wheels
