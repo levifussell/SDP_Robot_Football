@@ -10,18 +10,21 @@ import java.util.Arrays;
 public class Test {
     public static void main(String[] args) {
         OctaveEngine octave = new OctaveEngineFactory().getScriptEngine();
-        OctaveDouble a = new OctaveDouble(new double[]{1, 2, 3, 4}, 2, 2);
-        octave.put("a", a);
-        String func = "" //
-                + "function res = my_func(a)\n" //
-                + " res = 2 * a;\n" //
-                + "endfunction\n" //
-                + "";
-        octave.eval(func);
-        octave.eval("b = my_func(a);");
-        OctaveDouble b = octave.get(OctaveDouble.class, "b");
-        octave.close();
-	System.out.println(Arrays.toString(b.getData()));
+        //OctaveDouble a = new OctaveDouble(new double[]{1, 2, 3, 4}, 2, 2);
+        //octave.put("a", a);
+        //String func = "" //
+        //        + "function res = my_func(a)\n" //
+        //        + " res = 2 * a;\n" //
+        //        + "endfunction\n" //
+        //        + "";
+        //octave.eval(func);
+        //octave.eval("b = my_func(a);");
+        //OctaveDouble b = octave.get(OctaveDouble.class, "b");
+	//octave.close();
+	//System.out.println(Arrays.toString(b.getData()));
+	octave.eval("cd ..");
+	octave.eval("main");
+	octave.close();
     }
 }
 
