@@ -180,25 +180,25 @@ public class HorizVertSimpleDrive implements DriveInterface {
     //-----------------------------------
 
     //kicking
-    if (angleDiffAbs < angleThreshold2
-            && robotPolarCoords.x - ballPolarCoords.x < 10
+    if (angleDiffAbs <= angleThreshold2
+            && robotPolarCoords.x - ballPolarCoords.x < 25
             && robotPolarCoords.x >= ballPolarCoords.x) {
       ((Diag4RobotPort) commandPort).spamKick();
     }
 
-    if (angleDiffAbs < angleThreshold2 && robotPolarCoords.x > ballPolarCoords.x - radiusOffset) {
+    if (angleDiffAbs < angleThreshold2 && robotPolarCoords.x > ballPolarCoords.x) {
       System.out.println("GOING TO THE BALL");
       actionTargetRadius = ballPolarCoords.x - radiusOffset;
       actionTargetAngle = ballPolarCoords.y;
       return BallTrackState.GO_TO_BALL;
-    } else if(robotPolarCoords.x > ballPolarCoords.x - radiusOffset) {
+    } else if(robotPolarCoords.x > ballPolarCoords.x) {
       System.out.println("GOING BEHIND BALL");
-      actionTargetRadius = ballPolarCoords.x + radiusOffset + radiusThreshold;
+      actionTargetRadius = ballPolarCoords.x + radiusThreshold;
       actionTargetAngle = ballPolarCoords.y;
       return BallTrackState.GO_BEHIND_BALL;
-    } else if (robotPolarCoords.x < ballPolarCoords.x + radiusOffset) {
+    } else if (robotPolarCoords.x < ballPolarCoords.x) {
       System.out.println("GOING NEXT TO THE BALL");
-      actionTargetRadius = ballPolarCoords.x + radiusOffset;
+      actionTargetRadius = ballPolarCoords.x;
       double a = 2 * Math.asin(radiusThreshold / (2.0 * ballPolarCoords.x));
       actionTargetAngle = ballPolarCoords.y + (ballPolarCoords.y > Math.PI/2.0 ? -a : a);
       return BallTrackState.GO_NEXT_TO_BALL;
