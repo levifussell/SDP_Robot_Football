@@ -3,6 +3,7 @@ package strategy.robots;
 import communication.ports.robotPorts.Diag4RobotPort;
 import strategy.controllers.diag4.SpinnerKickController;
 import strategy.drives.FourWheelHolonomicDrive;
+import strategy.drives.HorizVertSimpleDrive;
 import vision.RobotType;
 
 /**
@@ -14,7 +15,7 @@ public class Diag4 extends RobotBase  {
 
   public Diag4(RobotType robotType)
   {
-    super(robotType, new Diag4RobotPort(), new FourWheelHolonomicDrive());
+    super(robotType, new Diag4RobotPort(), new HorizVertSimpleDrive());
     this.controllers.add(this.SPINNERKICK_CONTROLLER);
   }
 
