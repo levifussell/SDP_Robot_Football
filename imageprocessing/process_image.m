@@ -1,4 +1,4 @@
-function [M, patchCorners] = process_image(m, debug)
+function [M, patchCorners] = process_image(m, activeThresh, debug)
 
     % half the size of the image (could even try a fourth)
     %m_var_half = m_var(1:4:end, 1:4:end);
@@ -30,8 +30,8 @@ function [M, patchCorners] = process_image(m, debug)
     end
 
     % find the areas of interest
-    activeThreshold = 1600;
-    m_var_half_max_active = find_maxs(m_var_half_max, activeThreshold)
+    activeThreshold = activeThresh;%1600;
+    m_var_half_max_active = find_maxs(m_var_half_max, activeThreshold);
 
 
     % calculate the areas positions
@@ -87,15 +87,15 @@ function [M, patchCorners] = process_image(m, debug)
 
     % scale the image back to its normal size
     m_scale = scale_image(m_var_half_max_active, m_var_half);
-    size(m_scale) % processed image
-    size(m_var_half) % goal image
+    size(m_scale); % processed image
+    size(m_var_half); % goal image
     diffSize = size(m_var_half) - size(m_scale);
     edgeLow = floor(diffSize ./ 2);
     edgeHigh = ceil(diffSize ./ 2);
-    start_dim1 = edgeLow(1) + 1
-    end_dim1 = size(m_half, 1) - edgeHigh(1)
-    start_dim2 = edgeLow(2) + 1
-    end_dim2 = size(m_half, 2) - edgeHigh(2)
+    start_dim1 = edgeLow(1) + 1;
+    end_dim1 = size(m_half, 1) - edgeHigh(1);
+    start_dim2 = edgeLow(2) + 1;
+    end_dim2 = size(m_half, 2) - edgeHigh(2);
     m_overlay = repmat(m_scale > 0, [1, 1, 3]) .* m_half(start_dim1:end_dim1, start_dim2:end_dim2, :);
 
     % add the active patches to the final image

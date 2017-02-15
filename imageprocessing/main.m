@@ -22,6 +22,7 @@ drawPatches = true;
 % draw each patch
 for j=1:size(patches, 3)
     %imagesc(I1p(patches(2, 2, i):patches(1, 1, i), patches(1, 2, i):patches(2, 1, i), :))
+    ImPatchTopLeft = [patches(2, 2, j), patches(1, 2, j)];
     ImPatch = I1p(patches(2, 2, j):patches(1, 1, j), patches(1, 2, j):patches(2, 1, j), :);
     %figure(j + 1000)
     %imagesc(ImPatch);
@@ -60,39 +61,39 @@ for j=1:size(patches, 3)
     pinkRobotLayout(:, :, 3) += 150.0;
 
     % robot layout
-    robotLayout = double(zeros(9, 9, 3));
+    robotLayout = double(zeros(10, 10, 3));
     % pink = (255, 62, 150)
     % red channel
-    robotLayout(:, :, 1) = [255 255 255 0 0 0 255 255 255;
-                            255 255 255 0 0 0 255 255 255;
-                            255 255 255 0 0 0 255 255 255;
-                            0 0 0 0 0 0 0 0 0;
-                            0 0 0 0 0 0 0 0 0;
-                            0 0 0 0 0 0 0 0 0;
-                            0 0 0 0 0 0 255 255 255;
-                            0 0 0 0 0 0 255 255 255;
-                            0 0 0 0 0 0 255 255 255;];
+    %robotLayout(:, :, 1) = [255 255 255 0 0 0 255 255 255;
+                            %255 255 255 0 0 0 255 255 255;
+                            %255 255 255 0 0 0 255 255 255;
+                            %0 0 0 0 0 0 0 0 0;
+                            %0 0 0 0 0 0 0 0 0;
+                            %0 0 0 0 0 0 0 0 0;
+                            %0 0 0 0 0 0 255 255 255;
+                            %0 0 0 0 0 0 255 255 255;
+                            %0 0 0 0 0 0 255 255 255;];
     % blue channel
-    robotLayout(:, :, 2) = [0 0 0 255 255 255 0 0 0;
-                            0 0 0 255 255 255 0 0 0;
-                            0 0 0 255 255 255 0 0 0;
-                            255 255 255 0 0 0 255 255 255;
-                            255 255 255 0 0 0 255 255 255;
-                            255 255 255 0 0 0 255 255 255;
-                            255 255 255 255 255 255 0 0 0;
-                            255 255 255 255 255 255 0 0 0;
-                            255 255 255 255 255 255 0 0 0;];
+    %robotLayout(:, :, 2) = [0 0 0 255 255 255 0 0 0;
+                            %0 0 0 255 255 255 0 0 0;
+                            %0 0 0 255 255 255 0 0 0;
+                            %255 255 255 0 0 0 255 255 255;
+                            %255 255 255 0 0 0 255 255 255;
+                            %255 255 255 0 0 0 255 255 255;
+                            %255 255 255 255 255 255 0 0 0;
+                            %255 255 255 255 255 255 0 0 0;
+                            %255 255 255 255 255 255 0 0 0;];
 
     % green channel
-    robotLayout(:, :, 3) = [150 150 150 0 0 0 150 150 150;
-                            150 150 150 0 0 0 150 150 150;
-                            150 150 150 0 0 0 150 150 150;
-                            0 0 0 255 255 255 0 0 0;
-                            0 0 0 255 255 255 0 0 0;
-                            0 0 0 255 255 255 0 0 0;
-                            0 0 0 0 0 0 150 150 150;
-                            0 0 0 0 0 0 150 150 150;
-                            0 0 0 0 0 0 150 150 150;];
+    %robotLayout(:, :, 3) = [150 150 150 0 0 0 150 150 150;
+                            %150 150 150 0 0 0 150 150 150;
+                            %150 150 150 0 0 0 150 150 150;
+                            %0 0 0 255 255 255 0 0 0;
+                            %0 0 0 255 255 255 0 0 0;
+                            %0 0 0 255 255 255 0 0 0;
+                            %0 0 0 0 0 0 150 150 150;
+                            %0 0 0 0 0 0 150 150 150;
+                            %0 0 0 0 0 0 150 150 150;];
 
 
     %robotLayoutRot = rotateImage(robotLayout, 45.0);
@@ -102,21 +103,20 @@ for j=1:size(patches, 3)
     %imagesc(robotLayout)
 
     % create a selection of rotated robotLayouts
-    numRobotLayouts = 8;
-    degreeRate = 360.0 / numRobotLayouts;
-    robotLayoutsRot = zeros(9, 9, 3, numRobotLayouts);
-    for i=1:numRobotLayouts
-        robotLayoutsRot(:, :, :, i) = rotateImage(robotLayout, degreeRate * (i + 1));
-        %figure(100 + i)
-        %imagesc(robotLayoutsRot(:, :, :, i))
-        robotLayoutsRot(:, :, :, i) += (robotLayoutsRot(:, :, :, i) == 0) * 1500.0;
-    end
+    %numRobotLayouts = 8;
+    %degreeRate = 360.0 / numRobotLayouts;
+    %robotLayoutsRot = zeros(9, 9, 3, numRobotLayouts);
+    %for i=1:numRobotLayouts
+        %robotLayoutsRot(:, :, :, i) = rotateImage(robotLayout, degreeRate * (i + 1));
+        %%figure(100 + i)
+        %%imagesc(robotLayoutsRot(:, :, :, i))
+        %robotLayoutsRot(:, :, :, i) += (robotLayoutsRot(:, :, :, i) == 0) * 1500.0;
+    %end
 
-    distThresholdRed = 1400;
-    distThresholdGreen = 2500;
+    distThresholdRed = 400000;
+    distThresholdGreen = 400000;
     distThresholdBlue = 400000;
     distThresholdYellow = 300000;
-    %distThresholdPink = 400000000000;
     distThresholdPink = 400000;
     redCircleCount = 0;
     greenCircleCount = 0;
@@ -131,6 +131,12 @@ for j=1:size(patches, 3)
     bestYellowCircleDist = 1000000000;
     bestPinkCirclePos = [3; 1];
     bestPinkCircleDist = 1000000000;
+    
+    [robotPos, robotAngle, robotColour] = findRobot(ImPatch, distThresholdBlue, distThresholdYellow, distThresholdPink, distThresholdGreen);
+    robotPosFinal = ImPatchTopLeft + robotPos;
+    fprintf('robot: %d, %d\n', robotPosFinal, robotPosFinal);
+    fprintf('\t, %f\n', robotAngle);
+    fprintf('\t, %d\n', robotColour);
 
     temps_blueyellow = zeros(3, 3, 3, 2);
     temps_blueyellow(:, :, :, 1) = blueCircle;
@@ -140,58 +146,76 @@ for j=1:size(patches, 3)
     [best_blueyellow, count_blueyellow] = findTemplatesInImage(ImPatch, temps_blueyellow, thresh_blueyellow);
     countThresh = 0;
     
+    % robot is a BLUE robot
     if count_blueyellow(1) > countThresh
         ImPatch(best_blueyellow(1, 1), best_blueyellow(1, 2), :) = [0, 0, 255];
+        origin = best_blueyellow .+ 1;
 
-        rowStart = max(1, best_blueyellow(1, 1) - floor(size(robotLayout, 1) / 2.0));
-        rowEnd = min(size(ImPatch, 1), best_blueyellow(1, 1) + ceil(size(robotLayout, 1) / 2.0) - 1);
-        colStart = max(1, best_blueyellow(1, 2) - floor(size(robotLayout, 2) / 2.0));
-        colEnd = min(size(ImPatch, 2), best_blueyellow(1, 2) + ceil(size(robotLayout, 2) / 2.0) - 1);
+        rowStart = max(1, origin(1, 1) - floor(size(robotLayout, 1) / 2.0));
+        rowEnd = min(size(ImPatch, 1), origin(1, 1) + ceil(size(robotLayout, 1) / 2.0) - 1);
+        colStart = max(1, origin(1, 2) - floor(size(robotLayout, 2) / 2.0));
+        colEnd = min(size(ImPatch, 2), origin(1, 2) + ceil(size(robotLayout, 2) / 2.0) - 1);
         roboSeg = ImPatch(rowStart:rowEnd, colStart:colEnd, :);
 
-        temps_pink = zeros(3, 3, 3, 1);
-        temps_pink(:, :, :, 1) = pinkCircle;
-        thresh_pink = [distThresholdPink];
+        temps_pinkgreen = zeros(3, 3, 3, 2);
+        temps_pinkgreen(:, :, :, 1) = pinkCircle;
+        temps_pinkgreen(:, :, :, 2) = greenCircle;
+        thresh_pinkgreen = [distThresholdPink, distThresholdGreen];
         %temps_pink = zeros(9, 9, 3, 1);
         %temps_pink(:, :, :, 1) = pinkRobotLayout;
         %thresh_pink = [distThresholdPink];
 
-        [best_pink, count_pink, dist_pink] = findTemplatesInImage(roboSeg, temps_pink, thresh_pink);
+        [best_pink, count_pinkgreen, dist_pinkgreen] = findTemplatesInImage(roboSeg, temps_pinkgreen, thresh_pinkgreen);
 
-        roboSeg(best_pink(1, 1), best_pink(1, 2), :) = [255, 0, 150];
+        if count_pinkgreen(1, 1) < count_pinkgreen(2, 1)
+            roboSeg(best_pink(1, 1), best_pink(1, 2), :) = [255, 0, 150];
+        else
+            roboSeg(best_pink(2, 1), best_pink(2, 2), :) = [0, 255, 0];
+        end
 
         if drawPatches
             figure(j + 2000)
             imagesc(roboSeg)
-            fprintf('Bpinkcircles: %d\n\n', count_pink);
-            fprintf('Bpinkdist: %d\n\n', dist_pink);
+            %fprintf('Bpinkcircles: %d\n\n', count_pinkgreen(1, 1));
+            %fprintf('Bpinkdist: %d\n\n', dist_pinkgreen(1, 1));
+            %fprintf('Bgreencircles: %d\n\n', count_pinkgreen(2, 1));
+            %fprintf('Bgreendist: %d\n\n', dist_pinkgreen(2, 1));
         end
     end
+    % robot is a YELLOW robot
     if count_blueyellow(2) > countThresh
-        ImPatch(best_blueyellow(2, 1), best_blueyellow(2, 2), :) = [255, 255, 0];
+        ImPatch(best_blueyellow(2, 1), best_blueyellow(2, 2), :) = [0, 0, 255];
+        origin = best_blueyellow + 1;
 
-        rowStart = max(1, best_blueyellow(2, 1) - floor(size(robotLayout, 1) / 2.0));
-        rowEnd = min(size(ImPatch, 1), best_blueyellow(2, 1) + ceil(size(robotLayout, 1) / 2.0) - 1);
-        colStart = max(1, best_blueyellow(2, 2) - floor(size(robotLayout, 2) / 2.0));
-        colEnd = min(size(ImPatch, 2), best_blueyellow(2, 2) + ceil(size(robotLayout, 2) / 2.0) - 1);
+        rowStart = max(1, origin(2, 1) - floor(size(robotLayout, 1) / 2.0));
+        rowEnd = min(size(ImPatch, 1), origin(2, 1) + ceil(size(robotLayout, 1) / 2.0) - 1);
+        colStart = max(1, origin(2, 2) - floor(size(robotLayout, 2) / 2.0));
+        colEnd = min(size(ImPatch, 2), origin(2, 2) + ceil(size(robotLayout, 2) / 2.0) - 1);
         roboSeg = ImPatch(rowStart:rowEnd, colStart:colEnd, :);
 
-        temps_pink = zeros(3, 3, 3, 1);
-        temps_pink(:, :, :, 1) = pinkCircle;
-        thresh_pink = [distThresholdPink];
+        temps_pinkgreen = zeros(3, 3, 3, 2);
+        temps_pinkgreen(:, :, :, 1) = pinkCircle;
+        temps_pinkgreen(:, :, :, 2) = greenCircle;
+        thresh_pinkgreen = [distThresholdPink, distThresholdGreen];
         %temps_pink = zeros(9, 9, 3, 1);
         %temps_pink(:, :, :, 1) = pinkRobotLayout;
         %thresh_pink = [distThresholdPink];
 
-        [best_pink, count_pink, dist_pink] = findTemplatesInImage(roboSeg, temps_pink, thresh_pink);
+        [best_pink, count_pinkgreen, dist_pinkgreen] = findTemplatesInImage(roboSeg, temps_pinkgreen, thresh_pinkgreen);
 
-        roboSeg(best_pink(1, 1), best_pink(1, 2), :) = [255, 0, 150];
+        if count_pinkgreen(1, 1) < count_pinkgreen(2, 1)
+            roboSeg(best_pink(1, 1), best_pink(1, 2), :) = [255, 0, 150];
+        else
+            roboSeg(best_pink(2, 1), best_pink(2, 2), :) = [0, 255, 0];
+        end
 
         if drawPatches
             figure(j + 2500)
             imagesc(roboSeg)
-            fprintf('Ypinkcircles: %d\n\n', count_pink);
-            fprintf('Ypinkdist: %d\n\n', dist_pink);
+            %fprintf('Bpinkcircles: %d\n\n', count_pinkgreen(1, 1));
+            %fprintf('Bpinkdist: %d\n\n', dist_pinkgreen(1, 1));
+            %fprintf('Bgreencircles: %d\n\n', count_pinkgreen(2, 1));
+            %fprintf('Bgreendist: %d\n\n', dist_pinkgreen(2, 1));
         end
    end
 
@@ -269,8 +293,8 @@ for j=1:size(patches, 3)
     %imagesc(roboSeg)
     
     if drawPatches
-        figure(j + 1000)
-        imagesc(ImPatch);
+        %figure(j + 1000)
+        %imagesc(ImPatch);
     end
 
     %robotLayoutMin = 0;
