@@ -1,7 +1,10 @@
 function [robotsPos, robotsAngle, robotsColour, patches] = runVision(imageData, activeThresh, redThresh, blueThresh, yellowThresh, greenThresh, pinkThresh)
 
-    I1 = imageData(44:440, 53:600, :);
-    [I1p, patches] = process_image(I1, activeThresh, false);
+	cropEdge = 30;
+	height = 480;
+	width = 640;
+    I1 = imageData(cropEdge:(height - cropEdge), cropEdge:(width - cropEdge), :);
+    [I1p, patches] = process_image(I1, activeThresh, true);
     %figure(20)
     %imagesc(I1p)
     %patches
@@ -36,18 +39,34 @@ function [robotsPos, robotsAngle, robotsColour, patches] = runVision(imageData, 
         distThresholdPink = pinkThresh;%400000;
         ImPatchD = double(ImPatch);
 
-        [robotPos, robotAngle, robotColour] = findRobot(ImPatch, distThresholdBlue, distThresholdYellow, distThresholdPink, distThresholdGreen);
+        [robotPos, robotAngle, robotColour] = findRobot(ImPatch, distThresholdBlue, distThresholdYellow, distThresholdPink, distThresholdGreen, true, j * 13);
 	%scale robot position back up from 1:4
-	robotPos = robotPos .* 4;
+
+	figure(101 * j)
+	ImPatch(robotPos(1, 1), robotPos(1, 2), :) = [0, 255, 0]; 
+	imagesc(ImPatch)
 
         robotPosFinal = ImPatchTopLeft + robotPos;
         %fprintf('robot: %d, %d\n', robotPosFinal, robotPosFinal);
         %fprintf('\t, %f\n', robotAngle);
         %fprintf('\t, %d\n', robotColour(1, 1));
 
+	I1p(robotPosFinal(1, 1), robotPosFinal(1, 2), :) = [0, 0, 255];
+
+	robotPosFinal = (robotPosFinal .* 4) + cropEdge
         robotsPos(j, :) = robotPosFinal;
         robotsAngle(j, 1) = robotAngle;
         robotsColour(j, 1) = robotColour(1, 1);
+
+	
+	I1(robotPosFinal(1, 1) - cropEdge, robotPosFinal(1, 2) - cropEdge, :) = [0, 0, 255];
     end
 
+	% scale patches by 1;4
+	patches = (patches .* 4) + cropEdge;
+
+	figure(1314141)
+	imagesc(I1p)
+	figure(1314161)
+	imagesc(I1)
 end
