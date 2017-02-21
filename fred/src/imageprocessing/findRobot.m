@@ -1,4 +1,4 @@
-function [robotPos, robotAngle, robotColour] = findRobot(ImPatch, blueThreshold, yellowThreshold, pinkThreshold, greenThreshold)
+function [robotPos, robotAngle, robotColour] = findRobot(ImPatch, blueThreshold, yellowThreshold, pinkThreshold, greenThreshold, debug=false, id=0)
 
     % robot layout
     robotLayout = double(zeros(10, 10, 3));
@@ -10,6 +10,13 @@ function [robotPos, robotAngle, robotColour] = findRobot(ImPatch, blueThreshold,
     isYellow = false;
     isPink = false;
     isGreen = false;
+
+	%if(debug)
+	    %figure(id)
+	    %ImPatch(best_blueyellow(1, 1), best_blueyellow(1, 2), :) = [255, 255, 255];
+	    %ImPatch(best_blueyellow(2, 1), best_blueyellow(2, 2), :) = [255, 255, 0];
+	    %imagesc(ImPatch)
+	%end
 
     % offset the postion by 1 to centre it
     origin = best_blueyellow .+ 1;
@@ -56,10 +63,12 @@ function [robotPos, robotAngle, robotColour] = findRobot(ImPatch, blueThreshold,
         angle_colour = best_pinkgreen(2, :);
     end
 
-    %figure(j + 2500)
-    %roboSeg(best_pinkgreen(1, 1), best_pinkgreen(1, 2), :) = [255, 0, 150];
-    %roboSeg(best_pinkgreen(2, 1), best_pinkgreen(2, 2), :) = [0, 255, 0];
-    %imagesc(roboSeg)
+	if(debug)
+	    figure(id * id)
+	    roboSeg(best_pinkgreen(1, 1), best_pinkgreen(1, 2), :) = [255, 0, 150];
+	    roboSeg(best_pinkgreen(2, 1), best_pinkgreen(2, 2), :) = [0, 255, 0];
+	    imagesc(roboSeg)
+	end
 
     if (isGreen || isPink) && (isBlue || isYellow)
         % calculate robot angle
