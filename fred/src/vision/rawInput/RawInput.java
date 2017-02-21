@@ -1,13 +1,18 @@
 package vision.rawInput;
 
+
+import imageprocessing.java.CurrentVision;
 import vision.constants.Constants;
 import vision.gui.Preview;
 import vision.gui.SDPConsole;
 
 import java.awt.BorderLayout;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.LinkedList;
 
+import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 /**
@@ -50,6 +55,14 @@ public class RawInput extends JPanel{
 	
 	public void nextFrame(BufferedImage image, long time){
 		this.lastImage = image;
+		try {
+    	// retrieve image
+    	File outputfile = new File("src/imageprocessing/imgs/saved.png");
+    	ImageIO.write(image, "png", outputfile);
+		} catch (IOException e) {
+			System.out.println("Sorry, i cant save the image because of levi");
+		}
+		CurrentVision.startImageProcess();
 		for(RawInputListener ril : this.imageListeners){
 			ril.nextFrame(image, time);
 		}
@@ -59,6 +72,8 @@ public class RawInput extends JPanel{
 		for(RawInputInterface input : this.rawInputs){
 			input.stop();
 		}
+
+		CurrentVision.endOctaveProcess();
 	}
 
 	public void setVideoChannel(int port){

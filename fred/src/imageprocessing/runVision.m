@@ -1,6 +1,6 @@
-function [robotsPos, robotsAngle, robotsColour] = runVision(imageData, activeThresh, redThresh, blueThresh, yellowThresh, greenThresh, pinkThresh)
+function [robotsPos, robotsAngle, robotsColour, patches] = runVision(imageData, activeThresh, redThresh, blueThresh, yellowThresh, greenThresh, pinkThresh)
 
-    I1 = imageData(44:535, 53:729, :);
+    I1 = imageData(44:440, 53:600, :);
     [I1p, patches] = process_image(I1, activeThresh, false);
     %figure(20)
     %imagesc(I1p)
@@ -37,6 +37,8 @@ function [robotsPos, robotsAngle, robotsColour] = runVision(imageData, activeThr
         ImPatchD = double(ImPatch);
 
         [robotPos, robotAngle, robotColour] = findRobot(ImPatch, distThresholdBlue, distThresholdYellow, distThresholdPink, distThresholdGreen);
+	%scale robot position back up from 1:4
+	robotPos = robotPos .* 4;
 
         robotPosFinal = ImPatchTopLeft + robotPos;
         %fprintf('robot: %d, %d\n', robotPosFinal, robotPosFinal);
