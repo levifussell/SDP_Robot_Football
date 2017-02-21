@@ -233,4 +233,28 @@ public class OctaveGui extends JPanel implements ChangeListener {
         this.recalculateValues();
         this.myRepaint();
     }
+
+    public int getRedThresh() {
+        return redThresh;
+    }
+
+    public int getActiveThresh() {
+        return activeThresh;
+    }
+
+    public int getBlueThresh() {
+        return blueThresh;
+    }
+
+    public int getGreenThresh() {
+        return greenThresh;
+    }
+
+    public int getPinkThresh() {
+        return pinkThresh;
+    }
+
+    public int getYellowThresh() {
+        return yellowThresh;
+    }
 }

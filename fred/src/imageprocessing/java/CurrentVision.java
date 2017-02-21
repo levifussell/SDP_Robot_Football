@@ -3,6 +3,7 @@ package imageprocessing.java;
 import dk.ange.octave.OctaveEngine;
 import dk.ange.octave.OctaveEngineFactory;
 import dk.ange.octave.type.OctaveDouble;
+import vision.activeVision.OctaveGui;
 import vision.gui.Preview;
 
 import java.awt.*;
@@ -64,7 +65,19 @@ public class CurrentVision {
 
 	//octave.eval("main");
 	octave.eval("I1 = imread('imgs/saved.png');");
-	octave.eval("[roboPos, roboAngle, roboColour, activePatches] = runVision(I1, 1600, 1000000, 10000000, 1000000, 10000000, 10000000);");
+	octave.eval("[roboPos, roboAngle, roboColour, activePatches] = runVision(I1, "
+			+ OctaveGui.octaveGui.getActiveThresh()
+			+ ", "
+			+ OctaveGui.octaveGui.getRedThresh()
+			+ ", "
+			+ OctaveGui.octaveGui.getBlueThresh()
+			+ ", "
+			+ OctaveGui.octaveGui.getYellowThresh()
+			+ ", "
+			+ OctaveGui.octaveGui.getGreenThresh()
+			+ ", "
+			+ OctaveGui.octaveGui.getPinkThresh()
+			+ ");");
 		octave.eval("roboPos");
 	OctaveDouble rPos = octave.get(OctaveDouble.class, "roboPos");
 	OctaveDouble rAngle = octave.get(OctaveDouble.class, "roboAngle");
