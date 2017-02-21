@@ -20,7 +20,7 @@ import vision.tools.ColoredPoint;
 /**
  * Created by Siim Sammul
  */
-public class OctaveGui extends JFrame implements ChangeListener {
+public class OctaveGui extends JPanel implements ChangeListener {
     private JTextField activeThreshTextField;
     private JTextField redThreshTextField;
     private JTextField greenThreshTextField;
@@ -28,12 +28,12 @@ public class OctaveGui extends JFrame implements ChangeListener {
     private JTextField yellowThreshTextField;
     private JTextField pinkThreshTextField;
 
-    private int redThresh = 400000;
+    private int redThresh = 400001;
     private int activeThresh = 400000;
-    private int blueThresh = 400000;
-    private int greenThresh = 400000;
-    private int pinkThresh = 400000;
-    private int yellowThresh = 300000;
+    private int blueThresh = 400002;
+    private int greenThresh = 400003;
+    private int pinkThresh = 400004;
+    private int yellowThresh = 300005;
 
     private JSlider activeThreshSlider;
     private JSlider redThreshSlider;
@@ -49,125 +49,123 @@ public class OctaveGui extends JFrame implements ChangeListener {
     private Panel yellowThreshPanel;
     private Panel pinkThreshPanel;
 
+    public static final OctaveGui octaveGui = new OctaveGui();
+
     public OctaveGui(){
         super();
         this.setupGUI();
     }
 
     private void setupGUI(){
-        setTitle("Active Vision Calibration");
+        //setTitle("Active Vision Calibration");
         setSize(640,480);
-        JPanel panel = new JPanel();
-        getContentPane().add(panel, BorderLayout.CENTER);
-        panel.setLayout(null);
+        //JPanel panel = new JPanel();
+        //getContentPane().add(panel, BorderLayout.CENTER);
+        this.setLayout(null);
+
 
         activeThreshSlider = new JSlider();
         activeThreshSlider.setBounds(183, 56, 200, 14);
-        panel.add(activeThreshSlider);
+        this.add(activeThreshSlider);
 
         activeThreshPanel = new Panel();
         activeThreshPanel.setBounds(140, 56, 37, 14);
-        panel.add(activeThreshPanel);
+        this.add(activeThreshPanel);
 
         JLabel activeThreshLbl = new JLabel("Active Thresh:");
         activeThreshLbl.setBounds(10, 56, 120, 14);
-        panel.add(activeThreshLbl);
+        this.add(activeThreshLbl);
 
         greenThreshSlider = new JSlider();
         greenThreshSlider.setBounds(183, 137, 200, 14);
-        panel.add(greenThreshSlider);
+        this.add(greenThreshSlider);
 
         greenThreshPanel = new Panel();
         greenThreshPanel.setBounds(140, 137, 37, 14);
-        panel.add(greenThreshPanel);
+        this.add(greenThreshPanel);
 
         JLabel greenThreshLbl = new JLabel("Green Thresh:");
         greenThreshLbl.setBounds(10, 137, 120, 14);
-        panel.add(greenThreshLbl);
+        this.add(greenThreshLbl);
 
         blueThreshSlider = new JSlider();
         blueThreshSlider.setBounds(183, 176, 200, 14);
-        panel.add(blueThreshSlider);
+        this.add(blueThreshSlider);
 
         blueThreshPanel = new Panel();
         blueThreshPanel.setBounds(140, 176, 37, 14);
-        panel.add(blueThreshPanel);
+        this.add(blueThreshPanel);
 
         JLabel blueThreshLbl = new JLabel("Blue Thresh:");
         blueThreshLbl.setBounds(10, 176, 120, 14);
-        panel.add(blueThreshLbl);
+        this.add(blueThreshLbl);
 
         yellowThreshSlider = new JSlider();
         yellowThreshSlider.setBounds(183, 215, 200, 14);
-        panel.add(yellowThreshSlider);
+        this.add(yellowThreshSlider);
 
         yellowThreshPanel = new Panel();
         yellowThreshPanel.setBounds(140, 215, 37, 14);
-        panel.add(yellowThreshPanel);
+        this.add(yellowThreshPanel);
 
         JLabel yellowThreshLbl = new JLabel("Yellow Thresh:");
         yellowThreshLbl.setBounds(10, 215, 120, 14);
-        panel.add(yellowThreshLbl);
+        this.add(yellowThreshLbl);
 
         pinkThreshSlider = new JSlider();
         pinkThreshSlider.setBounds(183, 254, 200, 14);
-        panel.add(pinkThreshSlider);
+        this.add(pinkThreshSlider);
 
         pinkThreshPanel = new Panel();
         pinkThreshPanel.setBounds(140, 254, 37, 14);
-        panel.add(pinkThreshPanel);
+        this.add(pinkThreshPanel);
 
         JLabel pinkThreshLbl = new JLabel("Pink Thresh:");
         pinkThreshLbl.setBounds(10, 254, 120, 14);
-        panel.add(pinkThreshLbl);
+        this.add(pinkThreshLbl);
 
         activeThreshTextField = new JTextField();
-        activeThreshTextField.setEditable(false);
         activeThreshTextField.setBounds(389, 39, 86, 26);
-        panel.add(activeThreshTextField);
+        this.add(activeThreshTextField);
         activeThreshTextField.setColumns(10);
 
         greenThreshTextField = new JTextField();
-        greenThreshTextField.setEditable(false);
         greenThreshTextField.setColumns(10);
         greenThreshTextField.setBounds(389, 123, 86, 26);
-        panel.add(greenThreshTextField);
+        this.add(greenThreshTextField);
 
         blueThreshTextField = new JTextField();
-        blueThreshTextField.setEditable(false);
         blueThreshTextField.setColumns(10);
         blueThreshTextField.setBounds(389, 162, 86, 26);
-        panel.add(blueThreshTextField);
+        this.add(blueThreshTextField);
 
         yellowThreshTextField = new JTextField();
-        yellowThreshTextField.setEditable(false);
         yellowThreshTextField.setColumns(10);
         yellowThreshTextField.setBounds(389, 201, 86, 26);
-        panel.add(yellowThreshTextField);
+        this.add(yellowThreshTextField);
 
         pinkThreshTextField = new JTextField();
-        pinkThreshTextField.setEditable(false);
         pinkThreshTextField.setColumns(10);
         pinkThreshTextField.setBounds(389, 240, 86, 26);
-        panel.add(pinkThreshTextField);
+        this.add(pinkThreshTextField);
 
-        JLabel lblMaxHue = new JLabel("Max Hue:");
-        lblMaxHue.setBounds(10, 98, 120, 14);
-        panel.add(lblMaxHue);
+        JLabel redThreshLbl = new JLabel("Red Thresh:");
+        redThreshLbl.setBounds(10, 98, 120, 14);
+        this.add(redThreshLbl);
 
         redThreshPanel = new Panel();
         redThreshPanel.setBounds(140, 98, 37, 14);
-        panel.add(redThreshPanel);
+        this.add(redThreshPanel);
 
         redThreshSlider = new JSlider();
         redThreshSlider.setBounds(183, 98, 200, 14);
-        panel.add(redThreshSlider);
+        this.add(redThreshSlider);
 
         redThreshTextField = new JTextField();
-        redThreshTextField.setEditable(false);
         redThreshTextField.setColumns(10);
         redThreshTextField.setBounds(389, 81, 86, 26);
-        panel.add(redThreshTextField);
+        this.add(redThreshTextField);
+
         this.activeThreshSlider.setMaximum(600000);
         this.activeThreshSlider.setMinimum(200000);
         this.redThreshSlider.setMaximum(600000);
@@ -186,6 +184,18 @@ public class OctaveGui extends JFrame implements ChangeListener {
         this.blueThreshSlider.addChangeListener(this);
         this.yellowThreshSlider.addChangeListener(this);
         this.pinkThreshSlider.addChangeListener(this);
+        this.recalculateSliders();
+        redThresh = 400001;
+        this.recalculateSliders();
+        activeThresh = 400000;
+        this.recalculateSliders();
+        blueThresh = 400002;
+        this.recalculateSliders();
+        greenThresh = 400003;
+        this.recalculateSliders();
+        pinkThresh = 400004;
+        this.recalculateSliders();
+        yellowThresh = 300005;
         this.recalculateSliders();
         this.myRepaint();
 //        this.setVisible(false);
