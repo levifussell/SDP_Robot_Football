@@ -1,20 +1,9 @@
 package vision.activeVision;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Panel;
-import java.awt.event.ActionListener;
-
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSlider;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-
-import vision.gui.Preview;
-import vision.tools.ColoredPoint;
+import java.awt.*;
 
 
 /**
@@ -166,18 +155,18 @@ public class OctaveGui extends JPanel implements ChangeListener {
         redThreshTextField.setBounds(389, 81, 86, 26);
         this.add(redThreshTextField);
 
-        this.activeThreshSlider.setMaximum(600000);
-        this.activeThreshSlider.setMinimum(200000);
-        this.redThreshSlider.setMaximum(600000);
-        this.redThreshSlider.setMinimum(200000);
-        this.greenThreshSlider.setMaximum(600000);
-        this.greenThreshSlider.setMinimum(200000);
-        this.blueThreshSlider.setMaximum(600000);
-        this.blueThreshSlider.setMinimum(200000);
-        this.yellowThreshSlider.setMaximum(600000);
-        this.yellowThreshSlider.setMinimum(200000);
-        this.pinkThreshSlider.setMaximum(600000);
-        this.pinkThreshSlider.setMinimum(200000);
+        this.activeThreshSlider.setMaximum(4000);
+        this.activeThreshSlider.setMinimum(100);
+        this.redThreshSlider.setMaximum(600000000);
+        this.redThreshSlider.setMinimum(200000000);
+        this.greenThreshSlider.setMaximum(600000000);
+        this.greenThreshSlider.setMinimum(200000000);
+        this.blueThreshSlider.setMaximum(600000000);
+        this.blueThreshSlider.setMinimum(200000000);
+        this.yellowThreshSlider.setMaximum(600000000);
+        this.yellowThreshSlider.setMinimum(200000000);
+        this.pinkThreshSlider.setMaximum(60000000);
+        this.pinkThreshSlider.setMinimum(200000000);
         this.activeThreshSlider.addChangeListener(this);
         this.redThreshSlider.addChangeListener(this);
         this.greenThreshSlider.addChangeListener(this);
@@ -185,17 +174,17 @@ public class OctaveGui extends JPanel implements ChangeListener {
         this.yellowThreshSlider.addChangeListener(this);
         this.pinkThreshSlider.addChangeListener(this);
         this.recalculateSliders();
-        redThresh = 400001;
+        redThresh = 40000001;
         this.recalculateSliders();
-        activeThresh = 400000;
+        activeThresh = 1600;
         this.recalculateSliders();
-        blueThresh = 400002;
+        blueThresh = 40000002;
         this.recalculateSliders();
-        greenThresh = 400003;
+        greenThresh = 400000003;
         this.recalculateSliders();
-        pinkThresh = 400004;
+        pinkThresh = 400000004;
         this.recalculateSliders();
-        yellowThresh = 300005;
+        yellowThresh = 30000005;
         this.recalculateSliders();
         this.myRepaint();
 //        this.setVisible(false);

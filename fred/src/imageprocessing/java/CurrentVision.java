@@ -7,8 +7,6 @@ import vision.activeVision.OctaveGui;
 import vision.gui.Preview;
 
 import java.awt.*;
-import java.util.Arrays;
-import java.awt.image.BufferedImage;
 
 /**
  *  * Created by Siim on 10.02.2017.
@@ -38,14 +36,14 @@ public class CurrentVision {
 		octave.close();
 	}
 
-    public static void startImageProcess() {
+    public static void startImageProcess(double[] image, int width, int height) {
 
 		if(!isInitialised)
 			launchOctaveProcess();
 
 		System.out.println("test1");
 //        OctaveEngine octave = new OctaveEngineFactory().getScriptEngine();
-        OctaveDouble a = new OctaveDouble(new double[]{1, 2, 3, 4}, 2, 2);
+//        OctaveDouble a = new OctaveDouble(new double[]{1, 2, 3, 4}, 2, 2);
         //octave.put("a", a);
 	//octave.eval("a");
 
@@ -64,7 +62,10 @@ public class CurrentVision {
 	//System.out.println(Arrays.toString(b.getData()));
 
 	//octave.eval("main");
-	octave.eval("I1 = imread('imgs/saved.png');");
+//	octave.eval("I1 = imread('imgs/saved.png');");
+	OctaveDouble img = new OctaveDouble(image, 480, 640, 3);
+	octave.put("I1", img);
+//		octave.eval("I1");
 	octave.eval("[roboPos, roboAngle, roboColour, activePatches] = runVision(I1, "
 			+ OctaveGui.octaveGui.getActiveThresh()
 			+ ", "
@@ -86,7 +87,7 @@ public class CurrentVision {
 	double[] aPatchesData = aPatches.getData();
 		double[] rPosData = rPos.getData();
 
-		if(Preview.preview.originalImage != null) {
+		if(Preview.preview.drawnImage != null) {
 			Color c = new Color(255, 0, 0);
 			Color c2 = new Color(0, 255, 0);
 			for(int i = 0; i < aPatchesData.length; i += 4)

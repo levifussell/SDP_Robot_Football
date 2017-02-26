@@ -1,27 +1,24 @@
 package vision;
 
-import java.awt.BorderLayout;
-import java.util.LinkedList;
-
-import javax.swing.JFrame;
-import javax.swing.JTabbedPane;
-
 import vision.activeVision.OctaveGui;
-import vision.colorAnalysis.ColorCalibration;
-import vision.tools.CommandLineParser;
 import vision.distortion.Distortion;
 import vision.distortion.DistortionPreview;
 import vision.gui.MiscellaneousSettings;
 import vision.gui.Preview;
 import vision.gui.SDPConsole;
 import vision.rawInput.RawInput;
-import vision.robotAnalysis.newRobotAnalysis.NewRobotAnalysis;
-import vision.robotAnalysis.RobotPreview;
 import vision.robotAnalysis.DynamicWorldListener;
 import vision.robotAnalysis.RobotAnalysisBase;
+import vision.robotAnalysis.RobotPreview;
+import vision.robotAnalysis.newRobotAnalysis.NewRobotAnalysis;
 import vision.spotAnalysis.SpotAnalysisBase;
 import vision.spotAnalysis.approximatedSpotAnalysis.ApproximatedSpotAnalysis;
 import vision.spotAnalysis.recursiveSpotAnalysis.RecursiveSpotAnalysis;
+import vision.tools.CommandLineParser;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.LinkedList;
 
 /**
  * Created by Simon Rovder
