@@ -1,0 +1,98 @@
+Initial run of the profiler:
+
+Image parsing took: 34 ms
+Initializing octave took: 229 ms
+Creating octave matrix from image took: 0 ms
+Inserting image to octave took: 967 ms
+Running vision took: 2190 ms
+Evaluating roboPos took: 2 ms
+Getting results from octave took: 12 ms
+Drawing preview took: 2 ms
+Octave processing took: 3404 ms
+
+Image parsing took: 16 ms
+Creating octave matrix from image took: 0 ms
+Inserting image to octave took: 976 ms
+Running vision took: 1060 ms
+Evaluating roboPos took: 2 ms
+Getting results from octave took: 4 ms
+Drawing preview took: 0 ms
+Octave processing took: 2042 ms
+
+Image parsing took: 14 ms
+Creating octave matrix from image took: 0 ms
+Inserting image to octave took: 1076 ms
+
+Second run of the profiler:
+
+Image parsing took: 33 ms
+Initializing octave took: 226 ms
+Creating octave matrix from image took: 0 ms
+Inserting image to octave took: 963 ms
+Running vision took: 2247 ms
+Evaluating roboPos took: 2 ms
+Getting results from octave took: 13 ms
+Drawing preview took: 2 ms
+Octave processing took: 3455 ms
+
+Image parsing took: 22 ms
+Creating octave matrix from image took: 0 ms
+Inserting image to octave took: 973 ms
+Running vision took: 1243 ms
+Evaluating roboPos took: 2 ms
+Getting results from octave took: 3 ms
+Drawing preview took: 1 ms
+Octave processing took: 2222 ms
+
+Image parsing took: 14 ms
+Creating octave matrix from image took: 0 ms
+Inserting image to octave took: 941 ms
+Running vision took: 1291 ms
+Evaluating roboPos took: 3 ms
+Getting results from octave took: 3 ms
+Drawing preview took: 1 ms
+Octave processing took: 2239 ms
+
+Image parsing took: 14 ms
+Creating octave matrix from image took: 0 ms
+Inserting image to octave took: 941 ms
+Running vision took: 1210 ms
+Evaluating roboPos took: 2 ms
+Getting results from octave took: 3 ms
+Drawing preview took: 0 ms
+Octave processing took: 2156 ms
+
+Image parsing took: 14 ms
+Creating octave matrix from image took: 0 ms
+Inserting image to octave took: 940 ms
+Running vision took: 1240 ms
+Evaluating roboPos took: 2 ms
+Getting results from octave took: 3 ms
+Drawing preview took: 0 ms
+Octave processing took: 2186 ms
+
+Image parsing took: 13 ms
+Creating octave matrix from image took: 0 ms
+Inserting image to octave took: 944 ms
+Running vision took: 1063 ms
+Evaluating roboPos took: 2 ms
+Getting results from octave took: 2 ms
+Drawing preview took: 0 ms
+Octave processing took: 2012 ms
+
+Image parsing took: 13 ms
+Creating octave matrix from image took: 0 ms
+Inserting image to octave took: 952 ms
+Running vision took: 1259 ms
+Evaluating roboPos took: 2 ms
+Getting results from octave took: 2 ms
+Drawing preview took: 0 ms
+Octave processing took: 2215 ms
+
+Image parsing took: 13 ms
+Creating octave matrix from image took: 0 ms
+Inserting image to octave took: 955 ms
+Running vision took: 550 ms
+
+
+
