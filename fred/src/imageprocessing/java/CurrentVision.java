@@ -37,11 +37,15 @@ public class CurrentVision {
 	}
 
     public static void startImageProcess(double[] image, int width, int height) {
+		long timeStart = System.currentTimeMillis();
 
-		if(!isInitialised)
+		if(!isInitialised) {
 			launchOctaveProcess();
+			System.out.println("Initializing octave took: " + (System.currentTimeMillis() - timeStart) + " ms");
+			timeStart = System.currentTimeMillis();
+		}
 
-		System.out.println("test1");
+//		System.out.println("test1");
 //        OctaveEngine octave = new OctaveEngineFactory().getScriptEngine();
 //        OctaveDouble a = new OctaveDouble(new double[]{1, 2, 3, 4}, 2, 2);
         //octave.put("a", a);
@@ -64,7 +68,15 @@ public class CurrentVision {
 	//octave.eval("main");
 //	octave.eval("I1 = imread('imgs/saved.png');");
 	OctaveDouble img = new OctaveDouble(image, 480, 640, 3);
+
+	System.out.println("Creating octave matrix from image took: " + (System.currentTimeMillis() - timeStart) + " ms");
+	timeStart = System.currentTimeMillis();
+
 	octave.put("I1", img);
+
+	System.out.println("Inserting image to octave took: " + (System.currentTimeMillis() - timeStart) + " ms");
+	timeStart = System.currentTimeMillis();
+
 //		octave.eval("I1");
 	octave.eval("[roboPos, roboAngle, roboColour, activePatches] = runVision(I1, "
 			+ OctaveGui.octaveGui.getActiveThresh()
@@ -79,11 +91,23 @@ public class CurrentVision {
 			+ ", "
 			+ OctaveGui.octaveGui.getPinkThresh()
 			+ ");");
-		octave.eval("roboPos");
+
+	System.out.println("Running vision took: " + (System.currentTimeMillis() - timeStart) + " ms");
+	timeStart = System.currentTimeMillis();
+
+	octave.eval("roboPos");
+
+	System.out.println("Evaluating roboPos took: " + (System.currentTimeMillis() - timeStart) + " ms");
+	timeStart = System.currentTimeMillis();
+
 	OctaveDouble rPos = octave.get(OctaveDouble.class, "roboPos");
 	OctaveDouble rAngle = octave.get(OctaveDouble.class, "roboAngle");
 	OctaveDouble rColour = octave.get(OctaveDouble.class, "roboColour");
 		OctaveDouble aPatches = octave.get(OctaveDouble.class, "activePatches");
+
+	System.out.println("Getting results from octave took: " + (System.currentTimeMillis() - timeStart) + " ms");
+	timeStart = System.currentTimeMillis();
+
 	double[] aPatchesData = aPatches.getData();
 		double[] rPosData = rPos.getData();
 
@@ -124,6 +148,8 @@ public class CurrentVision {
 				}
 			}
 		}
+		System.out.println("Drawing preview took: " + (System.currentTimeMillis() - timeStart) + " ms");
+		timeStart = System.currentTimeMillis();
 
 //	octave.close();
 //	System.out.println("RoboPos: " + Arrays.toString(rPos.getData()));
