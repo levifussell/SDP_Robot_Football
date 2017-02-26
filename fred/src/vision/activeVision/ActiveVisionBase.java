@@ -39,19 +39,24 @@ public class ActiveVisionBase implements RawInputListener {
 
         long timeStart = System.currentTimeMillis();
 
-        int width = 640;
-        int height = 480;
+        int width = 160;
+        int height = 120;
         System.out.println(image.getWidth() + ", " + image.getHeight());
-        double[] img = new double[height * width * 3];
+        double[] img = new double[height * width];
 
-        for(int x = 0; x < width; ++x)
+        for(int x = 0; x < width; x += 4)
         {
-            for(int y = 0; y < height; ++y)
+            for(int y = 0; y < height; y += 4)
             {
                 Color c = new Color(image.getRGB(x, y));
-                img[x * height + y] = c.getRed();
-                img[width*height + (x * height + y)] = c.getGreen();
-                img[width*height*2 + (x * height + y)] = c.getBlue();
+//                img[x * height + y] = c.getRed();
+//                img[width*height + (x * height + y)] = c.getGreen();
+//                img[width*height*2 + (x * height + y)] = c.getBlue();
+                double mean = (c.getRed() + c.getGreen() + c.getBlue()) / 3.0;
+                double var = Math.sqrt(Math.pow(c.getRed() - mean, 2) +
+                        Math.pow(c.getGreen() - mean, 2) +
+                        Math.pow(c.getBlue() - mean, 2));
+                img[x * height + y] = var;
             }
         }
 

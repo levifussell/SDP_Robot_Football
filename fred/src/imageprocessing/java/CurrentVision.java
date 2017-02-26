@@ -67,7 +67,7 @@ public class CurrentVision {
 
 	//octave.eval("main");
 //	octave.eval("I1 = imread('imgs/saved.png');");
-	OctaveDouble img = new OctaveDouble(image, 480, 640, 3);
+	OctaveDouble img = new OctaveDouble(image, 120, 160);
 
 	System.out.println("Creating octave matrix from image took: " + (System.currentTimeMillis() - timeStart) + " ms");
 	timeStart = System.currentTimeMillis();
