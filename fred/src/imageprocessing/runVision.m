@@ -5,8 +5,9 @@ function [robotsPos, robotsAngle, robotsColour, patches] = runVision(imageData, 
 	height = 480;
 	width = 640;
     I1 = imageData(cropEdge:(height - cropEdge), cropEdge:(width - cropEdge), :);
+    t0 = time();
     t1 = time();
-    [I1p, patches] = process_image(I1, activeThresh, true);
+    [I1p, patches] = process_image(I1, activeThresh, false);
     disp("time to pre process "), disp((time() - t1) * 1000.0)
     t1 = time();
     %figure(20)
@@ -20,18 +21,21 @@ function [robotsPos, robotsAngle, robotsColour, patches] = runVision(imageData, 
     robotsColour = zeros(size(patches, 3), 1);
 
     % draw each patch
+    debug = false;
 
     for j=1:size(patches, 3)
 
         %imagesc(I1p(patches(2, 2, i):patches(1, 1, i), patches(1, 2, i):patches(2, 1, i), :))
         ImPatchTopLeft = [patches(2, 2, j), patches(1, 2, j)];
         ImPatch = I1p(patches(2, 2, j):patches(1, 1, j), patches(1, 2, j):patches(2, 1, j), :);
-        figure(j + 1000)
-        imagesc(ImPatch);
-        ImPatch = ImPatch .* repmat(var(ImPatch, 1, 3) > 2000, [1, 1, 3]);
-        patchRGB(1, j) = sum(sum(ImPatch(:, :, 1)));
-        patchRGB(2, j) = sum(sum(ImPatch(:, :, 2)));
-        patchRGB(3, j) = sum(sum(ImPatch(:, :, 3)));
+        if debug
+            figure(j + 1000)
+            imagesc(ImPatch);
+        end
+        %ImPatch = ImPatch .* repmat(var(ImPatch, 1, 3) > 2000, [1, 1, 3]);
+        %patchRGB(1, j) = sum(sum(ImPatch(:, :, 1)));
+        %patchRGB(2, j) = sum(sum(ImPatch(:, :, 2)));
+        %patchRGB(3, j) = sum(sum(ImPatch(:, :, 3)));
         patchSizes(j) = size(ImPatch, 1) .* size(ImPatch, 2);
         disp("time to create image patch "), disp((time() - t1) * 1000.0)
         t1 = time();
@@ -46,19 +50,21 @@ function [robotsPos, robotsAngle, robotsColour, patches] = runVision(imageData, 
         distThresholdPink = pinkThresh;%400000;
         ImPatchD = double(ImPatch);
 
-        [robotPos, robotAngle, robotColour] = findRobot(ImPatch, distThresholdBlue, distThresholdYellow, distThresholdPink, distThresholdGreen, true, j * 13);
+        [robotPos, robotAngle, robotColour] = findRobot(ImPatch, distThresholdBlue, distThresholdYellow, distThresholdPink, distThresholdGreen, debug, j * 13);
         disp("time to find robot data in patch "), disp((time() - t1) * 1000.0)
         t1 = time();
-        robotPos = ones(1, 2);
-        robotAngle = ones(1, 1);
-        robotColour = ones(1, 1);
+        %robotPos = ones(1, 2);
+        %robotAngle = ones(1, 1);
+        %robotColour = ones(1, 1);
         %scale robot position back up from 1:4
 
-        figure(101 * j)
-        ImPatch(robotPos(1, 1), robotPos(1, 2), :) = [0, 255, 0]; 
-        imagesc(ImPatch)
-        disp("time to draw patch "), disp((time() - t1) * 1000.0)
-        t1 = time();
+        if debug
+            figure(101 * j)
+            ImPatch(robotPos(1, 1), robotPos(1, 2), :) = [0, 255, 0]; 
+            imagesc(ImPatch)
+            disp("time to draw patch "), disp((time() - t1) * 1000.0)
+            t1 = time();
+        end
 
         robotPosFinal = ImPatchTopLeft + robotPos;
         fprintf('robot: %d, %d\n', robotPosFinal, robotPosFinal);
@@ -83,8 +89,12 @@ function [robotsPos, robotsAngle, robotsColour, patches] = runVision(imageData, 
 	% scale patches by 1;4
 	patches = (patches .* downSample) + cropEdge;
 
-	figure(1314141)
-	imagesc(I1p)
-	figure(1314161)
-	imagesc(I1)
+    if debug
+        figure(1314141)
+        imagesc(I1p)
+        figure(1314161)
+        imagesc(I1)
+    end
+
+    disp("time to total image processing "), disp((time() - t0) * 1000.0)
 end

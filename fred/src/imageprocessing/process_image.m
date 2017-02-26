@@ -2,36 +2,51 @@ function [M, patchCorners] = process_image(m, activeThresh, debug)
 
     % half the size of the image (could even try a fourth)
     %m_var_half = m_var(1:4:end, 1:4:end);
+    t1 = time();
     m_half = m(1:4:end, 1:4:end, :);
+    disp("time for shrinking image "), disp((time() - t1) * 1000.0)
+    t1 = time();
 
     if debug
         figure(1)
         colormap(gray)
         imagesc(m_half)
     end
+    disp("time for drawing shrunk image "), disp((time() - t1) * 1000.0)
+    t1 = time();
 
     % compute the variance of the 3 colour channels
     m_var_half = var(m_half, 0, 3);
+    disp("time for calculating variance "), disp((time() - t1) * 1000.0)
+    t1 = time();
 
     if debug
         figure(2)
         colormap(gray)
         imagesc(m_var_half)
     end
+    disp("time for drawing variance "), disp((time() - t1) * 1000.0)
+    t1 = time();
 
     % perform max-pooling on the image (for now we choose 15x15 pooling)
     max_pool_size = 11;
     m_var_half_max = max_pooling(m_var_half, max_pool_size);
+    disp("time for max pooling "), disp((time() - t1) * 1000.0)
+    t1 = time();
 
     if debug
         figure(3)
         colormap(gray)
         imagesc(m_var_half_max)
     end
+    disp("time for drawing maxpool "), disp((time() - t1) * 1000.0)
+    t1 = time();
 
     % find the areas of interest
     activeThreshold = activeThresh;%1600;
     m_var_half_max_active = find_maxs(m_var_half_max, activeThreshold);
+    disp("time for thresholding "), disp((time() - t1) * 1000.0)
+    t1 = time();
 
 
     % calculate the areas positions
@@ -72,6 +87,8 @@ function [M, patchCorners] = process_image(m, activeThresh, debug)
         patchCorners(2, 1, i) =  ceil(right .* max_pool_size);% .+ (max_pool_size / 2) .- 1);
         patchCorners(2, 2, i) =  ceil(up .* max_pool_size .- (max_pool_size) .+ 1);
     end
+    disp("time for finding interesting patch areas "), disp((time() - t1) * 1000.0)
+    t1 = time();
 
     %[active_patches_row, active_patches_col] = find(m_var_half_max_active);
     %active_patches_row_scaled = active_patches_row .* max_pool_size;
@@ -84,6 +101,8 @@ function [M, patchCorners] = process_image(m, activeThresh, debug)
         colormap(gray)
         imagesc(m_var_half_max_active)
     end
+    disp("time for drawing interesting patches "), disp((time() - t1) * 1000.0)
+    t1 = time();
 
     % scale the image back to its normal size
     m_scale = scale_image(m_var_half_max_active, m_var_half);
@@ -97,6 +116,8 @@ function [M, patchCorners] = process_image(m, activeThresh, debug)
     start_dim2 = edgeLow(2) + 1;
     end_dim2 = size(m_half, 2) - edgeHigh(2);
     m_overlay = repmat(m_scale > 0, [1, 1, 3]) .* m_half(start_dim1:end_dim1, start_dim2:end_dim2, :);
+    disp("time for scaling the image to normal size "), disp((time() - t1) * 1000.0)
+    t1 = time();
 
     % add the active patches to the final image
     for i=1:size(active_patches_row_centred)
@@ -110,11 +131,15 @@ function [M, patchCorners] = process_image(m, activeThresh, debug)
             m_overlay(patchCorners(2, 2, i), patchCorners(2, 1, i), :) = color;
         end
     end
+    disp("time for drawing patches on original image "), disp((time() - t1) * 1000.0)
+    t1 = time();
 
     if debug
         figure(5)
         imagesc(m_overlay)
     end
+    disp("time for drawing final image with patches overlaid "), disp((time() - t1) * 1000.0)
+    t1 = time();
 
 
     % return the processed image

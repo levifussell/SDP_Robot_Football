@@ -5,8 +5,9 @@ function [robotPos, robotAngle, robotColour] = findRobot(ImPatch, blueThreshold,
 
     % find blue/yellow circles
     t1 = time();
-    [best_blueyellow, count_blueyellow] = findBlueYellowCircles(ImPatch, blueThreshold, yellowThreshold);
+    [best_blueyellow, count_blueyellow, dist_blueyellow] = findBlueYellowCircles(ImPatch, blueThreshold, yellowThreshold);
     disp("time to find blue/yellow "), disp((time() - t1) * 1000.0)
+    disp(size(ImPatch))
     t1 = time();
     countThresh = 0;
     isBlue = false;
@@ -14,24 +15,25 @@ function [robotPos, robotAngle, robotColour] = findRobot(ImPatch, blueThreshold,
     isPink = false;
     isGreen = false;
 
-	%if(debug)
-	    %figure(id)
-	    %ImPatch(best_blueyellow(1, 1), best_blueyellow(1, 2), :) = [255, 255, 255];
-	    %ImPatch(best_blueyellow(2, 1), best_blueyellow(2, 2), :) = [255, 255, 0];
-	    %imagesc(ImPatch)
-	%end
-
-    % offset the postion by 1 to centre it
-    origin = best_blueyellow .+ 1;
-    origin_colour = origin(1, :);
-    % if robot is BLUE:
-    if count_blueyellow(1) > countThresh
-        isBlue = true;
-        origin_colour = origin(1, :);
+    origin = max(best_blueyellow .- 1, 1);
+    if(debug)
+        figure(id * id * id)
+        ImPatch(origin(1, 1), origin(1, 2), :) = [255, 255, 255];
+        ImPatch(origin(2, 1), origin(2, 2), :) = [255, 255, 0];
+        imagesc(ImPatch)
     end
 
+    % offset the postion by 1 to centre it
+    origin = best_blueyellow .- 1;
+    origin_colour = origin(1, :);
+    % if robot is BLUE:
+    %if count_blueyellow(1) > countThresh
+    if dist_blueyellow(1) > dist_blueyellow(2)
+        isBlue = true;
+        origin_colour = origin(1, :);
     % if robot is YELLOW:
-    if count_blueyellow(2) > countThresh
+    %if count_blueyellow(2) > countThresh
+    elseif dist_blueyellow(1) <= dist_blueyellow(2)
         isYellow = true;
         origin_colour = origin(2, :);
     end
@@ -57,29 +59,39 @@ function [robotPos, robotAngle, robotColour] = findRobot(ImPatch, blueThreshold,
 
     % find pink/green circles
     [best_pinkgreen, count_pinkgreen] = findPinkGreenCircles(roboSeg, pinkThreshold, greenThreshold);
+    count_pinkgreen
 
     disp("time to find pink/green "), disp((time() - t1) * 1000.0)
+    disp(size(roboSeg))
     t1 = time();
 
     angle_colour = best_pinkgreen(1, :);
     % if robot is PINK
     if count_pinkgreen(1, 1) < count_pinkgreen(2, 1)
         isPink = true;
-        angle_colour = best_pinkgreen(1, :);
+        angle_colour = max(1, best_pinkgreen(1, :) .- 1);
+
+        if(debug)
+            figure(id * id)
+            roboSeg(angle_colour(1), angle_colour(2), :) = [255, 0, 150];
+            imagesc(roboSeg)
+            disp("time to draw final robot crop image "), disp((time() - t1) * 1000.0)
+            t1 = time();
+        end
     % if robot is GREEN
     else
         isGreen = true;
-        angle_colour = best_pinkgreen(2, :);
+        angle_colour = max(1, best_pinkgreen(2, :) .- 1);
+
+        if(debug)
+            figure(id * id)
+            roboSeg(angle_colour(1), angle_colour(2), :) = [0, 255, 0];
+            imagesc(roboSeg)
+            disp("time to draw final robot crop image "), disp((time() - t1) * 1000.0)
+            t1 = time();
+        end
     end
 
-	if(debug)
-	    figure(id * id)
-	    roboSeg(best_pinkgreen(1, 1), best_pinkgreen(1, 2), :) = [255, 0, 150];
-	    roboSeg(best_pinkgreen(2, 1), best_pinkgreen(2, 2), :) = [0, 255, 0];
-	    imagesc(roboSeg)
-	end
-    disp("time to draw final robot crop image "), disp((time() - t1) * 1000.0)
-    t1 = time();
 
     if (isGreen || isPink) && (isBlue || isYellow)
         % calculate robot angle
@@ -93,14 +105,14 @@ function [robotPos, robotAngle, robotColour] = findRobot(ImPatch, blueThreshold,
         % calculate robot position (its just the blue/yellow position)
         robotPos = origin_colour;
 
-        robotColour = 0;
+        robotColour = 101010;
 
         if isBlue
             robotColour = 10;
         elseif isYellow
             robotColour = 20;
         else
-            robotColour = 0;
+            robotColour = 100;
         end
 
         if isPink

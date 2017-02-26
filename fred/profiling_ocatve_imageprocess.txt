@@ -1,0 +1,83 @@
+time for shrinking image 
+ 0.25392
+time for drawing shrunk image 
+ 0.016212
+time for calculating variance 
+ 1.3359
+time for drawing variance 
+ 0.013828
+time for max pooling 
+ 22.001
+time for drawing maxpool 
+ 0.033140
+time for thresholding 
+ 0.87690
+time for finding interesting patch areas 
+ 1.5399
+time for drawing interesting patches 
+ 0.021935
+time for scaling the image to normal size 
+ 2.1160
+time for drawing patches on original image 
+ 0.47612
+time for drawing final image with patches overlaid 
+ 0.023127
+time to pre process 
+ 29.583
+time to create image patch 
+ 2.3761
+time to find blue/yellow 
+ 130.83
+time to crop robot image patch 
+ 0.41699
+time to find pink/green 
+ 8.4438
+time to calculate final robot values 
+ 0.095844
+time to find robot data in patch 
+ 140.18
+robot: 2, 24
+robot: 2, 24
+        , 1.000000
+        , 1
+time to parse patches 
+ 0.25487
+time to create image patch 
+ 1.3530
+time to find blue/yellow 
+ 117.71
+time to crop robot image patch 
+ 0.26894
+time to find pink/green 
+ 9.6390
+time to calculate final robot values 
+ 0.17595
+time to find robot data in patch 
+ 128.12
+robot: 57, 24
+robot: 57, 24
+        , 1.000000
+        , 1
+time to parse patches 
+ 0.37003
+time to create image patch 
+ 2.0351
+time to find blue/yellow 
+ 124.61
+time to crop robot image patch 
+ 0.26608
+time to find pink/green 
+ 10.115
+time to calculate final robot values 
+ 0.092030
+time to find robot data in patch 
+ 135.41
+robot: 68, 24
+robot: 68, 24
+        , 1.000000
+        , 1
+time to parse patches 
+ 0.22101
+time to total image processing 
+ 440.23
+octave:8> 
