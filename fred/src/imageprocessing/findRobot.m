@@ -4,7 +4,10 @@ function [robotPos, robotAngle, robotColour] = findRobot(ImPatch, blueThreshold,
     robotLayout = double(zeros(10, 10, 3));
 
     % find blue/yellow circles
+    t1 = time();
     [best_blueyellow, count_blueyellow] = findBlueYellowCircles(ImPatch, blueThreshold, yellowThreshold);
+    disp("time to find blue/yellow "), disp((time() - t1) * 1000.0)
+    t1 = time();
     countThresh = 0;
     isBlue = false;
     isYellow = false;
@@ -39,6 +42,9 @@ function [robotPos, robotAngle, robotColour] = findRobot(ImPatch, blueThreshold,
     colStart = max(1, origin_colour(1, 2) - floor(size(robotLayout, 2) / 2.0));
     colEnd = min(size(ImPatch, 2), origin_colour(1, 2) + ceil(size(robotLayout, 2) / 2.0) - 1);
     roboSeg = ImPatch(rowStart:rowEnd, colStart:colEnd, :);
+
+    disp("time to crop robot image patch "), disp((time() - t1) * 1000.0)
+    t1 = time();
     
     % translate the blue/yellow position to the smaller domain
     %robotBinary = zeros(size(ImPatch, 1), size(ImPatch, 2), 1);
@@ -51,6 +57,9 @@ function [robotPos, robotAngle, robotColour] = findRobot(ImPatch, blueThreshold,
 
     % find pink/green circles
     [best_pinkgreen, count_pinkgreen] = findPinkGreenCircles(roboSeg, pinkThreshold, greenThreshold);
+
+    disp("time to find pink/green "), disp((time() - t1) * 1000.0)
+    t1 = time();
 
     angle_colour = best_pinkgreen(1, :);
     % if robot is PINK
@@ -69,6 +78,8 @@ function [robotPos, robotAngle, robotColour] = findRobot(ImPatch, blueThreshold,
 	    roboSeg(best_pinkgreen(2, 1), best_pinkgreen(2, 2), :) = [0, 255, 0];
 	    imagesc(roboSeg)
 	end
+    disp("time to draw final robot crop image "), disp((time() - t1) * 1000.0)
+    t1 = time();
 
     if (isGreen || isPink) && (isBlue || isYellow)
         % calculate robot angle
@@ -104,5 +115,9 @@ function [robotPos, robotAngle, robotColour] = findRobot(ImPatch, blueThreshold,
         robotAngle = -1;
         robotColour = -1;
         robotPos = [-1, -1];
+    end
+
+    disp("time to calculate final robot values "), disp((time() - t1) * 1000.0)
+    t1 = time();
 
 end

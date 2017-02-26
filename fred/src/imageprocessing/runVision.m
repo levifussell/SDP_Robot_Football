@@ -5,7 +5,10 @@ function [robotsPos, robotsAngle, robotsColour, patches] = runVision(imageData, 
 	height = 480;
 	width = 640;
     I1 = imageData(cropEdge:(height - cropEdge), cropEdge:(width - cropEdge), :);
+    t1 = time();
     [I1p, patches] = process_image(I1, activeThresh, true);
+    disp("time to pre process "), disp((time() - t1) * 1000.0)
+    t1 = time();
     %figure(20)
     %imagesc(I1p)
     %patches
@@ -30,6 +33,8 @@ function [robotsPos, robotsAngle, robotsColour, patches] = runVision(imageData, 
         patchRGB(2, j) = sum(sum(ImPatch(:, :, 2)));
         patchRGB(3, j) = sum(sum(ImPatch(:, :, 3)));
         patchSizes(j) = size(ImPatch, 1) .* size(ImPatch, 2);
+        disp("time to create image patch "), disp((time() - t1) * 1000.0)
+        t1 = time();
 
         % robot layout
         robotLayout = double(zeros(10, 10, 3));
@@ -42,30 +47,38 @@ function [robotsPos, robotsAngle, robotsColour, patches] = runVision(imageData, 
         ImPatchD = double(ImPatch);
 
         [robotPos, robotAngle, robotColour] = findRobot(ImPatch, distThresholdBlue, distThresholdYellow, distThresholdPink, distThresholdGreen, true, j * 13);
-	robotPos = ones(1, 2);
-	robotAngle = ones(1, 1);
-	robotColour = ones(1, 1);
-	%scale robot position back up from 1:4
+        disp("time to find robot data in patch "), disp((time() - t1) * 1000.0)
+        t1 = time();
+        robotPos = ones(1, 2);
+        robotAngle = ones(1, 1);
+        robotColour = ones(1, 1);
+        %scale robot position back up from 1:4
 
-	figure(101 * j)
-	ImPatch(robotPos(1, 1), robotPos(1, 2), :) = [0, 255, 0]; 
-	imagesc(ImPatch)
+        figure(101 * j)
+        ImPatch(robotPos(1, 1), robotPos(1, 2), :) = [0, 255, 0]; 
+        imagesc(ImPatch)
+        disp("time to draw patch "), disp((time() - t1) * 1000.0)
+        t1 = time();
 
         robotPosFinal = ImPatchTopLeft + robotPos;
         fprintf('robot: %d, %d\n', robotPosFinal, robotPosFinal);
         fprintf('\t, %f\n', robotAngle);
         fprintf('\t, %d\n', robotColour(1, 1));
 
-	I1p(robotPosFinal(1, 1), robotPosFinal(1, 2), :) = [0, 0, 255];
+        I1p(robotPosFinal(1, 1), robotPosFinal(1, 2), :) = [0, 0, 255];
 
-	robotPosFinal = (robotPosFinal .* downSample) + cropEdge
+        robotPosFinal = (robotPosFinal .* downSample) + cropEdge;
         robotsPos(j, :) = robotPosFinal;
         robotsAngle(j, 1) = robotAngle;
         robotsColour(j, 1) = robotColour(1, 1);
 
 	
-	I1(robotPosFinal(1, 1) - cropEdge, robotPosFinal(1, 2) - cropEdge, :) = [0, 0, 255];
+        I1(robotPosFinal(1, 1) - cropEdge, robotPosFinal(1, 2) - cropEdge, :) = [0, 0, 255];
+
+        disp("time to parse patches "), disp((time() - t1) * 1000.0)
+        t1 = time();
     end
+
 
 	% scale patches by 1;4
 	patches = (patches .* downSample) + cropEdge;
