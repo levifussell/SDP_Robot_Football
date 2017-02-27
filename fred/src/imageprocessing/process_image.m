@@ -3,7 +3,8 @@ function [M, patchCorners] = process_image(m, activeThresh, debug)
     % half the size of the image (could even try a fourth)
     %m_var_half = m_var(1:4:end, 1:4:end);
     t1 = time();
-    m_half = m(1:4:end, 1:4:end, :);
+    %m_half = m(1:4:end, 1:4:end, :);
+    m_half = m;
     disp("time for shrinking image "), disp((time() - t1) * 1000.0)
     t1 = time();
 
@@ -29,7 +30,7 @@ function [M, patchCorners] = process_image(m, activeThresh, debug)
     t1 = time();
 
     % perform max-pooling on the image (for now we choose 15x15 pooling)
-    max_pool_size = 11;
+    max_pool_size = 9;
     m_var_half_max = max_pooling(m_var_half, max_pool_size);
     disp("time for max pooling "), disp((time() - t1) * 1000.0)
     t1 = time();

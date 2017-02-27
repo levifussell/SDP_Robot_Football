@@ -1,13 +1,13 @@
 function [robotsPos, robotsAngle, robotsColour, patches] = runVision(imageData, activeThresh, redThresh, blueThresh, yellowThresh, greenThresh, pinkThresh)
 
 	downSample = 4;
-	cropEdge = 30;
-	height = 480;
-	width = 640;
+	cropEdge = 8;
+	height = 120;%480;
+	width = 160;%640;
     I1 = imageData(cropEdge:(height - cropEdge), cropEdge:(width - cropEdge), :);
     t0 = time();
     t1 = time();
-    [I1p, patches] = process_image(I1, activeThresh, false);
+    [I1p, patches] = process_image(I1, activeThresh, true);
     disp("time to pre process "), disp((time() - t1) * 1000.0)
     t1 = time();
     %figure(20)
@@ -21,7 +21,7 @@ function [robotsPos, robotsAngle, robotsColour, patches] = runVision(imageData, 
     robotsColour = zeros(size(patches, 3), 1);
 
     % draw each patch
-    debug = false;
+    debug = true;
 
     for j=1:size(patches, 3)
 
@@ -73,7 +73,8 @@ function [robotsPos, robotsAngle, robotsColour, patches] = runVision(imageData, 
 
         I1p(robotPosFinal(1, 1), robotPosFinal(1, 2), :) = [0, 0, 255];
 
-        robotPosFinal = (robotPosFinal .* downSample) + cropEdge;
+        %robotPosFinal = (robotPosFinal .* downSample) + cropEdge;
+        robotPosFinal = (robotPosFinal + cropEdge) .* downSample;
         robotsPos(j, :) = robotPosFinal;
         robotsAngle(j, 1) = robotAngle;
         robotsColour(j, 1) = robotColour(1, 1);

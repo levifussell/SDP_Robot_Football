@@ -4,7 +4,8 @@ function [best_blueyellow, count_blueyellow, dist_blueyellow] = findBlueYellowCi
     %blueCircle = zeros(3, 3, 3);
     %blueCircle(:, :, 3) = [255 255 255; 255 255 255; 255 255 255];
     blueCircle = zeros(3, 3, 3) - 1;
-    blueCircle(:, :, 3) = [1 1 1; 1 1 1; 1 1 1];
+    blueCircle(:, :, 3) = [-1 -1 -1; -1 1 1; -1 1 1];
+    blueCircle(:, :, 2) = [1 1 1; 1 -1 -1; 1 -1 -1];
 
     % yellow circle template
     %yellowCircle = double(zeros(3, 3, 3));
