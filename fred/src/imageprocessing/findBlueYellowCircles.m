@@ -1,15 +1,15 @@
 function [best_blueyellow, count_blueyellow, dist_blueyellow] = findBlueYellowCircles(ImPatch, blueThreshold, yellowThreshold)
 
     % blue circle template
-    %blueCircle = zeros(3, 3, 3);
-    %blueCircle(:, :, 3) = [255 255 255; 255 255 255; 255 255 255];
+    %blueCircle = zeros(2, 2, 3);
+    %blueCircle(:, :, 3) = [255 255; 255 255];
     blueCircle = zeros(3, 3, 3) - 1;
     blueCircle(:, :, 3) = [-1 -1 -1; -1 1 1; -1 1 1];
     blueCircle(:, :, 2) = [1 1 1; 1 -1 -1; 1 -1 -1];
 
     % yellow circle template
-    %yellowCircle = double(zeros(3, 3, 3));
-    %yellowCircle(:, :, 1) = [0 0 0; 0 255 255; 0 255 255];
+    %yellowCircle = double(zeros(2, 2, 3));
+    %yellowCircle(:, :, 1) = [255 255; 255 255];
     %yellowCircle(:, :, 2) += 255.0;
     yellowCircle = double(zeros(3, 3, 3)) - 1;
     yellowCircle(:, :, 1) = [1 1 1; 1 1 1; 1 1 1];

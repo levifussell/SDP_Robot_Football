@@ -8,14 +8,17 @@ function [TBestLocation, TCount, TBestDist] = findTemplatesInImage2(image, templ
     imageD = double(image);
 
     for t=1:size(templates, 4)
-        convTR = conv2(imageD(:, :, 1), templates(:, :, 1, t));
-        convTG = conv2(imageD(:, :, 2), templates(:, :, 2, t));
-        convTB = conv2(imageD(:, :, 3), templates(:, :, 3, t));
-        convT = convTR + convTG + convTB;
-        bestV = max(max(convT))
-        [bX, bY] = find(convT == max(max(convT)))
-        TBestLocation(t, :) = [bX(1), bY(1)]
-        TCount(t, :) = sum(sum(convT))
+        %convTR = conv2(imageD(:, :, 1), templates(:, :, 1, t), "valid");
+        %convTG = conv2(imageD(:, :, 2), templates(:, :, 2, t), "valid");
+        %convTB = conv2(imageD(:, :, 3), templates(:, :, 3, t), "valid");
+        %convT = convTR + convTG + convTB;blueThreshold, yellowThreshold];
+        convT = convn(imageD, templates(:, :, :, t)(end:-1:1, end:-1:1, end:-1:1), "valid");
+        templateSize = size(templates(:, :, :, t));
+        bestV = max(max(convT));
+        [bX, bY] = find(convT == max(convT(:)));
+        %TBestLocation(t, :) = [bX(1) - (templateSize(1) - 1) / 2, bY(1) - (templateSize(2) - 1) / 2]
+        TBestLocation(t, :) = [bX(1), bY(1)];
+        TCount(t, :) = sum(convT(:))
         TBestDist(t, :) = bestV;
     end
 end

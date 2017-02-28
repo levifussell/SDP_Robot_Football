@@ -3,6 +3,11 @@ function [robotPos, robotAngle, robotColour] = findRobot(ImPatch, blueThreshold,
     % robot layout
     robotLayout = double(zeros(10, 10, 3));
 
+    %ImPatchE = edge(rgb2gray(ImPatch));
+    %ImPatchE = (avg_pooling(ImPatch(:, :, 1), 2) + avg_pooling(ImPatch(:, :, 2), 2) + avg_pooling(ImPatch(:, :, 3), 2)) / 3.0;
+    %figure(id * 11221)
+    %imagesc(ImPatchE)
+
     % find blue/yellow circles
     t1 = time();
     [best_blueyellow, count_blueyellow, dist_blueyellow] = findBlueYellowCircles(ImPatch, blueThreshold, yellowThreshold);
@@ -24,7 +29,7 @@ function [robotPos, robotAngle, robotColour] = findRobot(ImPatch, blueThreshold,
     end
 
     % offset the postion by 1 to centre it
-    origin = best_blueyellow .- 1;
+    %origin = best_blueyellow .- 1;
     origin_colour = origin(1, :);
     % if robot is BLUE:
     %if count_blueyellow(1) > countThresh

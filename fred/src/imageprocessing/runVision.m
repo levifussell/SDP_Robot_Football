@@ -7,7 +7,7 @@ function [robotsPos, robotsAngle, robotsColour, patches] = runVision(imageData, 
     I1 = imageData(cropEdge:(height - cropEdge), cropEdge:(width - cropEdge), :);
     t0 = time();
     t1 = time();
-    [I1p, patches] = process_image(I1, activeThresh, true);
+    [I1p, patches] = process_image(I1, activeThresh, false);
     disp("time to pre process "), disp((time() - t1) * 1000.0)
     t1 = time();
     %figure(20)
@@ -22,6 +22,56 @@ function [robotsPos, robotsAngle, robotsColour, patches] = runVision(imageData, 
 
     % draw each patch
     debug = true;
+
+    % robot layout
+    robotLayout = double(zeros(9, 9, 3));
+     %red channel
+    robotLayout(:, :, 1) = [255 255 255 0 0 0 255 255 255;
+                            255 255 255 0 0 0 255 255 255;
+                            255 255 255 0 0 0 255 255 255;
+                            0 0 0 0 0 0 0 0 0;
+                            0 0 0 0 0 0 0 0 0;
+                            0 0 0 0 0 0 0 0 0;
+                            0 0 0 0 0 0 255 255 255;
+                            0 0 0 0 0 0 255 255 255;
+                            0 0 0 0 0 0 255 255 255;];
+     %blue channel
+    robotLayout(:, :, 2) = [0 0 0 255 255 255 0 0 0;
+                            0 0 0 255 255 255 0 0 0;
+                            0 0 0 255 255 255 0 0 0;
+                            255 255 255 0 0 0 255 255 255;
+                            255 255 255 0 0 0 255 255 255;
+                            255 255 255 0 0 0 255 255 255;
+                            255 255 255 255 255 255 0 0 0;
+                            255 255 255 255 255 255 0 0 0;
+                            255 255 255 255 255 255 0 0 0;];
+
+     %green channel
+    robotLayout(:, :, 3) = [150 150 150 0 0 0 150 150 150;
+                            150 150 150 0 0 0 150 150 150;
+                            150 150 150 0 0 0 150 150 150;
+                            0 0 0 255 255 255 0 0 0;
+                            0 0 0 255 255 255 0 0 0;
+                            0 0 0 255 255 255 0 0 0;
+                            0 0 0 0 0 0 150 150 150;
+                            0 0 0 0 0 0 150 150 150;
+                            0 0 0 0 0 0 150 150 150;];
+                            
+   %robotLayout = rotateImage(robotLayout, -45.0);
+   %figure(29292)
+   %imagesc(robotLayout)
+   
+     %create a selection of rotated robotLayouts
+    numRobotLayouts = 8;
+    degreeRate = 360.0 / numRobotLayouts;
+    robotLayoutsRot = zeros(9, 9, 3, numRobotLayouts);
+    for i=1:numRobotLayouts
+        robotLayoutsRot(:, :, :, i) = rotateImage(robotLayout, degreeRate * (i + 1));
+        %figure(100 + i)
+        %imagesc(robotLayoutsRot(:, :, :, i))
+        robotLayoutsRot(:, :, :, i) += (robotLayoutsRot(:, :, :, i) == 0) * -10.0;
+    end
+
 
     for j=1:size(patches, 3)
 
@@ -51,6 +101,13 @@ function [robotsPos, robotsAngle, robotsColour, patches] = runVision(imageData, 
         ImPatchD = double(ImPatch);
 
         [robotPos, robotAngle, robotColour] = findRobot(ImPatch, distThresholdBlue, distThresholdYellow, distThresholdPink, distThresholdGreen, debug, j * 13);
+        %temps_robo = zeros(9, 9, 3, 1);
+        %temps_robo(:, :, :, 1) = robotLayout;
+        %thresh_robo = [100];
+        %[best_spot, count_spot] = findTemplatesInImage2(ImPatch, robotLayoutsRot, thresh_robo);
+        %[bX, bY] = find(count_spot == max(count_spot(:)));
+        %bSpot = best_spot(bX, :);
+
         disp("time to find robot data in patch "), disp((time() - t1) * 1000.0)
         t1 = time();
         %robotPos = ones(1, 2);
@@ -58,13 +115,14 @@ function [robotsPos, robotsAngle, robotsColour, patches] = runVision(imageData, 
         %robotColour = ones(1, 1);
         %scale robot position back up from 1:4
 
-        if debug
-            figure(101 * j)
+        %if debug
+            figure(102 * j)
+            robotPos
             ImPatch(robotPos(1, 1), robotPos(1, 2), :) = [0, 255, 0]; 
             imagesc(ImPatch)
             disp("time to draw patch "), disp((time() - t1) * 1000.0)
             t1 = time();
-        end
+        %end
 
         robotPosFinal = ImPatchTopLeft + robotPos;
         fprintf('robot: %d, %d\n', robotPosFinal, robotPosFinal);
