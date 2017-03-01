@@ -5,8 +5,10 @@ function [TBestLocation, TCount, TBestDist] = matchTemplate(image, template, pos
     TBestLocation = ones(1, 2);
     %imageD = double(image);
     imageD = getTemplate(image, posR, posC, assessRegion);
+    figure(120312)
+    imagesc(floor(imageD))
 
-    convT = convn(imageD, template(end:-1:1, end:-1:1, end:-1:1), "valid");
+    convT = convn(imageD, template, "valid");
     templateSize = size(template);
     bestV = max(convT(:));
     [bX, bY] = find(convT ==  bestV);
@@ -20,9 +22,9 @@ function [TBestLocation, TCount, TBestDist] = matchTemplate(image, template, pos
     %figure(floor(1212 * rand()))
     %imagesc(imageD)
 
-    bX = floor(max(1, min(size(image, 1), bX + posR - assessRegion / 2)));
-    bY = floor(max(1, min(size(image, 2), bY + posC - assessRegion / 2)));
-    TBestLocation(:) = [bX(1), bY(1)];
+    bX = floor(max(1, min(size(image, 1), bX + posR - assessRegion / 2));
+    bY = floor(max(1, min(size(image, 2), bY + posC - assessRegion / 2));
+    TBestLocation(:) = [bX, bY];
     TCount(:) = sum(convT(:));
     TBestDist(:) = bestV;
 

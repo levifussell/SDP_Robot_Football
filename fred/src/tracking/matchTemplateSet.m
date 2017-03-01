@@ -3,7 +3,6 @@ function [TBestLocation, TCount, TBestDist, TBestRot] = matchTemplateSet(image, 
     TBestLocation = [-10000, -10000];
     TCount = -10000;
     TBestDist = -10000;
-
     for i=1:size(templateSet, 4)
         [tB, tC, tD] = matchTemplate(image, templateSet(:, :, :, i), posR, posC, assessRegion);
         if tD > TBestDist
