@@ -1,13 +1,17 @@
+#include <Servo.h>
+
 #include "SerialCommand.h"
 #include "SDPArduino.h"
 #include <Wire.h>
 #include <Arduino.h>
+
 
 #define FRONT 5
 #define RIGHT 3
 #define BACK 4
 #define LEFT 0
 #define KICKERS 1
+#define GRABBER 2
 
 #define sensor A3
 
@@ -16,23 +20,29 @@ int grabberUp = 1;
 
 SerialCommand sCmd;
 
+Servo myservo;
+
 void loop(){
   
-  float irReading = analogRead(sensor)*0.0048828125;  // value from sensor * (5/1024)
-  //delay(50); // slow down serial port for printing
-  //Serial.println(irReading);   // print the distance
-  
-  if (irReading > 2 && grabberUp) {
-    grabberUp = 0;
+  //myservo.write(100);
+
+//  float irReading = analogRead(sensor)*0.0048828125;  // value from sensor * (5/1024)
+//  //delay(50); // slow down serial port for printing
+//  //Serial.println(irReading);   // print the distance
+//  
+//  if (irReading > 2 && grabberUp) {
+//    grabberUp = 0;
+//    
+//    //grabber down
+//    motorControl(2,-100);
+//    delay(500);
+//  
+//    //stop grabber
+//    completeHalt();
+//    delay(600);
+//    
+//  }  
     
-    //grabber down
-    motorControl(2,-100);
-    delay(300);
-  
-    //stop grabber
-    completeHalt();
-    delay(600);
-  }  
   
 }
 
@@ -101,13 +111,25 @@ void setup(){
   sCmd.addCommand("ping", pingMethod); 
   sCmd.addCommand("kick", kicker); 
   SDPsetup();
-  helloWorld();
   
+//  motorControl (GRABBER,-15);
+//  motorControl(KICKERS,100);
+//  delay(2000);
+//  
+//  motorControl(GRABBER,100);
+//  delay(600);
+//  motorControl(GRABBER, 0);
+//  motorControl(KICKERS, 0);
+  
+ 
+ 
+ 
+ 
   //set grabber
   //grabber up
-  motorControl(2,100);
-  delay(300);
+  //motorControl(2,100);
+  //delay(500);
   //stop grabber
-  completeHalt();
+  //completeHalt();
 }
 
