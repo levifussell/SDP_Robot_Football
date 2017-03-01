@@ -29,6 +29,7 @@ public class HorizVertSimpleDrive implements DriveInterface {
 //  private BallTrackState ballTrackState = BallTrackState.UNKNOWN;
   private double actionTargetRadius = 0.0;
   private double actionTargetAngle = 0.0;
+  private Robot previ_robot;
 
   private int MAX_MOTION = 100;
 
@@ -262,8 +263,6 @@ public class HorizVertSimpleDrive implements DriveInterface {
 
     //try to get our robot from the world
     Robot us = Strategy.world.getRobot(RobotType.FRIEND_2);
-    if(us == null)
-      return;
 
     //our origin for the polar coordinates is the enemy goal always
     // (for now)
@@ -276,6 +275,39 @@ public class HorizVertSimpleDrive implements DriveInterface {
     VectorGeometry ballPoint = new VectorGeometry(ballP.getX(), ballP.getY());
 
     commandPort = port;
+
+    if(us == null)
+    {
+      ((Diag4RobotPort) commandPort).spamKick();
+      double[] totalPowerDrive = getActionBallTrackedState(previ_robot,origin,ballPoint);
+      ((FourWheelHolonomicRobotPort) port).
+              fourWheelHolonomicMotion(totalPowerDrive[0], totalPowerDrive[1], totalPowerDrive[2], totalPowerDrive[3]);
+      VectorGeometry ball_current = toPolarCoord(origin,ballPoint);
+      VectorGeometry previ_robot_polar = toPolarCoord(origin,previ_robot.location);
+      if(ball_current.x >= previ_robot_polar.x)
+      {
+        if(ball_current.y >= previ_robot_polar.y)
+        {
+          previ_robot.location = new DirectedPoint(previ_robot.location.x-1,previ_robot.location.y-1.5,previ_robot.location.direction);
+        }
+        else
+        {
+          previ_robot.location = new DirectedPoint(previ_robot.location.x-1,previ_robot.location.y+1.5,previ_robot.location.direction);
+        }
+      }
+      else
+      {
+        if(ball_current.y >= previ_robot_polar.y)
+        {
+          previ_robot.location = new DirectedPoint(previ_robot.location.x+1,previ_robot.location.y-1.5,previ_robot.location.direction);
+        }
+        else
+        {
+          previ_robot.location = new DirectedPoint(previ_robot.location.x+1,previ_robot.location.y+1.5,previ_robot.location.direction);
+        }
+      }
+      return;
+    }
 
     //always keep our robot rotated towards the goal
 //    double[] powerToGoal = this.goToOriginPolarCoord(us, origin);
@@ -320,7 +352,7 @@ public class HorizVertSimpleDrive implements DriveInterface {
 //        totalPowerDrive[i] -= 40;
 //      }
 //    }
-
+    previ_robot = us;
     //send drive to wheels
     ((FourWheelHolonomicRobotPort) port).
         fourWheelHolonomicMotion(totalPowerDrive[0], totalPowerDrive[1], totalPowerDrive[2], totalPowerDrive[3]);

@@ -64,8 +64,6 @@ public class MotionController extends ControllerBase {
     public void perform(){
         if(this.mode == MotionMode.OFF) return;
 
-        Robot us = Strategy.world.getRobot(RobotType.FRIEND_2);
-        if(us == null) return;
 
 //        NavigationInterface navigation;
 //
@@ -146,12 +144,9 @@ public class MotionController extends ControllerBase {
 //            return;
 //        }
 
-        if(us == null)
-            return;
-
         double rotation = 0.0; //we don't care about this parameter right now
         double factor = 0.0; //we don't care about this parameter right now
-        VectorGeometry ourRobotLocation = new VectorGeometry(us.location.x, us.location.y);
+        VectorGeometry ourRobotLocation = new VectorGeometry(0, 0);
         DirectedPoint target = new DirectedPoint(this.destination.getX(), this.destination.getY(), 0);
 
 //        strategy.navigationInterface.draw();
