@@ -11,6 +11,8 @@ import vision.RobotType;
 import vision.tools.DirectedPoint;
 import vision.tools.VectorGeometry;
 
+import java.util.Vector;
+
 /**
  * Created by levi on 04/02/17.
  */
@@ -153,21 +155,34 @@ public class HorizVertSimpleDrive implements DriveInterface {
     return totalPowerDrive;
   }
 
+  public robotInPath(VectorGeometry[] robots, double first, double second) {
+
+  }
+
   public BallTrackState getBallTrackState(Robot us, VectorGeometry ballPoint, VectorGeometry origin)
   {
-    //convert the robot and ball position to polar coords
-    VectorGeometry robotPolarCoords = this.toPolarCoord(origin, us.location);
+    // get other robots
+    Robot friend = Strategy.world.getRobot(RobotType.FRIEND_1);
+    Robot foe1 = Strategy.world.getRobot(RobotType.FOE_1);
+    Robot foe2 = Strategy.world.getRobot(RobotType.FOE_2);
+
+    //convert the robots and ball position to polar coords
+    VectorGeometry diag4PolarCoords = this.toPolarCoord(origin, us.location);
+    VectorGeometry friendPolarCoords = this.toPolarCoord(origin, friend.location);
+    VectorGeometry foe1PolarCoords = this.toPolarCoord(origin, foe1.location);
+    VectorGeometry foe2PolarCoords = this.toPolarCoord(origin, foe2.location);
     VectorGeometry ballPolarCoords = this.toPolarCoord(origin, ballPoint);
 
+    VectorGeometry[] players = {friendPolarCoords, foe1PolarCoords, foe2PolarCoords};
     //TODO: instead of doing diff of angle and then diff of radius,
     //TODO:   treat these like cartesian points and update both in
     //TODO:   conjunction.
 
     //calculate difference between robot angle and ball angle
-    double angleDiff = ballPolarCoords.y - robotPolarCoords.y;
+    double angleDiff = ballPolarCoords.y - diag4PolarCoords.y;
     double angleDiffAbs = Math.abs(angleDiff);
     //calculate difference between robot radius and ball radius
-    double radiusDiff = ballPolarCoords.x - robotPolarCoords.x;
+    double radiusDiff = ballPolarCoords.x - diag4PolarCoords.x;
 
 //    System.out.println("DIFF ANGLE: " + angleDiff);
 //    System.out.println("DIFF RADIUS: " + radiusDiff);
@@ -181,31 +196,33 @@ public class HorizVertSimpleDrive implements DriveInterface {
 
     //kicking
     if (angleDiffAbs <= angleThreshold2
-            && robotPolarCoords.x - ballPolarCoords.x < 25
-            && robotPolarCoords.x >= ballPolarCoords.x) {
+            && diag4PolarCoords.x - ballPolarCoords.x < 25
+            && diag4PolarCoords.x >= ballPolarCoords.x) {
       ((Diag4RobotPort) commandPort).spamKick();
     }
 
-    if (angleDiffAbs < angleThreshold2 && robotPolarCoords.x > ballPolarCoords.x) {
+
+    if (angleDiffAbs < angleThreshold2 && diag4PolarCoords.x > ballPolarCoords.x) {
       System.out.println("GOING TO THE BALL");
+      if(robotInPath(players))
       actionTargetRadius = ballPolarCoords.x - radiusOffset;
       actionTargetAngle = ballPolarCoords.y;
       return BallTrackState.GO_TO_BALL;
-    } else if(robotPolarCoords.x > ballPolarCoords.x) {
+    } else if(diag4PolarCoords.x > ballPolarCoords.x) {
       System.out.println("GOING BEHIND BALL");
       actionTargetRadius = ballPolarCoords.x + radiusThreshold;
       actionTargetAngle = ballPolarCoords.y;
       return BallTrackState.GO_BEHIND_BALL;
-    } else if (robotPolarCoords.x < ballPolarCoords.x) {
+    } else if (diag4PolarCoords.x < ballPolarCoords.x) {
       System.out.println("GOING NEXT TO THE BALL");
       actionTargetRadius = ballPolarCoords.x;
       double a = 2 * Math.asin(radiusThreshold / (2.0 * ballPolarCoords.x));
-      actionTargetAngle = ballPolarCoords.y + (ballPolarCoords.y > Math.PI/2.0 ? -a : a);
+      actionTargetAngle = ballPolarCoords.y + (ballPolarCoords.y > Math.PI / 2.0 ? -a : a);
       return BallTrackState.GO_NEXT_TO_BALL;
     } else {
       System.out.println("UNKNOWN STATE");
-      actionTargetRadius = robotPolarCoords.x;
-      actionTargetAngle = robotPolarCoords.y;
+      actionTargetRadius = diag4PolarCoords.x;
+      actionTargetAngle = diag4PolarCoords.y;
       return BallTrackState.UNKNOWN;
     }
   }
