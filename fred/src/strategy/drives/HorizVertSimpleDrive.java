@@ -155,19 +155,28 @@ public class HorizVertSimpleDrive implements DriveInterface {
 	return totalPowerDrive;
   }
 
-  public boolean robotInPath(VectorGeometry[] robots, double radius, double angle) {
+  public String robotInPath(VectorGeometry[] robots, double ourRadius,
+                            double ourAngle, double targetRadius, double targetAngle) {
 
-    // check if robot is in the destination path of diag4
-    boolean robotIsInPath = false;
-    final double angleThreshold = Math.PI / 40;
-    for(VectorGeometry robot : robots) {
-        double radiusDiff = robot.x - radius;
-        double angleDiff = robot.y - angle;
-        if(radiusDiff < 25 && angleDiff <= angleThreshold){
-          robotIsInPath = true;
+	// check if robot is in the destination path of diag4 and where
+	String whereIsTheRobot = "Nowhere";
+	final double angleThreshold = Math.PI / 40;
+	for(VectorGeometry robot : robots) {
+      double targetAngleDiff = Math.abs(robot.y - targetAngle);
+      double robotsAngleDiff = Math.abs(robot.y - ourAngle);
+      if(targetAngleDiff <= angleThreshold && robotsAngleDiff <= angleThreshold) {
+        if(robot.x < ourRadius  && robot.x >= targetRadius){
+          whereIsTheRobot = "In front";
+		} else if(robot.x < targetRadius){
+          whereIsTheRobot = "Behind";
         }
-    }
-      return robotIsInPath;
+	  } else if(targetAngleDiff <= angleThreshold || robotsAngleDiff <= angleThreshold) {
+        if(robot.x >= targetRadius && robot.x < ourRadius) {
+          whereIsTheRobot = "In front";
+        }
+      }
+	}
+	  return whereIsTheRobot;
   }
 
   public BallTrackState getBallTrackState(Robot us, VectorGeometry ballPoint, VectorGeometry origin)
@@ -212,25 +221,34 @@ public class HorizVertSimpleDrive implements DriveInterface {
 	  ((Diag4RobotPort) commandPort).spamKick();
 	}
 
-    /* case A: robot is behind the ball on a straight line; check if there is
-     a robot in the path, if false go ahead, otherwise circumvent and go next
-     to the ball
-    */
+	/* case A: path on a straight line; check if there is
+	 a robot on it too and where
+	*/
 	if (angleDiffAbs < angleThreshold2 && diag4PolarCoords.x > ballPolarCoords.x) {
 	  double targetRadius = ballPolarCoords.x - radiusOffset;
 	  double targetAngle = ballPolarCoords.y;
-	  if(robotInPath(players, targetRadius, targetAngle)) {
-        System.out.println("GOING NEXT TO THE BALL");
-        actionTargetRadius = ballPolarCoords.x;
-        double a = 2 * Math.asin(radiusThreshold / (2.0 * ballPolarCoords.x));
-        actionTargetAngle = ballPolarCoords.y + (ballPolarCoords.y > Math.PI / 2.0 ? -a : a);
-        return BallTrackState.GO_NEXT_TO_BALL;
-	  } else {
-        System.out.println("GOING TO THE BALL");
+	  // if robot in the middle of diag4's path move next to the ball
+      if(robotInPath(players, diag4PolarCoords.x, diag4PolarCoords.y, targetRadius, targetAngle) == "In front") {
+		System.out.println("GOING NEXT TO THE BALL");
+		actionTargetRadius = ballPolarCoords.x;
+		double a = 2 * Math.asin(radiusThreshold / (2.0 * ballPolarCoords.x));
+		actionTargetAngle = ballPolarCoords.y + (ballPolarCoords.y > Math.PI / 2.0 ? -a : a);
+		return BallTrackState.GO_NEXT_TO_BALL;
+	  /* if robot in the middle of ball and enemy goal, block any passes by staying behind
+         the ball */
+      } else if(robotInPath(players, diag4PolarCoords.x, diag4PolarCoords.y, targetRadius, targetAngle) == "Behind") {
+        System.out.println("GOING BEHIND BALL");
+        actionTargetRadius = ballPolarCoords.x + radiusThreshold;
+        actionTargetAngle = ballPolarCoords.y;
+        return BallTrackState.GO_BEHIND_BALL;
+	  // if we reach this stage path is clear
+      } else {
+		System.out.println("GOING TO THE BALL");
 		actionTargetRadius = targetRadius;
 		actionTargetAngle = targetAngle;
-	    return BallTrackState.GO_TO_BALL;
+		return BallTrackState.GO_TO_BALL;
 	  }
+    /* case B: */
 	} else if(diag4PolarCoords.x > ballPolarCoords.x) {
 	  System.out.println("GOING BEHIND BALL");
 	  actionTargetRadius = ballPolarCoords.x + radiusThreshold;
@@ -366,4 +384,5 @@ public class HorizVertSimpleDrive implements DriveInterface {
 		fourWheelHolonomicMotion(totalPowerDrive[0], totalPowerDrive[1], totalPowerDrive[2], totalPowerDrive[3]);
   }
 }
+
 
