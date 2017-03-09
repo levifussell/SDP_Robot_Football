@@ -11,10 +11,6 @@ import PolarCoordNavigation.DimensionNavigation.RadiusDimensionNavigation;
  */
 public class PolarNavigator {
 
-    private static final double POWER_CONST_RADIUS = 60.0;
-    private static final double POWER_CONST_ANGLE = 60.0;
-    private static final double SIZE_OF_ROBOT_IN_PIXELS = 20.0;
-
     private PolarNavigationState targetState;
     private RadiusDimensionNavigation radiusDimensionNavigation;
     private AngleDimensionNavigation angleDimensionNavigation;
@@ -24,6 +20,31 @@ public class PolarNavigator {
     {
         this.targetState = new PolarNavigationState();
         this.targetState.UpdateState(origin, null);
+
+        this.radiusDimensionNavigation = new RadiusDimensionNavigation();
+        this.angleDimensionNavigation = new AngleDimensionNavigation();
+        this.pointingToOriginDimensionNavigation = new PointingToOriginDimensionNavigation();
+    }
+
+    /**
+     * Below methods update the state of the target that the navigator is trying to
+     * reach
+     */
+    public void SetTargetRadius(float radius)
+    {
+        this.SetTargetState(radius, this.targetState.getObject().getAngle());
+    }
+    public void SetTargetAngle(float angle)
+    {
+        this.SetTargetState(this.targetState.getObject().getRadius(), angle);
+    }
+    public void SetTargetState(PolarCoordinate targetCoord)
+    {
+        this.targetState.UpdateState(null, targetCoord);
+    }
+    public void SetTargetState(float radius, float angle)
+    {
+        this.SetTargetState(new PolarCoordinate(radius, angle));
     }
 
     /**
@@ -32,17 +53,15 @@ public class PolarNavigator {
      * @param object
      * @param angleDirection
      */
-    public double[] TransformDrive4Wheel(CartesianCoordinate object, double angleDirection)
+    public double[] TransformDrive4Wheel(PolarCoordinate object, double angleDirection)
     {
-        PolarCoordinate objPolar = PolarCoordinate.CartesianToPolar(object, this.targetState.getOrigin());
-
         double[] driveToRadius =
-                this.radiusDimensionNavigation.Drive4WheelToTarget(objPolar.getRadius(),
+                this.radiusDimensionNavigation.Drive4WheelToTarget(object.getRadius(),
                         this.targetState.getObject().getRadius());
 
         double[] driveToAngle =
-                this.angleDimensionNavigation.Drive4WheelToTarget(objPolar.getAngle(),
-                        this.targetState.getObject().getAngle(), objPolar.getRadius());
+                this.angleDimensionNavigation.Drive4WheelToTarget(object.getAngle(),
+                        this.targetState.getObject().getAngle(), object.getRadius());
 
         //angle preprocessing for facing origin
         double angleOriginDirection = (Math.PI + Math.PI *2 + angleDirection) % (Math.PI * 2);
@@ -72,39 +91,5 @@ public class PolarNavigator {
         }
 
         return totalPowerDrive;
-    }
-
-    /**
-     * Created by levif on 09/03/17.
-     *
-     * This class represents the state of some polar coordinate world
-     * and an object within it
-     */
-    public static class PolarNavigationState {
-
-        private CartesianCoordinate origin;
-        private PolarCoordinate object;
-
-        public PolarNavigationState()
-        {
-            this.origin = new CartesianCoordinate();
-            this.object = new PolarCoordinate();
-        }
-
-        public void UpdateState(CartesianCoordinate origin, PolarCoordinate object)
-        {
-            if(origin != null)
-            {
-                this.origin = origin;
-            }
-
-            if(object != null)
-            {
-                this.object = object;
-            }
-        }
-
-        public PolarCoordinate getObject() { return this.object; }
-        public CartesianCoordinate getOrigin() { return this.origin; }
     }
 }

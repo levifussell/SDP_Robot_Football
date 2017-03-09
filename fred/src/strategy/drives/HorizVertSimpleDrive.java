@@ -1,5 +1,8 @@
 package strategy.drives;
 
+import PolarCoordNavigation.Coordinates.CartesianCoordinate;
+import PolarCoordNavigation.Coordinates.PolarCoordinate;
+import PolarCoordNavigation.PolarNavigator;
 import communication.ports.interfaces.FourWheelHolonomicRobotPort;
 import communication.ports.interfaces.RobotPort;
 import communication.ports.robotPorts.Diag4RobotPort;
@@ -10,8 +13,6 @@ import vision.Robot;
 import vision.RobotType;
 import vision.tools.DirectedPoint;
 import vision.tools.VectorGeometry;
-
-import java.util.Vector;
 
 /**
  * Created by levi on 04/02/17.
@@ -28,9 +29,7 @@ public class HorizVertSimpleDrive implements DriveInterface {
 	UNKNOWN
   }
 
-//  private BallTrackState ballTrackState = BallTrackState.UNKNOWN;
-  private double actionTargetRadius = 0.0;
-  private double actionTargetAngle = 0.0;
+	PolarNavigator polarNavigator;
 
   private int MAX_MOTION = 100;
 
@@ -48,111 +47,6 @@ public class HorizVertSimpleDrive implements DriveInterface {
 	double angle = (Math.PI * 2.5 + Math.atan2(diff.y, diff.x)) % (Math.PI * 2);
 
 	return new VectorGeometry(radius, angle);
-  }
-
-  //polar coordinate origin calculator
-  public double[] goToOriginPolarCoord(Robot us, VectorGeometry origin)
-  {
-	double[] powerVec = {0.0, 0.0, 0.0, 0.0};
-
-	double ourAngle = us.location.direction;
-	ourAngle = (Math.PI + Math.PI *2 + ourAngle) % (Math.PI * 2);
-
-	VectorGeometry distToGoal = new VectorGeometry(origin.x - us.location.x, origin.y - us.location.y);
-
-	double expectedAngle = (Math.atan2(distToGoal.y, distToGoal.x) + Math.PI) % (Math.PI * 2);
-	double distToAngle = expectedAngle - ourAngle;
-	//System.out.println("EXP: " + expectedAngle);
-	//System.out.println("OUR: " + ourAngle);
-
-	if (Math.abs(distToAngle) < Math.PI / 10.0) return powerVec;
-
-	double k = 20.0 / Math.PI;
-	double powerConst = Math.max(20.0, Math.abs(distToAngle) * k);
-	double power = distToAngle < 0 ? -powerConst : powerConst;
-
-	for(int i = 0; i < powerVec.length; ++i)
-	  powerVec[i] = power;
-
-	return powerVec;
-  }
-
-  //polar coordinate angle calculator
-  public double[] goToRadiusPolarCoord(Robot us, VectorGeometry origin, double targetRadius)
-  {
-	//polar coords: (radius, angle)
-	VectorGeometry polarCoords = this.toPolarCoord(origin, us.location);
-
-	if(DEBUG_MODE)
-	  System.out.println("POlAR COORDS: " + polarCoords.toString());
-
-	double distToRadius = polarCoords.x - targetRadius;
-
-	if(DEBUG_MODE)
-	  System.out.println("DIST TO ANGLE: " + distToRadius);
-
-	//60.0
-	double powerConst = Math.max(60.0, 60.0 * (Math.abs(distToRadius) / 120.0));
-	double power = distToRadius < 0 ? powerConst : -powerConst;
-
-	double[] powerVec = {0, 0, power, -power};
-
-	return powerVec;
-  }
-
-  //polar coordinate angle calculator
-  public double[] goToAnglePolarCoord(Robot us, VectorGeometry origin, double targetAngle)
-  {
-	//polar coords: (radius, angle)
-	VectorGeometry polarCoords = this.toPolarCoord(origin, us.location);
-
-	if(DEBUG_MODE)
-	  System.out.println("POlAR COORDS: " + polarCoords.toString());
-
-	double distToAngle = polarCoords.y - targetAngle;
-
-	if(DEBUG_MODE)
-	  System.out.println("DIST TO ANGLE: " + distToAngle);
-
-	//60.0
-	double powerConst = Math.max(60.0, 60.0 * (distToAngle / Math.PI));
-	double power = distToAngle < 0 ? powerConst : -powerConst;
-
-	//front wheel runs slower relative to the radius
-	double wheelPowerFront =
-		(polarCoords.x - SIZE_OF_ROBOT_IN_PIXELS / 2) / (polarCoords.x + SIZE_OF_ROBOT_IN_PIXELS / 2)
-			* power;
-	//back wheel runs faster relative to the radius
-	double wheelPowerBack =
-		(polarCoords.x + SIZE_OF_ROBOT_IN_PIXELS / 2) / (polarCoords.x - SIZE_OF_ROBOT_IN_PIXELS / 2)
-			* power;
-	double[] powerVec = {-wheelPowerFront, wheelPowerBack, 0.0, 0.0};
-
-	return powerVec;
-  }
-
-  //merge all 3 drive dimensions
-  public double[] performPolarCoordPowerCalc(
-		  double[] originPower, double[] radiusPower, double[] anglePower,  double angleForRotatePriority)
-  {
-	double[] totalPowerDrive = new double[4];
-
-	for(int i = 0; i < 4; ++i) {
-	  // if not within 45 degrees of target only rotate
-	  if (Math.abs(angleForRotatePriority) > Math.PI / 2.0) {
-		totalPowerDrive[i] = originPower[i];
-	  } else {
-		totalPowerDrive[i] = (originPower[i] + radiusPower[i] + anglePower[i]) / 3.0;
-	  }
-
-	  if (totalPowerDrive[i] > 0) {
-		totalPowerDrive[i] += 40;
-	  } else if (totalPowerDrive[i] < 0) {
-		totalPowerDrive[i] -= 40;
-	  }
-	}
-
-	return totalPowerDrive;
   }
 
   public String robotInPath(VectorGeometry[] robots, double ourRadius,
@@ -230,84 +124,58 @@ public class HorizVertSimpleDrive implements DriveInterface {
 	  // if robot in the middle of diag4's path move next to the ball
       if(robotInPath(players, diag4PolarCoords.x, diag4PolarCoords.y, targetRadius, targetAngle) == "In front") {
 		System.out.println("GOING NEXT TO THE BALL");
-		actionTargetRadius = ballPolarCoords.x;
+		double actionTargetRadius = ballPolarCoords.x;
 		double a = 2 * Math.asin(radiusThreshold / (2.0 * ballPolarCoords.x));
-		actionTargetAngle = ballPolarCoords.y + (ballPolarCoords.y > Math.PI / 2.0 ? -a : a);
+		double actionTargetAngle = ballPolarCoords.y + (ballPolarCoords.y > Math.PI / 2.0 ? -a : a);
+		  polarNavigator.SetTargetState((float)actionTargetRadius, (float)actionTargetAngle);
 		return BallTrackState.GO_NEXT_TO_BALL;
 	  /* if robot in the middle of ball and enemy goal, block any passes by staying behind
          the ball */
       } else if(robotInPath(players, diag4PolarCoords.x, diag4PolarCoords.y, targetRadius, targetAngle) == "Behind") {
         System.out.println("GOING BEHIND BALL");
-        actionTargetRadius = ballPolarCoords.x + radiusThreshold;
-        actionTargetAngle = ballPolarCoords.y;
+		  double actionTargetRadius = ballPolarCoords.x + radiusThreshold;
+		  double actionTargetAngle = ballPolarCoords.y;
+		  polarNavigator.SetTargetState((float)actionTargetRadius, (float)actionTargetAngle);
         return BallTrackState.GO_BEHIND_BALL;
 	  // if we reach this stage path is clear
       } else {
 		System.out.println("GOING TO THE BALL");
-		actionTargetRadius = targetRadius;
-		actionTargetAngle = targetAngle;
+		  double actionTargetRadius = targetRadius;
+		  double actionTargetAngle = targetAngle;
+		  polarNavigator.SetTargetState((float)actionTargetRadius, (float)actionTargetAngle);
 		return BallTrackState.GO_TO_BALL;
 	  }
     /* case B: */
 	} else if(diag4PolarCoords.x > ballPolarCoords.x) {
 	  System.out.println("GOING BEHIND BALL");
-	  actionTargetRadius = ballPolarCoords.x + radiusThreshold;
-	  actionTargetAngle = ballPolarCoords.y;
+		double actionTargetRadius = ballPolarCoords.x + radiusThreshold;
+		double actionTargetAngle = ballPolarCoords.y;
+		polarNavigator.SetTargetState((float)actionTargetRadius, (float)actionTargetAngle);
 	  return BallTrackState.GO_BEHIND_BALL;
 	} else if (diag4PolarCoords.x < ballPolarCoords.x) {
 	  System.out.println("GOING NEXT TO THE BALL");
-	  actionTargetRadius = ballPolarCoords.x;
+		double actionTargetRadius = ballPolarCoords.x;
 	  double a = 2 * Math.asin(radiusThreshold / (2.0 * ballPolarCoords.x));
-	  actionTargetAngle = ballPolarCoords.y + (ballPolarCoords.y > Math.PI / 2.0 ? -a : a);
+		double actionTargetAngle = ballPolarCoords.y + (ballPolarCoords.y > Math.PI / 2.0 ? -a : a);
+		polarNavigator.SetTargetState((float)actionTargetRadius, (float)actionTargetAngle);
 	  return BallTrackState.GO_NEXT_TO_BALL;
 	} else {
 	  System.out.println("UNKNOWN STATE");
-	  actionTargetRadius = diag4PolarCoords.x;
-	  actionTargetAngle = diag4PolarCoords.y;
+		double actionTargetRadius = diag4PolarCoords.x;
+		double actionTargetAngle = diag4PolarCoords.y;
+		polarNavigator.SetTargetState((float)actionTargetRadius, (float)actionTargetAngle);
 	  return BallTrackState.UNKNOWN;
 	}
+
   }
 
   public double[] getActionBallTrackedState(Robot us, VectorGeometry origin, VectorGeometry ballPoint)
   {
-	//ballPoint = toPolarCoord(origin, ballPoint);
-	//System.out.println("BALL: " + ballPoint.y);
+	  CartesianCoordinate usCC = new CartesianCoordinate((float)us.location.x, (float)us.location.y);
+	  CartesianCoordinate originCC = new CartesianCoordinate((float)origin.x, (float)origin.y);
+	  PolarCoordinate usPC = PolarCoordinate.CartesianToPolar(usCC, originCC);
 
-	double[] powerToGoal = this.goToOriginPolarCoord(us, origin);
-
-	// HACK-------
-	double rotOffset = 0;
-	{
-	  double ourAngle = us.location.direction;
-	  ourAngle = (Math.PI + Math.PI * 2 + ourAngle) % (Math.PI * 2);
-
-	  VectorGeometry distToGoal = new VectorGeometry(origin.x - us.location.x, origin.y - us.location.y);
-
-	  double expectedAngle = (Math.atan2(distToGoal.y, distToGoal.x) + Math.PI) % (Math.PI * 2);
-	  rotOffset = expectedAngle - ourAngle;
-	}
-	// END OF HACK------
-
-	double[] powerToRadius = {0.0, 0.0, 0.0, 0.0};
-	double[] powerToAngle = {0.0, 0.0, 0.0, 0.0};
-
-	getBallTrackState(us, ballPoint, origin);
-	System.out.println("TARGET ANGLE:" + actionTargetAngle);
-	System.out.println("TARGET RADIUS:" + actionTargetRadius);
-
-
-	//drive our robot towards the target radius from the origin (enemy goal)
-	double targetRadius = actionTargetRadius;
-	powerToRadius = this.goToRadiusPolarCoord(us, origin, targetRadius);
-
-	//drive our robot towards the target angle from the origin (enemy goal)
-	double targetAngle = actionTargetAngle;
-	powerToAngle = this.goToAnglePolarCoord(us, origin, targetAngle);
-
-	//merge all power motions of the robot
-	double[] totalPowerDrive = performPolarCoordPowerCalc(powerToGoal, powerToRadius, powerToAngle, rotOffset);
-
-	return totalPowerDrive;
+	  return this.polarNavigator.TransformDrive4Wheel(usPC, us.location.direction);
   }
 
   @Override
