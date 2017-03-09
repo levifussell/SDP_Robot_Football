@@ -38,6 +38,10 @@ public class Diag4RobotPort extends RobotPort implements SpinnerKickRobotPort, F
     //this.sdpPort.commandSender("spinkick", spin, engaged);
   }
 
+  public void spamKick() {
+    this.sdpPort.commandSender("k");
+  }
+
   @Override
   public void receivedStringHandler(String portMessage)
   {
