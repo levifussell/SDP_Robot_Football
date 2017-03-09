@@ -26,7 +26,7 @@ public class HorizVertSimpleDrive implements DriveInterface {
     UNKNOWN
   }
 
-//  private BallTrackState ballTrackState = BallTrackState.UNKNOWN;
+  //  private BallTrackState ballTrackState = BallTrackState.UNKNOWN;
   private double actionTargetRadius = 0.0;
   private double actionTargetAngle = 0.0;
 
@@ -118,12 +118,12 @@ public class HorizVertSimpleDrive implements DriveInterface {
 
     //front wheel runs slower relative to the radius
     double wheelPowerFront =
-        (polarCoords.x - SIZE_OF_ROBOT_IN_PIXELS / 2) / (polarCoords.x + SIZE_OF_ROBOT_IN_PIXELS / 2)
-            * power;
+            (polarCoords.x - SIZE_OF_ROBOT_IN_PIXELS / 2) / (polarCoords.x + SIZE_OF_ROBOT_IN_PIXELS / 2)
+                    * power;
     //back wheel runs faster relative to the radius
     double wheelPowerBack =
-        (polarCoords.x + SIZE_OF_ROBOT_IN_PIXELS / 2) / (polarCoords.x - SIZE_OF_ROBOT_IN_PIXELS / 2)
-            * power;
+            (polarCoords.x + SIZE_OF_ROBOT_IN_PIXELS / 2) / (polarCoords.x - SIZE_OF_ROBOT_IN_PIXELS / 2)
+                    * power;
     double[] powerVec = {-wheelPowerFront, wheelPowerBack, 0.0, 0.0};
 
     return powerVec;
@@ -262,7 +262,8 @@ public class HorizVertSimpleDrive implements DriveInterface {
 
     //try to get our robot from the world
     Robot us = Strategy.world.getRobot(RobotType.FRIEND_2);
-    if (us == null) return;
+    if(us == null)
+      return;
 
     //our origin for the polar coordinates is the enemy goal always
     // (for now)
@@ -277,51 +278,51 @@ public class HorizVertSimpleDrive implements DriveInterface {
     commandPort = port;
 
     //always keep our robot rotated towards the goal
-    double[] powerToGoal = this.goToOriginPolarCoord(us, origin);
-
-    // HACK-------
-    double rotOffset = 0;
-    {
-      double ourAngle = us.location.direction;
-      ourAngle = (Math.PI + Math.PI * 2 + ourAngle) % (Math.PI * 2);
-
-      VectorGeometry distToGoal = new VectorGeometry(origin.x - us.location.x, origin.y - us.location.y);
-
-      double expectedAngle = (Math.atan2(distToGoal.y, distToGoal.x) + Math.PI) % (Math.PI * 2);
-      rotOffset = expectedAngle - ourAngle;
-    }
-    // END OF HACK------
-
-    //drive our robot towards the target radius from the origin (enemy goal)
-    double targetRadius = 120.0; //TODO: this is just a random radius for testing (future note: move robot away from ball and move behind)
-    double[] powerToRadius = this.goToRadiusPolarCoord(us, origin, targetRadius);
-
-    //drive our robot towards the target angle from the origin (enemy goal)
-    double targetAngle = Math.PI / 2; //TODO: this is just a random angle for testing (future note: move robot away from ball and move behind)
-    double[] powerToAngle = this.goToAnglePolarCoord(us, origin, targetAngle);
-
-    //merge all power motions of the robot
-    double[] totalPowerDrive = performPolarCoordPowerCalc(powerToGoal, powerToRadius, powerToAngle, rotOffset);
-      this.ballTrackState = getBallTrackState(us, ballPoint, origin);
+//    double[] powerToGoal = this.goToOriginPolarCoord(us, origin);
+//
+//    // HACK-------
+//    double rotOffset = 0;
+//    {
+//      double ourAngle = us.location.direction;
+//      ourAngle = (Math.PI + Math.PI * 2 + ourAngle) % (Math.PI * 2);
+//
+//      VectorGeometry distToGoal = new VectorGeometry(origin.x - us.location.x, origin.y - us.location.y);
+//
+//      double expectedAngle = (Math.atan2(distToGoal.y, distToGoal.x) + Math.PI) % (Math.PI * 2);
+//      rotOffset = expectedAngle - ourAngle;
+//    }
+//    // END OF HACK------
+//
+//    //drive our robot towards the target radius from the origin (enemy goal)
+//    double targetRadius = 120.0; //TODO: this is just a random radius for testing (future note: move robot away from ball and move behind)
+//    double[] powerToRadius = this.goToRadiusPolarCoord(us, origin, targetRadius);
+//
+//    //drive our robot towards the target angle from the origin (enemy goal)
+//    double targetAngle = Math.PI / 2; //TODO: this is just a random angle for testing (future note: move robot away from ball and move behind)
+//    double[] powerToAngle = this.goToAnglePolarCoord(us, origin, targetAngle);
+//
+//    //merge all power motions of the robot
+//    double[] totalPowerDrive = performPolarCoordPowerCalc(powerToGoal, powerToRadius, powerToAngle, rotOffset);
+//      this.ballTrackState = getBallTrackState(us, ballPoint, origin);
     //TODO: for now we don't use ball state but that's fine. Will fix this later
-      double[] totalPowerDrive = getActionBallTrackedState(us, origin, ballPoint);
-    for(int i = 0; i < 4; ++i) {
-      // if not within 45 degrees of target only rotate
-      if (Math.abs(rotOffset) > Math.PI / 2.0) {
-        totalPowerDrive[i] = powerToGoal[i];
-      } else {
-        totalPowerDrive[i] = (powerToGoal[i] + powerToRadius[i] + powerToAngle[i]) / 3.0;
-      }
-
-      if (totalPowerDrive[i] > 0) {
-        totalPowerDrive[i] += 40;
-      } else if (totalPowerDrive[i] < 0) {
-        totalPowerDrive[i] -= 40;
-      }
-    }
+    double[] totalPowerDrive = getActionBallTrackedState(us, origin, ballPoint);
+//    for(int i = 0; i < 4; ++i) {
+//      // if not within 45 degrees of target only rotate
+//      if (Math.abs(rotOffset) > Math.PI / 2.0) {
+//        totalPowerDrive[i] = powerToGoal[i];
+//      } else {
+//        totalPowerDrive[i] = (powerToGoal[i] + powerToRadius[i] + powerToAngle[i]) / 3.0;
+//      }
+//
+//      if (totalPowerDrive[i] > 0) {
+//        totalPowerDrive[i] += 40;
+//      } else if (totalPowerDrive[i] < 0) {
+//        totalPowerDrive[i] -= 40;
+//      }
+//    }
 
     //send drive to wheels
     ((FourWheelHolonomicRobotPort) port).
-        fourWheelHolonomicMotion(totalPowerDrive[0], totalPowerDrive[1], totalPowerDrive[2], totalPowerDrive[3]);
+            fourWheelHolonomicMotion(totalPowerDrive[0], totalPowerDrive[1], totalPowerDrive[2], totalPowerDrive[3]);
   }
 }
