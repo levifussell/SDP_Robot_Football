@@ -170,7 +170,7 @@ public class HorizVertSimpleDrive implements DriveInterface {
 		} else if(robot.x < targetRadius){
           whereIsTheRobot = "Behind";
         }
-	  } else if(targetAngleDiff <= angleThreshold || robotsAngleDiff <= angleThreshold) {
+	  } else if(robot.y < Math.max(ourAngle, targetAngle) && robot.y > Math.min(ourAngle, targetAngle)) {
         if(robot.x >= targetRadius && robot.x < ourRadius) {
           whereIsTheRobot = "In front";
         }
