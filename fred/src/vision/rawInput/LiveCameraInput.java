@@ -3,6 +3,7 @@ package vision.rawInput;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -18,6 +19,9 @@ import au.edu.jcu.v4l4j.VideoDevice;
 import au.edu.jcu.v4l4j.VideoFrame;
 import au.edu.jcu.v4l4j.exceptions.StateException;
 import au.edu.jcu.v4l4j.exceptions.V4L4JException;
+import backgroundSub.JinVision;
+import org.opencv.core.CvType;
+import org.opencv.core.Mat;
 import vision.constants.Constants;
 import vision.gui.Preview;
 import vision.gui.SDPConsole;
@@ -142,6 +146,10 @@ public class LiveCameraInput extends AbstractRawInput implements CaptureCallback
 			this.stop();
 			return;
 		}
+		byte[] data = ((DataBufferByte)image.getRaster().getDataBuffer()).getData();
+		Mat frame_jin = new Mat(image.getHeight(),image.getWidth(), CvType.CV_8UC3);
+		frame_jin.put(0,0,data);
+		JinVision jinVision = new JinVision(frame_jin);
 		this.listener.nextFrame(image, frame.getCaptureTime());
 		frame.recycle();
 	}

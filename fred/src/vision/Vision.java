@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
 
+import backgroundSub.OpenCVGUI;
 import vision.colorAnalysis.ColorCalibration;
 import vision.tools.CommandLineParser;
 import vision.distortion.Distortion;
@@ -71,7 +72,8 @@ public class Vision extends JFrame implements DynamicWorldListener {
 		
 		
 		tabbedPane.addTab("Input Selection", null, RawInput.rawInputMultiplexer, null);
-		tabbedPane.addTab("Color Calibration", null, ColorCalibration.colorCalibration, null);
+		//tabbedPane.addTab("Color Calibration", null, ColorCalibration.colorCalibration, null);
+		tabbedPane.addTab("Color Calibration", null, OpenCVGUI.opencvGUI, null);
 		tabbedPane.addTab("Distortion", null, Distortion.distortion, null);
 //		tabbedPane.addTab("Robots", null, RobotAnalysis.strategy.robots, null);
 		tabbedPane.addTab("Misc Settings", null,  MiscellaneousSettings.miscSettings, null);

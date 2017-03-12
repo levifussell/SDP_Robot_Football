@@ -1,10 +1,9 @@
 package strategy.actions.other;
 
 import communication.ports.interfaces.FourWheelHolonomicRobotPort;
-import communication.ports.interfaces.PropellerEquipedRobotPort;
 import strategy.actions.ActionException;
 import strategy.actions.ActionBase;
-import strategy.robots.Fred;
+import strategy.robots.Diag4;
 import strategy.robots.RobotBase;
 
 /**
@@ -16,7 +15,7 @@ public class Demo extends ActionBase {
 
     public Demo(RobotBase robot) {
         super(robot);
-        assert(robot instanceof Fred);
+        assert(robot instanceof Diag4);
         this.rawDescription = " Demo Action";
     }
 
