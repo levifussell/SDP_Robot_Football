@@ -1,26 +1,25 @@
 package vision;
 
-import java.awt.BorderLayout;
-import java.util.LinkedList;
-
-import javax.swing.JFrame;
-import javax.swing.JTabbedPane;
-
-import vision.colorAnalysis.ColorCalibration;
-import vision.tools.CommandLineParser;
+import vision.activeVision.ActiveVisionBase;
+import vision.activeVision.OctaveGui;
 import vision.distortion.Distortion;
 import vision.distortion.DistortionPreview;
 import vision.gui.MiscellaneousSettings;
 import vision.gui.Preview;
 import vision.gui.SDPConsole;
 import vision.rawInput.RawInput;
-import vision.robotAnalysis.newRobotAnalysis.NewRobotAnalysis;
-import vision.robotAnalysis.RobotPreview;
 import vision.robotAnalysis.DynamicWorldListener;
 import vision.robotAnalysis.RobotAnalysisBase;
+import vision.robotAnalysis.RobotPreview;
+import vision.robotAnalysis.newRobotAnalysis.NewRobotAnalysis;
 import vision.spotAnalysis.SpotAnalysisBase;
 import vision.spotAnalysis.approximatedSpotAnalysis.ApproximatedSpotAnalysis;
 import vision.spotAnalysis.recursiveSpotAnalysis.RecursiveSpotAnalysis;
+import vision.tools.CommandLineParser;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.LinkedList;
 
 /**
  * Created by Simon Rovder
@@ -68,10 +67,12 @@ public class Vision extends JFrame implements DynamicWorldListener {
 		Distortion.addDistortionListener(robotAnalysis);
 		robotAnalysis.addDynamicWorldListener(RobotPreview.preview);
 		robotAnalysis.addDynamicWorldListener(this);
-		
+
+		// Active vision listener
+		RawInput.addRawInputListener(new ActiveVisionBase());
 		
 		tabbedPane.addTab("Input Selection", null, RawInput.rawInputMultiplexer, null);
-		tabbedPane.addTab("Color Calibration", null, ColorCalibration.colorCalibration, null);
+		tabbedPane.addTab("Color Calibration", null, OctaveGui.octaveGui, null);
 		tabbedPane.addTab("Distortion", null, Distortion.distortion, null);
 //		tabbedPane.addTab("Robots", null, RobotAnalysis.strategy.robots, null);
 		tabbedPane.addTab("Misc Settings", null,  MiscellaneousSettings.miscSettings, null);

@@ -1,15 +1,9 @@
 package strategy;
 
+import communication.PortListener;
 import communication.ports.robotPorts.Diag4RobotPort;
-import strategy.actions.Behave;
-import strategy.actions.other.*;
-import strategy.actions.offense.OffensiveKick;
-import strategy.actions.offense.ShuntKick;
-import communication.ports.robotPorts.FredRobotPort;
 import strategy.points.basicPoints.*;
 import strategy.robots.Diag4;
-import strategy.robots.Fred;
-import communication.PortListener;
 import strategy.robots.RobotBase;
 import vision.*;
 
@@ -104,28 +98,13 @@ public class Strategy implements VisionListener, PortListener, ActionListener {
                 case "a":
                     diag4.setControllersActive(true);
                     break;
-                case "stop":
-                    diag4.ACTION_CONTROLLER.setAction(new Stop(diag4));
-                    break;
                 case "!":
-                    System.out.print("Action: ");
-                    System.out.print(diag4.ACTION_CONTROLLER.isActive());
                     System.out.print(" Motion: ");
                     System.out.print(diag4.MOTION_CONTROLLER.isActive());
                     System.out.print(" Propeller: ");
                     System.out.println(diag4.SPINNERKICK_CONTROLLER.isActive());
                     break;
-                case "?":
-                    diag4.ACTION_CONTROLLER.printDescription();
-                    break;
-                case "hold":
-                    diag4.ACTION_CONTROLLER.setAction(new HoldPosition(diag4, new MidFoePoint()));
-                    break;
-                case "kick":
-                    diag4.ACTION_CONTROLLER.setAction(new OffensiveKick(diag4));
-                    break;
                 case "h":
-                    diag4.ACTION_CONTROLLER.setAction(new Waiting(diag4));
                     diag4.MOTION_CONTROLLER.setDestination(null);
                     diag4.MOTION_CONTROLLER.setHeading(null);
                     port.halt();
@@ -135,38 +114,8 @@ public class Strategy implements VisionListener, PortListener, ActionListener {
                     diag4.SPINNERKICK_CONTROLLER.disengageSpinner(true);
                     diag4.SPINNERKICK_CONTROLLER.disengageSpinner(true);
                     diag4.SPINNERKICK_CONTROLLER.disengageSpinner(true);
-//                  port.spinnerKick(0, 0);
-//                  port.spinnerKick(0, 0);
-//                  port.spinnerKick(0, 0);
-                    break;
-                case "reset":
-                    diag4.ACTION_CONTROLLER.setAction(new Goto(diag4, new ConstantPoint(0,0)));
-                    break;
-                case "remote":
-                    System.out.println(diag4.ACTION_CONTROLLER.isActive());
-                    diag4.ACTION_CONTROLLER.setAction(new RemoteControl(diag4));
-                    break;
-                case "behave":
-                    Status.fixedBehaviour = null;
-                    diag4.ACTION_CONTROLLER.setAction(new Behave(diag4));
-                    break;
-                case "AUTO":
-                    Status.fixedBehaviour = null;
-                    break;
-                case "safe":
-                    diag4.ACTION_CONTROLLER.setAction(new GoToSafeLocation(diag4));
-                    break;
-                case "shunt":
-                    diag4.ACTION_CONTROLLER.setAction(new ShuntKick(diag4));
-                    break;
-                case "demo":
-                    diag4.ACTION_CONTROLLER.setAction(new Demo(diag4));
-                    break;
-                case "def":
-                    diag4.ACTION_CONTROLLER.setAction(new DefendGoal(diag4));
                     break;
                 case "annoy":
-                    diag4.ACTION_CONTROLLER.setAction(null);
                     diag4.MOTION_CONTROLLER.setDestination(new InFrontOfRobot(RobotAlias.FELIX));
                     diag4.MOTION_CONTROLLER.setHeading(new RobotPoint(RobotAlias.FELIX));
                     break;
@@ -175,10 +124,6 @@ public class Strategy implements VisionListener, PortListener, ActionListener {
                     diag4.SPINNERKICK_CONTROLLER.disengageSpinner(true);
                     diag4.SPINNERKICK_CONTROLLER.disengageSpinner(true);
                     diag4.SPINNERKICK_CONTROLLER.disengageSpinner(true);
-//                    ((FredRobotPort) fred.port).propeller(0);
-//                    ((FredRobotPort) fred.port).propeller(0);
-//                    ((FredRobotPort) fred.port).propeller(0);
-                    diag4.ACTION_CONTROLLER.setActive(false);
                     diag4.MOTION_CONTROLLER.setDestination(new Rotate());
                     diag4.MOTION_CONTROLLER.setHeading(new BallPoint());
                     break;
@@ -187,9 +132,6 @@ public class Strategy implements VisionListener, PortListener, ActionListener {
                     diag4.SPINNERKICK_CONTROLLER.setActive(!act);
                     if(!act){
                         diag4.SPINNERKICK_CONTROLLER.disengageSpinner(true);
-//                        ((FredRobotPort) fred.port).propeller(0);
-//                        ((FredRobotPort) fred.port).propeller(0);
-//                        ((FredRobotPort) fred.port).propeller(0);
                     }
                     System.out.println(diag4.SPINNERKICK_CONTROLLER.isActive());
                     break;

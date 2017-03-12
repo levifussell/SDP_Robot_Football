@@ -2,7 +2,6 @@ package strategy.robots;
 
 import communication.ports.robotPorts.Diag4RobotPort;
 import strategy.controllers.diag4.SpinnerKickController;
-import strategy.drives.FourWheelHolonomicDrive;
 import strategy.drives.HorizVertSimpleDrive;
 import vision.RobotType;
 

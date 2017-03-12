@@ -23,8 +23,8 @@ public class Preview extends JFrame implements RawInputListener{
 	
 	public final static Preview preview = new Preview();
 	private ArrayList<PreviewSelectionListener> listeners;
-	private BufferedImage drawnImage;
-	private BufferedImage originalImage;
+	public BufferedImage drawnImage;
+	public BufferedImage originalImage;
 	
 	public JLabel imageLabel;
 	
@@ -32,7 +32,7 @@ public class Preview extends JFrame implements RawInputListener{
 		super("Preview");
 		
 		this.listeners = new ArrayList<PreviewSelectionListener>();
-		
+
 		this.setSize(Constants.INPUT_WIDTH, Constants.INPUT_HEIGHT + 20);
 		this.setResizable(false);
 		this.imageLabel = new JLabel();
@@ -42,6 +42,16 @@ public class Preview extends JFrame implements RawInputListener{
 	        @Override
 	        public void mouseClicked(MouseEvent e) {
 	            Preview.selection(e.getX(), e.getY());
+				if(Preview.preview.originalImage != null) {
+					Color c = new Color(255, 255, 255);
+					for(int i = 0; i < 100; ++i)
+					{
+						for(int j = 0; j < 100; ++j)
+						{
+							Preview.preview.originalImage.setRGB(i, j, c.getRGB());
+						}
+					}
+				}
 	        }
 
 			@Override
@@ -83,7 +93,7 @@ public class Preview extends JFrame implements RawInputListener{
 	private static void selection(int x, int y){
 		
 		if(Preview.preview.originalImage == null) return;
-		
+
 		ColoredPoint cp = new ColoredPoint(x, y, new Color(Preview.preview.originalImage.getRGB(x, y)));
 		for(PreviewSelectionListener psl : Preview.preview.listeners){
 			psl.previewClickHandler(cp);

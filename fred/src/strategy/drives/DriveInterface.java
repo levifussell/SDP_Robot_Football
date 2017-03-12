@@ -1,8 +1,6 @@
 package strategy.drives;
 
 import communication.ports.interfaces.RobotPort;
-import vision.tools.DirectedPoint;
-import vision.tools.VectorGeometry;
 
 /**
  * Created by Simon Rovder
@@ -19,10 +17,6 @@ public interface DriveInterface {
      * instance into your robot's 'drive' variable.
      *
      * @param port The sdpPort of the robot that is to be moved.
-     * @param location The location of the robot as found in the DynamicWorld
-     * @param force The force acting on the robot (absolute direction in which it is supposed to move
-     * @param rotation Rotational offset from the point the robot is to be facing
-     * @param factor The required speed of motion.
      */
-    void move(RobotPort port, DirectedPoint location, VectorGeometry force, double rotation, double factor);
+    void move(RobotPort port);
 }

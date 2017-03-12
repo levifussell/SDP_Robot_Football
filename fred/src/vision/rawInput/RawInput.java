@@ -1,15 +1,13 @@
 package vision.rawInput;
 
-import vision.constants.Constants;
-import vision.gui.Preview;
-import vision.gui.SDPConsole;
 
-import java.awt.BorderLayout;
+import imageprocessing.java.CurrentVision;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.LinkedList;
 
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
 /**
  * Created by Simon Rovder
  */
@@ -59,6 +57,8 @@ public class RawInput extends JPanel{
 		for(RawInputInterface input : this.rawInputs){
 			input.stop();
 		}
+
+		CurrentVision.endOctaveProcess();
 	}
 
 	public void setVideoChannel(int port){

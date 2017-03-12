@@ -2,19 +2,10 @@ package strategy.controllers.essentials;
 
 import strategy.Strategy;
 import strategy.controllers.ControllerBase;
-import strategy.navigation.NavigationInterface;
-import strategy.navigation.Obstacle;
 import strategy.points.DynamicPoint;
-import strategy.navigation.aStarNavigation.AStarNavigation;
-import strategy.navigation.potentialFieldNavigation.PotentialFieldNavigation;
 import strategy.robots.RobotBase;
-import strategy.GUI;
 import vision.Robot;
 import vision.RobotType;
-import vision.tools.DirectedPoint;
-import vision.tools.VectorGeometry;
-
-import java.util.LinkedList;
 
 /**
  * Created by Simon Rovder
@@ -26,8 +17,6 @@ public class MotionController extends ControllerBase {
     private DynamicPoint destination = null;
 
     private int tolerance;
-
-    private LinkedList<Obstacle> obstacles = new LinkedList<Obstacle>();
 
     public MotionController(RobotBase robot) {
         super(robot);
@@ -53,18 +42,11 @@ public class MotionController extends ControllerBase {
         this.heading = dir;
     }
 
-    public void addObstacle(Obstacle obstacle){
-        this.obstacles.add(obstacle);
-    }
-
-    public void clearObstacles(){
-        this.obstacles.clear();
-    }
-
     public void perform(){
         if(this.mode == MotionMode.OFF) return;
 
 
+<<<<<<< HEAD
 //        NavigationInterface navigation;
 //
 //        VectorGeometry heading = null;
@@ -153,5 +135,8 @@ public class MotionController extends ControllerBase {
 
         this.robot.drive.move(this.robot.port, target, ourRobotLocation, rotation, factor);
 
+=======
+        this.robot.drive.move(this.robot.port);
+>>>>>>> 1f3673266cbedaac1e44fae73e8bc03510da1625
     }
 }
