@@ -10,11 +10,18 @@ import java.util.List;
  */
 public class JinVision {
     private Mat origin_Field;
-    private Mat plate_Background = Imgcodecs.imread(getClass().getResource("backgroundSub/img/plate.png").getPath());
+    private Mat plate_Background = Imgcodecs.imread(getClass().getResource("img/plate.png").getPath());
+    public Mat field_background = Imgcodecs.imread(getClass().getResource("img/0_0.jpeg").getPath());
+    public Mat field = Imgcodecs.imread(getClass().getResource("img/4_0.jpeg").getPath());
     private FieldSub fieldSub;
-    private PlateSub plateSub = new PlateSub(false,plate_Background);
+    private PlateSub plateSub = new PlateSub(true,plate_Background);
     private int counter = 0;
     private List<String> detected_robot;
+
+    public JinVision()
+    {
+        this.origin_Field = field_background;
+    }
 
     public JinVision(Mat origin_Field)
     {
@@ -23,13 +30,14 @@ public class JinVision {
 
     public void image_Processing(Mat frame)
     {
-        fieldSub = new FieldSub(false,origin_Field);
-        List<Rect> plate_position = fieldSub.image_processing(frame);
+        fieldSub = new FieldSub(true,origin_Field);
+        List<Rect> plate_position = fieldSub.image_processing(field);
         for(int i = 0; i < plate_position.size(); i++)
         {
-            Mat plate_image = new Mat(frame,plate_position.get(i));
+            Mat plate_image = new Mat(field,plate_position.get(i));
             detected_robot = plateSub.image_processing(plate_image);
+            System.out.println(detected_robot);
         }
-        System.out.print(detected_robot);
     }
+
 }

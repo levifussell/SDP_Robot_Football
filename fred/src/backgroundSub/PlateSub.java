@@ -1,9 +1,9 @@
 package backgroundSub;
 
-import com.atul.JavaOpenCV.Imshow;
 import org.opencv.core.*;
 import org.opencv.imgproc.Imgproc;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -12,25 +12,29 @@ import java.util.List;
 public class PlateSub implements BackGroundSub {
 
     private Boolean DEBUG;
-    private Mat originalImage,filter_image;
-    private ColourContain cp;
-    private List<String> colour_plate;
-    public Mat currentGray,backgroundGray,frameDelta,thresh;
-    public List<MatOfPoint> cnts;
-    public List<Rect> position_plate;
+    private Mat originalImage = new Mat();
+    private ColourContain cp = new ColourContain(true);
+    private List<String> colour_plate = new ArrayList<String>();
+    public Mat currentGray = new Mat(),backgroundGray = new Mat(),frameDelta = new Mat(),thresh = new Mat();
+    public List<MatOfPoint> cnts = new ArrayList<MatOfPoint>();
+    public List<Rect> position_plate = new ArrayList<Rect>();
     public Size size = new Size(1,1);
 
     public PlateSub(Boolean DEBUG,Mat originalImage)
     {
         this.DEBUG = DEBUG;
-        this.originalImage = originalImage;
+        Imgproc.resize(originalImage,this.originalImage,new Size(30,30));
     }
 
     @Override
     public List<String> image_processing(Mat frame) {
+        Mat filter_image = new Mat(30, 30, CvType.CV_8UC3, new Scalar(0,0,0));
+
+        Mat resized_frame = new Mat();
+        Imgproc.resize(frame,resized_frame,new Size(30,30));
 
 
-        Imgproc.cvtColor(frame, currentGray, Imgproc.COLOR_BGR2GRAY);
+        Imgproc.cvtColor(resized_frame, currentGray, Imgproc.COLOR_BGR2GRAY);
         Imgproc.GaussianBlur(currentGray, currentGray, size, 0);
 
         Imgproc.cvtColor(this.originalImage, backgroundGray, Imgproc.COLOR_BGR2GRAY);
@@ -43,7 +47,7 @@ public class PlateSub implements BackGroundSub {
             imshow2.showImage(backgroundGray);
         }
 
-        Imgproc.accumulateWeighted(currentGray, backgroundGray, 0.5);
+//        Imgproc.accumulateWeighted(currentGray, backgroundGray, 0.5);
         Core.convertScaleAbs(backgroundGray, backgroundGray);
         Core.absdiff(backgroundGray, currentGray, frameDelta);
 
@@ -72,13 +76,17 @@ public class PlateSub implements BackGroundSub {
             {
                 if(thresh.get(j,i)[0] == 255)
                 {
-                    filter_image.put(j,i,thresh.get(j,i));
+                    filter_image.put(j,i,resized_frame.get(j,i));
                 }
             }
         }
+        if(this.DEBUG)
+        {
+            Imshow imshow6 = new Imshow("filter image");
+            imshow6.showImage(filter_image);
+        }
 
         colour_plate = cp.colour_contain(filter_image);
-
 
         return colour_plate;
     }

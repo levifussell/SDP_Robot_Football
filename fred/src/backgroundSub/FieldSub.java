@@ -4,12 +4,12 @@ import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.core.Size;
-import com.atul.JavaOpenCV.Imshow;
 import org.opencv.core.Point;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -18,10 +18,10 @@ import java.util.List;
 public class FieldSub implements BackGroundSub {
 
     private Boolean DEBUG;
-    private Mat originalImage;
-    public Mat currentGray,backgroundGray,frameDelta,thresh;
-    public List<MatOfPoint> cnts;
-    public List<Rect> position_plate;
+    private Mat originalImage = new Mat();
+    public Mat currentGray = new Mat(),backgroundGray = new Mat(),frameDelta = new Mat(),thresh = new Mat();
+    public List<MatOfPoint> cnts = new ArrayList<MatOfPoint>();
+    public List<Rect> position_plate = new ArrayList<Rect>();
     public Size size = new Size(11,11);
     public Scalar scalar = new Scalar(0,255,0);
 
@@ -47,7 +47,7 @@ public class FieldSub implements BackGroundSub {
              imshow2.showImage(backgroundGray);
          }
 
-         Imgproc.accumulateWeighted(currentGray,backgroundGray,0.5);
+         //Imgproc.accumulateWeighted(currentGray,backgroundGray,0.5);
          Core.convertScaleAbs(backgroundGray,backgroundGray);
          Core.absdiff(backgroundGray,currentGray,frameDelta);
 
@@ -65,7 +65,7 @@ public class FieldSub implements BackGroundSub {
              imshow4.showImage(thresh);
          }
 
-         Imgproc.dilate(thresh,thresh,new Mat(),new Point(-1,-1),4);
+         Imgproc.dilate(thresh,thresh,new Mat(),new Point(-1,-1),5);
 
         if(this.DEBUG)
         {
@@ -96,7 +96,7 @@ public class FieldSub implements BackGroundSub {
     {
         for(int i = 0; i < cnts.size();i++)
         {
-            if(Imgproc.contourArea(cnts.get(i)) > 1500)
+            if(Imgproc.contourArea(cnts.get(i)) > 2200)
             {
                 return true;
             }
