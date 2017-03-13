@@ -19,7 +19,7 @@ public class FieldSub implements BackGroundSub {
 
     private Boolean DEBUG;
     private Mat originalImage;
-    public Mat currentGray,backgroundGray,frameDelta,thresh;
+    public Mat currentGray = new Mat(),backgroundGray = new Mat(),frameDelta = new Mat(),thresh = new Mat();
     public List<MatOfPoint> cnts;
     public List<Rect> position_plate;
     public Size size = new Size(11,11);
@@ -33,7 +33,7 @@ public class FieldSub implements BackGroundSub {
 
     @Override
     public List<Rect> image_processing(Mat frame) {
-         Imgproc.cvtColor(frame,currentGray,Imgproc.COLOR_BGR2GRAY);
+         Imgproc.cvtColor(frame,this.currentGray,Imgproc.COLOR_BGR2GRAY);
          Imgproc.GaussianBlur(currentGray,currentGray,size,0);
 
          Imgproc.cvtColor(this.originalImage,backgroundGray,Imgproc.COLOR_BGR2GRAY);

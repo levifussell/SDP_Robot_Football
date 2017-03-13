@@ -11,6 +11,7 @@ import javax.swing.JLabel;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.tree.ExpandVetoException;
 
 import au.edu.jcu.v4l4j.CaptureCallback;
 import au.edu.jcu.v4l4j.FrameGrabber;
@@ -42,6 +43,9 @@ public class LiveCameraInput extends AbstractRawInput implements CaptureCallback
 	private JTextField port;
 	
 	private JComboBox<CameraChooser> choice;
+
+	private static boolean check = true;
+	private JinVision jinVision;
     
 	private CameraChooser choosers[] = {
 			  new CameraChooser("STANDARD_PAL",    (short) V4L4JConstants.STANDARD_PAL),
@@ -146,10 +150,33 @@ public class LiveCameraInput extends AbstractRawInput implements CaptureCallback
 			this.stop();
 			return;
 		}
-		byte[] data = ((DataBufferByte)image.getRaster().getDataBuffer()).getData();
-		Mat frame_jin = new Mat(image.getHeight(),image.getWidth(), CvType.CV_8UC3);
-		frame_jin.put(0,0,data);
-		JinVision jinVision = new JinVision(frame_jin);
+
+//		try {
+
+			System.out.print("test4");
+			Mat out = new Mat(image.getHeight(), image.getWidth(), CvType.CV_8UC3);
+			System.out.print("test1");
+			byte[] data = new byte[image.getWidth() * image.getHeight() * (int) out.elemSize()];
+			System.out.print("test2");
+			int[] dataBuff = image.getRGB(0, 0, image.getWidth(), image.getHeight(), null, 0, image.getWidth());
+			System.out.print("test3");
+			for (int i = 0; i < dataBuff.length; i++) {
+				data[i * 3] = (byte) ((dataBuff[i]));
+				data[i * 3 + 1] = (byte) ((dataBuff[i]));
+				data[i * 3 + 2] = (byte) ((dataBuff[i]));
+			}
+			out.put(0, 0, data);
+			if (check == true) {
+				System.out.print("test");
+				jinVision = new JinVision(out);
+				check = false;
+			}
+			jinVision.image_Processing(out);
+//		}
+//		catch(Exception e)
+//		{
+//			System.out.println("CAUGHT: " + e.toString());
+//		}
 		this.listener.nextFrame(image, frame.getCaptureTime());
 		frame.recycle();
 	}

@@ -1,6 +1,9 @@
 package strategy;
 
 import communication.ports.robotPorts.Diag4RobotPort;
+import org.opencv.core.Core;
+import org.opencv.core.CvType;
+import org.opencv.core.Mat;
 import strategy.actions.Behave;
 import strategy.actions.other.*;
 import strategy.actions.offense.OffensiveKick;
@@ -220,6 +223,8 @@ public class Strategy implements VisionListener, PortListener, ActionListener {
      * @param args
      */
     public static void main(String[] args) {
+        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+//        Mat image = new Mat(100, 100, 0);
         new Strategy(args);
     }
 
