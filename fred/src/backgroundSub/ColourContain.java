@@ -11,23 +11,42 @@ import java.util.List;
  * Created by jinhong on 09/03/2017.
  */
 public class ColourContain {
-    private List<String> colour_plate;
-    private Mat hsv,mask,thresh,nonZeroCoordinates;
-    private List<MatOfPoint> cnts;
-    private List<Rect> position_circle;
-    private HashMap<String,ArrayList<Scalar>> boundaries;
+    private List<String> colour_plate = new ArrayList<String>();
+    private Mat hsv = new Mat(),mask = new Mat(),thresh = new Mat(),nonZeroCoordinates = new Mat();
+    private List<MatOfPoint> cnts = new ArrayList<MatOfPoint>();
+    private List<Rect> position_circle = new ArrayList<Rect>();
+    private HashMap<String,ArrayList<Scalar>> boundaries = new HashMap<String,ArrayList<Scalar>>();
+    private List<String> color = new ArrayList<String>();
     private Scalar scalar = new Scalar(0,255,0);
+    private OpenCVGUI openCVGUI;
+    private boolean Debug;
 
-    public ColourContain(){}
+    public ColourContain(boolean Debug)
+    {
+        color.add("red");
+        color.add("yellow");
+        color.add("blue");
+        color.add("green");
+        this.Debug = Debug;
+        openCVGUI = new OpenCVGUI();
+
+    }
 
     public List<String> colour_contain(Mat image)
     {
+        getColourRange();
         for(int i = 0; i < boundaries.size(); i++)
         {
             Imgproc.cvtColor(image,hsv,Imgproc.COLOR_BGR2HSV);
-            Core.inRange(hsv,boundaries.get("").get(0),boundaries.get("").get(1),mask);
+            Core.inRange(hsv,boundaries.get(color.get(i)).get(0),boundaries.get(color.get(i)).get(1),mask);
 
             Imgproc.erode(mask,thresh,new Mat(),new Point(-1,-1),1);
+
+            if(this.Debug)
+            {
+                Imshow imshow = new Imshow("mask" + color.get(i));
+                imshow.showImage(thresh);
+            }
 
             Imgproc.findContours(thresh,cnts,new Mat(),Imgproc.RETR_EXTERNAL,Imgproc.CHAIN_APPROX_SIMPLE);
             Core.findNonZero(mask,nonZeroCoordinates);
@@ -35,11 +54,11 @@ public class ColourContain {
             {
                 if(cnts.size() > 1)
                 {
-                    colour_plate.add(boundaries.keySet() + "3");
+                    colour_plate.add(color.get(i) + "3");
                 }
                 else
                 {
-                    colour_plate.add("");
+                    colour_plate.add(color.get(i));
                     Rect rect = Imgproc.boundingRect(cnts.get(0));
                     position_circle.add(rect);
                 }
@@ -72,6 +91,28 @@ public class ColourContain {
         }
 
         return colour_plate;
+    }
+    public void getColourRange()
+    {
+        ArrayList<Scalar> red = new ArrayList<Scalar>();
+        red.add(openCVGUI.getRedLower());
+        red.add(openCVGUI.getRedUpper());
+        boundaries.put("red",red);
+
+        ArrayList<Scalar> yellow = new ArrayList<Scalar>();
+        yellow.add(openCVGUI.getYellowLower());
+        yellow.add(openCVGUI.getYellowUpper());
+        boundaries.put("yellow",yellow);
+
+        ArrayList<Scalar> blue = new ArrayList<Scalar>();
+        blue.add(openCVGUI.getBlueLower());
+        blue.add(openCVGUI.getBlueUpper());
+        boundaries.put("blue",blue);
+
+        ArrayList<Scalar> green = new ArrayList<Scalar>();
+        green.add(openCVGUI.getGreenLower());
+        green.add(openCVGUI.getGreenUpper());
+        boundaries.put("green",green);
     }
 
 }
