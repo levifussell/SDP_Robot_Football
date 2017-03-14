@@ -1,14 +1,12 @@
 package strategy.drives;
 
-import PolarCoordNavigation.Coordinates.CartesianCoordinate;
 import PolarCoordNavigation.Coordinates.PolarCoordinate;
 import PolarCoordNavigation.PolarNavigator;
 import communication.ports.interfaces.FourWheelHolonomicRobotPort;
 import communication.ports.interfaces.RobotPort;
 import communication.ports.robotPorts.Diag4RobotPort;
 import strategy.Strategy;
-import strategy.points.basicPoints.BallPoint;
-import strategy.points.basicPoints.EnemyGoal;
+import strategy.points.ImportantPoints;
 import vision.Robot;
 import vision.RobotType;
 
@@ -27,7 +25,7 @@ public class HorizVertSimpleDrive implements DriveInterface {
 	UNKNOWN
   }
 
-	PolarNavigator polarNavigator;
+	PolarNavigator polarNavigator = new PolarNavigator();
 
   private static final boolean DEBUG_MODE = true;
 
@@ -57,22 +55,14 @@ public class HorizVertSimpleDrive implements DriveInterface {
 	  return whereIsTheRobot;
   }
 
-  public BallTrackState getBallTrackState(CartesianCoordinate usPosition, CartesianCoordinate ballPoint, CartesianCoordinate origin)
+  public BallTrackState getBallTrackState()
   {
-	// get other robots
-	Robot friend = Strategy.world.getRobot(RobotType.FRIEND_1);
-	  CartesianCoordinate friendCC = new CartesianCoordinate((float)friend.location.x, (float)friend.location.y);
-	Robot foe1 = Strategy.world.getRobot(RobotType.FOE_1);
-	  CartesianCoordinate foe1CC = new CartesianCoordinate((float)foe1.location.x, (float)foe1.location.y);
-	Robot foe2 = Strategy.world.getRobot(RobotType.FOE_2);
-	  CartesianCoordinate foe2CC = new CartesianCoordinate((float)foe2.location.x, (float)foe2.location.y);
-
 	//convert the robots and ball position to polar coords
-	  PolarCoordinate diag4PolarCoords = PolarCoordinate.CartesianToPolar(origin, usPosition);
-	  PolarCoordinate friendPolarCoords = PolarCoordinate.CartesianToPolar(origin, friendCC);
-	  PolarCoordinate foe1PolarCoords = PolarCoordinate.CartesianToPolar(origin, foe1CC);
-	  PolarCoordinate foe2PolarCoords = PolarCoordinate.CartesianToPolar(origin, foe2CC);
-	  PolarCoordinate ballPolarCoords = PolarCoordinate.CartesianToPolar(origin, ballPoint);
+	  PolarCoordinate diag4PolarCoords = ImportantPoints.getRobotPolar(RobotType.FRIEND_2);
+	  PolarCoordinate friendPolarCoords = ImportantPoints.getRobotPolar(RobotType.FRIEND_1);
+	  PolarCoordinate foe1PolarCoords = ImportantPoints.getRobotPolar(RobotType.FOE_1);
+	  PolarCoordinate foe2PolarCoords = ImportantPoints.getRobotPolar(RobotType.FOE_2);
+	  PolarCoordinate ballPolarCoords = ImportantPoints.getBallPolar();
 
 	  PolarCoordinate[] players = {friendPolarCoords, foe1PolarCoords, foe2PolarCoords};
 	//TODO: instead of doing diff of angle and then diff of radius,
@@ -95,6 +85,13 @@ public class HorizVertSimpleDrive implements DriveInterface {
 	final double angleThreshold2 = Math.PI / 40;
 	//-----------------------------------
 
+	  //FOR TESTING IF THE ROBOT GOES TO THE BALL---
+//	  PolarCoordinate ballTarget = ImportantPoints.getBallPolar();
+//	  polarNavigator.SetTargetState(ballTarget.getRadius(), ballTarget.getAngle());
+//	  if(ballTarget != null)
+//	  	return BallTrackState.UNKNOWN;
+	  //------------
+
 	//kicking
 	if (angleDiffAbs <= angleThreshold2
 			&& diag4PolarCoords.getRadius() - ballPolarCoords.getRadius() < 25
@@ -108,30 +105,33 @@ public class HorizVertSimpleDrive implements DriveInterface {
 	if (angleDiffAbs < angleThreshold2 && diag4PolarCoords.getRadius() > ballPolarCoords.getRadius()) {
 	  double targetRadius = ballPolarCoords.getRadius() - radiusOffset;
 	  double targetAngle = ballPolarCoords.getAngle();
+		polarNavigator.SetTargetState((float)targetRadius, (float)targetAngle);
 	  // if robot in the middle of diag4's path move next to the ball
-      if(robotInPath(players, diag4PolarCoords.getRadius(), diag4PolarCoords.getAngle(), targetRadius, targetAngle) == "In front") {
-		System.out.println("GOING NEXT TO THE BALL");
-		double actionTargetRadius = ballPolarCoords.getRadius();
-		double a = 2 * Math.asin(radiusThreshold / (2.0 * ballPolarCoords.getRadius()));
-		double actionTargetAngle = ballPolarCoords.getAngle() + (ballPolarCoords.getAngle() > Math.PI / 2.0 ? -a : a);
-		  polarNavigator.SetTargetState((float)actionTargetRadius, (float)actionTargetAngle);
-		return BallTrackState.GO_NEXT_TO_BALL;
-	  /* if robot in the middle of ball and enemy goal, block any passes by staying behind
-         the ball */
-      } else if(robotInPath(players, diag4PolarCoords.getRadius(), diag4PolarCoords.getAngle(), targetRadius, targetAngle) == "Behind") {
-        System.out.println("GOING BEHIND BALL");
-		  double actionTargetRadius = ballPolarCoords.getRadius() + radiusThreshold;
-		  double actionTargetAngle = ballPolarCoords.getAngle();
-		  polarNavigator.SetTargetState((float)actionTargetRadius, (float)actionTargetAngle);
-        return BallTrackState.GO_BEHIND_BALL;
-	  // if we reach this stage path is clear
-      } else {
+//      if(robotInPath(players, diag4PolarCoords.getRadius(), diag4PolarCoords.getAngle(), targetRadius, targetAngle) == "In front") {
+////		System.out.println("GOING NEXT TO THE BALL");
+//		double actionTargetRadius = ballPolarCoords.getRadius();
+//		double a = 2 * Math.asin(radiusThreshold / (2.0 * ballPolarCoords.getRadius()));
+//		double actionTargetAngle = ballPolarCoords.getAngle() + (ballPolarCoords.getAngle() > Math.PI / 2.0 ? -a : a);
+//		  polarNavigator.SetTargetState((float)actionTargetRadius, (float)actionTargetAngle);
+//		return BallTrackState.GO_NEXT_TO_BALL;
+//	  /* if robot in the middle of ball and enemy goal, block any passes by staying behind
+//         the ball */
+//      } else if(robotInPath(players, diag4PolarCoords.getRadius(), diag4PolarCoords.getAngle(), targetRadius, targetAngle) == "Behind") {
+////        System.out.println("GOING BEHIND BALL");
+//		  double actionTargetRadius = ballPolarCoords.getRadius() + radiusThreshold;
+//		  double actionTargetAngle = ballPolarCoords.getAngle();
+//		  polarNavigator.SetTargetState((float)actionTargetRadius, (float)actionTargetAngle);
+//        return BallTrackState.GO_BEHIND_BALL;
+//	  // if we reach this stage path is clear
+//      } else {
+////		System.out.println("GOING TO THE BALL");
+//		  double actionTargetRadius = targetRadius;
+//		  double actionTargetAngle = targetAngle;
+//		  polarNavigator.SetTargetState((float)actionTargetRadius, (float)actionTargetAngle);
+//		return BallTrackState.GO_TO_BALL;
+//	  }
 		System.out.println("GOING TO THE BALL");
-		  double actionTargetRadius = targetRadius;
-		  double actionTargetAngle = targetAngle;
-		  polarNavigator.SetTargetState((float)actionTargetRadius, (float)actionTargetAngle);
-		return BallTrackState.GO_TO_BALL;
-	  }
+		return  BallTrackState.GO_TO_BALL;
     /* case B: */
 	} else if(diag4PolarCoords.getRadius() > ballPolarCoords.getRadius()) {
 	  System.out.println("GOING BEHIND BALL");
@@ -156,13 +156,12 @@ public class HorizVertSimpleDrive implements DriveInterface {
 
   }
 
-  public double[] getActionBallTrackedState(CartesianCoordinate usPosition, double usAngleDirection, CartesianCoordinate origin, CartesianCoordinate ballPoint)
+  public double[] getActionBallTrackedState(double usAngleDirection)
   {
-	  getBallTrackState(usPosition, ballPoint, origin);
+	  getBallTrackState();
 
-	  PolarCoordinate usPC = PolarCoordinate.CartesianToPolar(usPosition, origin);
-
-	  return this.polarNavigator.TransformDrive4Wheel(usPC, usAngleDirection);
+	  return this.polarNavigator.TransformDrive4Wheel(
+			  ImportantPoints.getRobotPolar(RobotType.FRIEND_2), usAngleDirection);
   }
 
   @Override
@@ -175,24 +174,17 @@ public class HorizVertSimpleDrive implements DriveInterface {
 
 	//try to get our robot from the world
 	Robot us = Strategy.world.getRobot(RobotType.FRIEND_2);
-	if(us == null)
-	  return;
+	if(us == null) {
+		return;
+	}
 
-	  CartesianCoordinate usPosition = new CartesianCoordinate((float)us.location.x, (float)us.location.y);
-
-	//our origin for the polar coordinates is the enemy goal always
-	// (for now)
-	EnemyGoal enem = new EnemyGoal();
-	enem.recalculate();
-	  CartesianCoordinate origin = new CartesianCoordinate((float)enem.getX(), (float)enem.getY());
-
-	BallPoint ballP = new BallPoint();
-	ballP.recalculate();
-	  CartesianCoordinate ballPoint = new CartesianCoordinate((float)ballP.getX(), (float)ballP.getY());
+	//FIRST WE UPDATE OUR ORIGIN OF POLAR COORDS TO THE ENEMY GOAL
+	// (just incase for some reason this has changed)
+	ImportantPoints.setOrigin(ImportantPoints.getEnemyGoalCartesian());
 
 	commandPort = port;
 
-	  double[] totalPowerDrive = getActionBallTrackedState(usPosition, us.location.direction, origin, ballPoint);
+	double[] totalPowerDrive = getActionBallTrackedState(us.location.direction);
 
 	//send drive to wheels
 	((FourWheelHolonomicRobotPort) port).

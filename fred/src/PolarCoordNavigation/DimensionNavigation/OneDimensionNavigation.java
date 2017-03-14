@@ -5,12 +5,12 @@ package PolarCoordNavigation.DimensionNavigation;
  */
 public abstract class OneDimensionNavigation {
 
-    private double DirectionalisePower(double power, double polarity)
+    protected double DirectionalisePower(double power, double polarity)
     {
         return polarity < 0 ? power : -power;
     }
 
-    private double DistToTarget(double current, double target)
+    protected double DistToTarget(double current, double target)
     {
         return current - target;
     }

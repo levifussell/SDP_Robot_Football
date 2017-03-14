@@ -29,6 +29,9 @@ public class Vector2 {
     protected float getV2() { return this.v2; }
     protected void setV2(float v) { this.v2 = v; }
 
+    @Override
+    public String toString() { return "(" + this.v1 + ", " + this.v2 + ")"; }
+
     //-----static methods------
 
     public static Vector2 Subtract(Vector2 pc1, Vector2 pc2)

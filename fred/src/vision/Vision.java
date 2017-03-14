@@ -1,7 +1,6 @@
 package vision;
 
-import vision.activeVision.ActiveVisionBase;
-import vision.activeVision.OctaveGui;
+import vision.colorAnalysis.ColorCalibration;
 import vision.distortion.Distortion;
 import vision.distortion.DistortionPreview;
 import vision.gui.MiscellaneousSettings;
@@ -69,10 +68,10 @@ public class Vision extends JFrame implements DynamicWorldListener {
 		robotAnalysis.addDynamicWorldListener(this);
 
 		// Active vision listener
-		RawInput.addRawInputListener(new ActiveVisionBase());
+//		RawInput.addRawInputListener(new ActiveVisionBase());
 		
 		tabbedPane.addTab("Input Selection", null, RawInput.rawInputMultiplexer, null);
-		tabbedPane.addTab("Color Calibration", null, OctaveGui.octaveGui, null);
+		tabbedPane.addTab("Color Calibration", null, ColorCalibration.colorCalibration, null);
 		tabbedPane.addTab("Distortion", null, Distortion.distortion, null);
 //		tabbedPane.addTab("Robots", null, RobotAnalysis.strategy.robots, null);
 		tabbedPane.addTab("Misc Settings", null,  MiscellaneousSettings.miscSettings, null);

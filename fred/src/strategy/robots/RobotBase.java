@@ -22,7 +22,6 @@ public abstract class RobotBase implements RobotInterface{
 
     protected LinkedList<ControllerInterface> controllers;
 
-    public final ActionController ACTION_CONTROLLER = new ActionController(this);
     public final MotionController MOTION_CONTROLLER = new MotionController(this);
 
     public final RobotPort port;
@@ -41,8 +40,8 @@ public abstract class RobotBase implements RobotInterface{
         this.port = port;
         this.robotType = robotType;
         this.controllers = new LinkedList<ControllerInterface>();
-        this.controllers.add(this.ACTION_CONTROLLER);
         this.controllers.add(this.MOTION_CONTROLLER);
+        this.MOTION_CONTROLLER.setMode(MotionController.MotionMode.OFF);
     }
 
     @Override

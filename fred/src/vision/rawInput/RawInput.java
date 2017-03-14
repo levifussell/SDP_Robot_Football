@@ -1,8 +1,6 @@
 package vision.rawInput;
 
 
-import imageprocessing.java.CurrentVision;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -58,7 +56,6 @@ public class RawInput extends JPanel{
 			input.stop();
 		}
 
-		CurrentVision.endOctaveProcess();
 	}
 
 	public void setVideoChannel(int port){

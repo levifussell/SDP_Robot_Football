@@ -1,13 +1,7 @@
 package strategy;
 
 import strategy.controllers.essentials.MotionController;
-import strategy.points.basicPoints.BallPoint;
-import strategy.points.basicPoints.InFrontOfRobot;
-import strategy.points.basicPoints.MidPoint;
-import strategy.points.basicPoints.RobotPoint;
-import strategy.robots.Diag4;
 import strategy.robots.RobotBase;
-import vision.RobotAlias;
 
 import javax.swing.*;
 import java.awt.*;
@@ -129,55 +123,18 @@ public class GUI extends JFrame implements KeyListener{
     public void keyPressed(KeyEvent e) {
         if(e.getSource() == this.r){
             this.robot.MOTION_CONTROLLER.setMode(MotionController.MotionMode.ON);
-            this.robot.MOTION_CONTROLLER.setHeading(null);
-            this.robot.MOTION_CONTROLLER.setDestination(null);
-            ((Diag4)this.robot).SPINNERKICK_CONTROLLER.setActive(false);
-            ((Diag4)this.robot).SPINNERKICK_CONTROLLER.disengageSpinner(true);
-            ((Diag4)this.robot).SPINNERKICK_CONTROLLER.disengageSpinner(true);
-            ((Diag4)this.robot).SPINNERKICK_CONTROLLER.disengageSpinner(true);
             this.robot.port.sdpPort.commandSender("f");
             this.robot.port.sdpPort.commandSender("f");
             this.robot.port.sdpPort.commandSender("f");
             switch(e.getKeyChar()){
-                case 'a':
-                    this.robot.setControllersActive(true);
-                    this.robot.MOTION_CONTROLLER.setDestination(new InFrontOfRobot(RobotAlias.FELIX));
-                    this.robot.MOTION_CONTROLLER.setHeading(new RobotPoint(RobotAlias.FELIX));
-                    break;
-                case 'q':
-                    this.robot.setControllersActive(true);
-                    this.robot.MOTION_CONTROLLER.setDestination(new InFrontOfRobot(RobotAlias.JEFFREY));
-                    this.robot.MOTION_CONTROLLER.setHeading(new RobotPoint(RobotAlias.JEFFREY));
-                    break;
-                case 'o':
-                    this.robot.setControllersActive(true);
-                    this.robot.MOTION_CONTROLLER.setDestination(new MidPoint(new RobotPoint(RobotAlias.FELIX), new BallPoint()));
-                    this.robot.MOTION_CONTROLLER.setHeading(new RobotPoint(RobotAlias.FELIX));
-                    break;
-                case 'p':
-                    this.robot.setControllersActive(true);
-                    this.robot.MOTION_CONTROLLER.setDestination(new MidPoint(new RobotPoint(RobotAlias.JEFFREY), new BallPoint()));
-                    this.robot.MOTION_CONTROLLER.setHeading(new RobotPoint(RobotAlias.JEFFREY));
-                    break;
-                case 'd':
-                    this.robot.setControllersActive(true);
-                    break;
                 case 'k':
-                    this.robot.setControllersActive(true);
-                    break;
-                case 's':
-                    this.robot.setControllersActive(true);
-                    break;
-                case 'b':
+                    System.out.println("K clicked");
                     this.robot.setControllersActive(true);
                     break;
                 case 'h':
                 case ' ':
+                default:
                     this.robot.MOTION_CONTROLLER.setMode(MotionController.MotionMode.OFF);
-                    ((Diag4)this.robot).SPINNERKICK_CONTROLLER.setActive(false);
-                    ((Diag4)this.robot).SPINNERKICK_CONTROLLER.disengageSpinner(true);
-                    ((Diag4)this.robot).SPINNERKICK_CONTROLLER.disengageSpinner(true);
-                    ((Diag4)this.robot).SPINNERKICK_CONTROLLER.disengageSpinner(true);
                     break;
             }
         }

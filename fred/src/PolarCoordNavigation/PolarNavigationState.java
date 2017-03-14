@@ -35,4 +35,7 @@ public class PolarNavigationState {
 
     public PolarCoordinate getObject() { return this.object; }
     public CartesianCoordinate getOrigin() { return this.origin; }
+
+    @Override
+    public String toString() { return this.object.toString(); }
 }
