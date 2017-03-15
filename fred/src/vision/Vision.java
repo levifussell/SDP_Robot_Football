@@ -6,6 +6,7 @@ import vision.distortion.DistortionPreview;
 import vision.gui.MiscellaneousSettings;
 import vision.gui.Preview;
 import vision.gui.SDPConsole;
+import vision.multipleRegions.MultipleRegions;
 import vision.rawInput.RawInput;
 import vision.robotAnalysis.DynamicWorldListener;
 import vision.robotAnalysis.RobotAnalysisBase;
@@ -72,8 +73,8 @@ public class Vision extends JFrame implements DynamicWorldListener {
 		
 		tabbedPane.addTab("Input Selection", null, RawInput.rawInputMultiplexer, null);
 		tabbedPane.addTab("Color Calibration", null, ColorCalibration.colorCalibration, null);
+		tabbedPane.addTab("Multiple Regions",null, MultipleRegions.multipleRegions,null);
 		tabbedPane.addTab("Distortion", null, Distortion.distortion, null);
-//		tabbedPane.addTab("Robots", null, RobotAnalysis.strategy.robots, null);
 		tabbedPane.addTab("Misc Settings", null,  MiscellaneousSettings.miscSettings, null);
 		
 		SDPConsole.console.setVisible(true);
