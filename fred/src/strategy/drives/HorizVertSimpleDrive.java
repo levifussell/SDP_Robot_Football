@@ -35,24 +35,24 @@ public class HorizVertSimpleDrive implements DriveInterface {
                             double ourAngle, double targetRadius, double targetAngle) {
 
 	// check if robot is in the destination path of diag4 and where
-	String whereIsTheRobot = "Nowhere";
-	final double angleThreshold = Math.PI / 40;
-	for(PolarCoordinate robot : robots) {
-      double targetAngleDiff = Math.abs(robot.getAngle() - targetAngle);
-      double robotsAngleDiff = Math.abs(robot.getAngle() - ourAngle);
-      if(targetAngleDiff <= angleThreshold && robotsAngleDiff <= angleThreshold) {
-        if(robot.getRadius() < ourRadius  && robot.getRadius() >= targetRadius){
-          whereIsTheRobot = "In front";
-		} else if(robot.getRadius() < targetRadius){
-          whereIsTheRobot = "Behind";
-        }
-	  } else if(targetAngleDiff <= angleThreshold || robotsAngleDiff <= angleThreshold) {
-        if(robot.getRadius() >= targetRadius && robot.getRadius() < ourRadius) {
-          whereIsTheRobot = "In front";
-        }
-      }
-	}
-	  return whereIsTheRobot;
+      String whereIsTheRobot = "Nowhere";
+      final double angleThreshold = Math.PI / 40;
+      for(PolarCoordinate robot : robots) {
+      	double targetAngleDiff = Math.abs(robot.getAngle() - targetAngle);
+      	double robotsAngleDiff = Math.abs(robot.getAngle() - ourAngle);
+      	if(targetAngleDiff <= angleThreshold && robotsAngleDiff <= angleThreshold) {
+	  if(robot.getRadius() < ourRadius  && robot.getRadius() >= targetRadius){
+	    whereIsTheRobot = "In front";
+	   } else if(robot.getRadius() < targetRadius){
+            whereIsTheRobot = "Behind";
+           }
+         } else if(robot.getAngle() < Math.max(ourAngle, targetAngle) && robot.getAngle() > Math.min(ourAngle, targetAngle)) {
+           if(robot.getRadius() >= targetRadius && robot.getRadius() < ourRadius) {
+             whereIsTheRobot = "In front";
+           }
+         }
+       }
+       return whereIsTheRobot;
   }
 
   public BallTrackState getBallTrackState()
@@ -100,57 +100,53 @@ public class HorizVertSimpleDrive implements DriveInterface {
 	}
 
 	/* case A: path on a straight line; check if there is
-	 a robot on it too and where
-	*/
+	 a robot on it too and where */
 	if (angleDiffAbs < angleThreshold2 && diag4PolarCoords.getRadius() > ballPolarCoords.getRadius()) {
 	  double targetRadius = ballPolarCoords.getRadius() - radiusOffset;
 	  double targetAngle = ballPolarCoords.getAngle();
-		polarNavigator.SetTargetState((float)targetRadius, (float)targetAngle);
+	  polarNavigator.SetTargetState((float)targetRadius, (float)targetAngle);
 	  // if robot in the middle of diag4's path move next to the ball
-//      if(robotInPath(players, diag4PolarCoords.getRadius(), diag4PolarCoords.getAngle(), targetRadius, targetAngle) == "In front") {
-////		System.out.println("GOING NEXT TO THE BALL");
-//		double actionTargetRadius = ballPolarCoords.getRadius();
-//		double a = 2 * Math.asin(radiusThreshold / (2.0 * ballPolarCoords.getRadius()));
-//		double actionTargetAngle = ballPolarCoords.getAngle() + (ballPolarCoords.getAngle() > Math.PI / 2.0 ? -a : a);
-//		  polarNavigator.SetTargetState((float)actionTargetRadius, (float)actionTargetAngle);
-//		return BallTrackState.GO_NEXT_TO_BALL;
-//	  /* if robot in the middle of ball and enemy goal, block any passes by staying behind
-//         the ball */
-//      } else if(robotInPath(players, diag4PolarCoords.getRadius(), diag4PolarCoords.getAngle(), targetRadius, targetAngle) == "Behind") {
-////        System.out.println("GOING BEHIND BALL");
-//		  double actionTargetRadius = ballPolarCoords.getRadius() + radiusThreshold;
-//		  double actionTargetAngle = ballPolarCoords.getAngle();
-//		  polarNavigator.SetTargetState((float)actionTargetRadius, (float)actionTargetAngle);
-//        return BallTrackState.GO_BEHIND_BALL;
-//	  // if we reach this stage path is clear
-//      } else {
-////		System.out.println("GOING TO THE BALL");
-//		  double actionTargetRadius = targetRadius;
-//		  double actionTargetAngle = targetAngle;
-//		  polarNavigator.SetTargetState((float)actionTargetRadius, (float)actionTargetAngle);
-//		return BallTrackState.GO_TO_BALL;
-//	  }
-		System.out.println("GOING TO THE BALL");
-		return  BallTrackState.GO_TO_BALL;
-    /* case B: */
+          if(robotInPath(players, diag4PolarCoords.getRadius(), diag4PolarCoords.getAngle(), targetRadius, targetAngle) == "In front") {
+	    System.out.println("GOING NEXT TO THE BALL");
+	    double actionTargetRadius = ballPolarCoords.getRadius();
+	    double a = 2 * Math.asin(radiusThreshold / (2.0 * ballPolarCoords.getRadius()));
+	    double actionTargetAngle = ballPolarCoords.getAngle() + (ballPolarCoords.getAngle() > Math.PI / 2.0 ? -a : a);
+	    polarNavigator.SetTargetState((float)actionTargetRadius, (float)actionTargetAngle);
+	    return BallTrackState.GO_NEXT_TO_BALL;
+	  /* if robot in the middle of ball and enemy goal, block any passes by staying behind
+          the ball */
+          } else if(robotInPath(players, diag4PolarCoords.getRadius(), diag4PolarCoords.getAngle(), targetRadius, targetAngle) == "Behind") {
+            System.out.println("GOING BEHIND BALL");
+            double actionTargetRadius = ballPolarCoords.getRadius() + radiusThreshold;
+	    double actionTargetAngle = ballPolarCoords.getAngle();
+	    polarNavigator.SetTargetState((float)actionTargetRadius, (float)actionTargetAngle);
+            return BallTrackState.GO_BEHIND_BALL;
+	  // if we reach this stage path is clear
+          } else {
+	    System.out.println("GOING TO THE BALL");
+            double actionTargetRadius = targetRadius;
+	    double actionTargetAngle = targetAngle;
+            polarNavigator.SetTargetState((float)actionTargetRadius, (float)actionTargetAngle);
+	    return BallTrackState.GO_TO_BALL;
+	  }
 	} else if(diag4PolarCoords.getRadius() > ballPolarCoords.getRadius()) {
 	  System.out.println("GOING BEHIND BALL");
-		double actionTargetRadius = ballPolarCoords.getRadius() + radiusThreshold;
-		double actionTargetAngle = ballPolarCoords.getAngle();
-		polarNavigator.SetTargetState((float)actionTargetRadius, (float)actionTargetAngle);
+	  double actionTargetRadius = ballPolarCoords.getRadius() + radiusThreshold;
+	  double actionTargetAngle = ballPolarCoords.getAngle();
+	  polarNavigator.SetTargetState((float)actionTargetRadius, (float)actionTargetAngle);
 	  return BallTrackState.GO_BEHIND_BALL;
 	} else if (diag4PolarCoords.getRadius() < ballPolarCoords.getRadius()) {
 	  System.out.println("GOING NEXT TO THE BALL");
-		double actionTargetRadius = ballPolarCoords.getRadius();
+	  double actionTargetRadius = ballPolarCoords.getRadius();
 	  double a = 2 * Math.asin(radiusThreshold / (2.0 * ballPolarCoords.getRadius()));
-		double actionTargetAngle = ballPolarCoords.getAngle() + (ballPolarCoords.getAngle() > Math.PI / 2.0 ? -a : a);
-		polarNavigator.SetTargetState((float)actionTargetRadius, (float)actionTargetAngle);
+	  double actionTargetAngle = ballPolarCoords.getAngle() + (ballPolarCoords.getAngle() > Math.PI / 2.0 ? -a : a);
+	  polarNavigator.SetTargetState((float)actionTargetRadius, (float)actionTargetAngle);
 	  return BallTrackState.GO_NEXT_TO_BALL;
 	} else {
 	  System.out.println("UNKNOWN STATE");
-		double actionTargetRadius = diag4PolarCoords.getRadius();
-		double actionTargetAngle = diag4PolarCoords.getAngle();
-		polarNavigator.SetTargetState((float)actionTargetRadius, (float)actionTargetAngle);
+	  double actionTargetRadius = diag4PolarCoords.getRadius();
+	  double actionTargetAngle = diag4PolarCoords.getAngle();
+	  polarNavigator.SetTargetState((float)actionTargetRadius, (float)actionTargetAngle);
 	  return BallTrackState.UNKNOWN;
 	}
 
