@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.PrintWriter;
 
+import backgroundSub.OpenCVGUI;
 import vision.colorAnalysis.SDPColor;
 import vision.colorAnalysis.SDPColors;
 import vision.distortion.Distortion;
@@ -34,8 +35,12 @@ public class SettingsManager {
 
 			writer.write("^DISTORTION\r\n");
 			writer.write(Distortion.distortion.saveSettings() + "\r\n");
+
+			writer.write("^JIN_VISION\r\n");
+			writer.write(OpenCVGUI.opencvGUI.saveSettings() + "\r\n");
 			writer.write("^END");
 			writer.close();
+
 		}
 	}
 	
@@ -58,6 +63,15 @@ public class SettingsManager {
 			}
 			next = r.readLine();
 			Distortion.distortion.loadSettings(next);
+
+			next = r.readLine();
+			while(!next.equals("^JIN_VISION")){
+				OpenCVGUI.opencvGUI.loadSettings(next);
+				next = r.readLine();
+			}
+			next = r.readLine();
+			OpenCVGUI.opencvGUI.loadSettings(next);
+
 			while(!next.equals("^END")) next = r.readLine();
 			r.close();
 		}

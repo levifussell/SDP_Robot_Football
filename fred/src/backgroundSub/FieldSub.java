@@ -33,6 +33,7 @@ public class FieldSub implements BackGroundSub {
 
     @Override
     public List<Rect> image_processing(Mat frame) {
+         Mat frame_copy = frame.clone();
          Imgproc.cvtColor(frame,currentGray,Imgproc.COLOR_BGR2GRAY);
          Imgproc.GaussianBlur(currentGray,currentGray,size,0);
 
@@ -84,8 +85,18 @@ public class FieldSub implements BackGroundSub {
         for(int i = 0; i < cnts.size(); i ++)
         {
             Rect rect = Imgproc.boundingRect(cnts.get(i));
-            Imgproc.rectangle(frame,rect.tl(),rect.br(),scalar,2);
+            Imgproc.rectangle(frame_copy,rect.tl(),rect.br(),scalar,2);
             position_plate.add(rect);
+        }
+        if(this.DEBUG)
+        {
+            Imshow imshow6 = new Imshow("frame copy");
+            imshow6.showImage(frame_copy);
+        }
+        if(this.DEBUG)
+        {
+            Imshow imshow7 = new Imshow("frame");
+            imshow7.showImage(frame);
         }
 
         return position_plate;

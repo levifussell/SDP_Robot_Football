@@ -13,7 +13,7 @@ public class PlateSub implements BackGroundSub {
 
     private Boolean DEBUG;
     private Mat originalImage = new Mat();
-    private ColourContain cp = new ColourContain(true);
+    private ColourContain cp = new ColourContain(false);
     private List<String> colour_plate = new ArrayList<String>();
     public Mat currentGray = new Mat(),backgroundGray = new Mat(),frameDelta = new Mat(),thresh = new Mat();
     public List<MatOfPoint> cnts = new ArrayList<MatOfPoint>();

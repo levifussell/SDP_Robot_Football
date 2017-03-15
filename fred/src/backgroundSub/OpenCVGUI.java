@@ -1,6 +1,7 @@
 package backgroundSub;
 
 import org.opencv.core.Scalar;
+import vision.settings.SaveLoadCapable;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -11,7 +12,7 @@ import java.awt.Panel;
 /**
  * Created by jinhong on 11/03/2017.
  */
-public class OpenCVGUI extends JPanel implements ChangeListener{
+public class OpenCVGUI extends JPanel implements ChangeListener,SaveLoadCapable {
     private int redLower_H=0,redLower_S=0,redLower_V=0;
     private int redUpper_H=0,redUpper_S=0,redUpper_V=0;
 
@@ -558,40 +559,6 @@ public class OpenCVGUI extends JPanel implements ChangeListener{
         greenUpper_V_Slider.setValue(greenUpper_V);
     }
 
-//    public void myRepaint()
-//    {
-//        this.redLower_H_Text.setText("" + this.redLower_H);
-//        this.redLower_S_Text.setText("" + this.redLower_S);
-//        this.redLower_V_Text.setText("" + this.redLower_V);
-//
-//        this.redUpper_H_Text.setText("" + this.redUpper_H);
-//        this.redUpper_S_Text.setText("" + this.redUpper_S);
-//        this.redUpper_V_Text.setText("" + this.redUpper_V);
-//
-//        this.yellowLower_H_Text.setText("" + this.yellowLower_H);
-//        this.yellowLower_S_Text.setText("" + this.yellowLower_S);
-//        this.yellowLower_V_Text.setText("" + this.yellowLower_V);
-//
-//        this.yellowUpper_H_Text.setText("" + this.yellowUpper_H);
-//        this.yellowUpper_S_Text.setText("" + this.yellowUpper_S);
-//        this.yellowUpper_V_Text.setText("" + this.yellowUpper_V);
-//
-//        this.blueLower_H_Text.setText("" + this.blueLower_H);
-//        this.blueLower_S_Text.setText("" + this.blueLower_S);
-//        this.blueLower_V_Text.setText("" + this.blueLower_V);
-//
-//        this.blueUpper_H_Text.setText("" + this.blueUpper_H);
-//        this.blueUpper_S_Text.setText("" + this.blueUpper_S);
-//        this.blueUpper_V_Text.setText("" + this.blueUpper_V);
-//
-//        this.greenLower_H_Text.setText("" + this.greenLower_H);
-//        this.greenLower_S_Text.setText("" + this.greenLower_S);
-//        this.greenLower_V_Text.setText("" + this.greenLower_V);
-//
-//        this.greenUpper_H_Text.setText("" + this.greenUpper_H);
-//        this.greenUpper_S_Text.setText("" + this.greenUpper_S);
-//        this.greenUpper_V_Text.setText("" + this.greenUpper_V);
-//    }
 
     @Override
     public void stateChanged(ChangeEvent e) {
@@ -646,5 +613,106 @@ public class OpenCVGUI extends JPanel implements ChangeListener{
     {
         green_Upper_HSV = new Scalar(greenUpper_H,greenUpper_S,greenUpper_V);
         return green_Upper_HSV;
+    }
+
+    @Override
+    public String saveSettings() {
+        StringBuilder b = new StringBuilder();
+        b.append(this.redLower_H);
+        b.append(";");
+        b.append(this.redLower_S);
+        b.append(";");
+        b.append(this.redLower_V);
+        b.append(";");
+        b.append(this.redUpper_H);
+        b.append(";");
+        b.append(this.redUpper_S);
+        b.append(";");
+        b.append(this.redUpper_V);
+        b.append(";");
+
+        b.append(this.yellowLower_H);
+        b.append(";");
+        b.append(this.yellowLower_S);
+        b.append(";");
+        b.append(this.yellowLower_V);
+        b.append(";");
+        b.append(this.yellowUpper_H);
+        b.append(";");
+        b.append(this.yellowUpper_S);
+        b.append(";");
+        b.append(this.yellowUpper_V);
+        b.append(";");
+
+        b.append(this.blueLower_H);
+        b.append(";");
+        b.append(this.blueLower_S);
+        b.append(";");
+        b.append(this.blueLower_V);
+        b.append(";");
+        b.append(this.blueUpper_H);
+        b.append(";");
+        b.append(this.blueUpper_S);
+        b.append(";");
+        b.append(this.blueUpper_V);
+        b.append(";");
+
+        b.append(this.greenLower_H);
+        b.append(";");
+        b.append(this.greenLower_S);
+        b.append(";");
+        b.append(this.greenLower_V);
+        b.append(";");
+        b.append(this.greenUpper_H);
+        b.append(";");
+        b.append(this.greenUpper_S);
+        b.append(";");
+        b.append(this.greenUpper_V);
+        b.append(";");
+        return b.toString();
+    }
+
+    @Override
+    public void loadSettings(String settings) {
+        if(settings == null) return;
+        String[] values = settings.split(";");
+        if (values.length != 24) return;
+        try{
+            this.redLower_H = Integer.parseInt(values[0]);
+            this.redLower_S = Integer.parseInt(values[1]);
+            this.redLower_V = Integer.parseInt(values[2]);
+            this.redUpper_H = Integer.parseInt(values[3]);
+            this.redUpper_S = Integer.parseInt(values[4]);
+            this.redUpper_V = Integer.parseInt(values[5]);
+
+            this.yellowLower_H = Integer.parseInt(values[6]);
+            this.yellowLower_S = Integer.parseInt(values[7]);
+            this.yellowLower_V = Integer.parseInt(values[8]);
+            this.yellowUpper_H = Integer.parseInt(values[9]);
+            this.yellowUpper_S = Integer.parseInt(values[10]);
+            this.yellowUpper_V = Integer.parseInt(values[11]);
+
+            this.blueLower_H = Integer.parseInt(values[12]);
+            this.blueLower_S = Integer.parseInt(values[13]);
+            this.blueLower_V = Integer.parseInt(values[14]);
+            this.blueUpper_H = Integer.parseInt(values[15]);
+            this.blueUpper_S = Integer.parseInt(values[16]);
+            this.blueUpper_V = Integer.parseInt(values[17]);
+
+            this.greenLower_H = Integer.parseInt(values[18]);
+            this.greenLower_S = Integer.parseInt(values[19]);
+            this.greenLower_V = Integer.parseInt(values[20]);
+            this.greenUpper_H = Integer.parseInt(values[21]);
+            this.greenUpper_S = Integer.parseInt(values[22]);
+            this.greenUpper_V = Integer.parseInt(values[23]);
+
+            //this.changeText();
+
+            this.recalculateSliders();
+
+        }catch (Exception ex){
+            return;
+        }
+
     }
 }
