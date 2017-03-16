@@ -1,5 +1,7 @@
 package vision.colorAnalysis;
 
+import vision.multipleRegions.MultipleRegions;
+
 import java.awt.List;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -36,8 +38,19 @@ public class ColorCalibration extends JPanel implements ActionListener{
 	public void actionPerformed(ActionEvent arg0) {
 		String selected = this.list.getSelectedItem();
 		if(selected != null){
-			SDPColors.colors.get(SDPColor.valueOf(selected)).setVisible(true);
-			SDPColors.colors.get(SDPColor.valueOf(selected)).transferFocus();
+			if(MultipleRegions.multipleRegions.jCheckBox.isSelected())
+			{
+				MultipleRegions.multipleRegions.multiple_region_color.get(MultipleRegions.multipleRegions.jCheckBox).get(SDPColor.valueOf(selected)).setVisible(true);
+				MultipleRegions.multipleRegions.multiple_region_color.get(MultipleRegions.multipleRegions.jCheckBox).get(SDPColor.valueOf(selected)).transferFocus();
+				//SDPColors.colors.get(SDPColor.valueOf(selected)).setVisible(true);
+				//SDPColors.colors.get(SDPColor.valueOf(selected)).transferFocus();
+				MultipleRegions.multipleRegions.multiple_region_color.put(MultipleRegions.multipleRegions.jCheckBox,SDPColors.colors);
+			}
+			else
+			{
+				System.out.println("No specific region is selected");
+			}
+
 		}
 	}	
 }

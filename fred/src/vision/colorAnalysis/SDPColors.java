@@ -11,7 +11,7 @@ public class SDPColors {
 	
 	public static HashMap<SDPColor, SDPColorInstance> colors;
 	
-	private SDPColors(){
+	public SDPColors(){
 		colors = new HashMap<SDPColor, SDPColorInstance>();
 		for(SDPColor c : SDPColor.values()){
 			colors.put(c,  new SDPColorInstance(c.toString(), new Color(255,0,0), c));

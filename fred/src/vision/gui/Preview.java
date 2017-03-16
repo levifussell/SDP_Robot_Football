@@ -1,7 +1,6 @@
 package vision.gui;
 
-import java.awt.Color;
-import java.awt.Graphics;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
@@ -9,10 +8,10 @@ import java.awt.image.ColorModel;
 import java.awt.image.WritableRaster;
 import java.util.ArrayList;
 
-import javax.swing.JFrame;
-import javax.swing.JLabel;
+import javax.swing.*;
 
 import vision.constants.Constants;
+import vision.multipleRegions.MultipleRegions;
 import vision.rawInput.RawInputListener;
 import vision.tools.ColoredPoint;
 
@@ -75,6 +74,12 @@ public class Preview extends JFrame implements RawInputListener{
 	}
 	
 	public void nextFrame(BufferedImage bi, long time){
+		Graphics2D g2 = bi.createGraphics();
+		for(JPanel p : MultipleRegions.multipleRegions.regions.values())
+		{
+			g2.drawRoundRect(Integer.parseInt(((JTextField)p.getComponent(0)).getText()),Integer.parseInt(((JTextField)p.getComponent(1)).getText()),Integer.parseInt(((JTextField)p.getComponent(2)).getText()),Integer.parseInt(((JTextField)p.getComponent(3)).getText()),2,2);
+			g2.setColor(Color.RED);
+		}
 		Preview.preview.originalImage = bi;
 		Preview.preview.drawnImage = deepCopy(bi);
 	}

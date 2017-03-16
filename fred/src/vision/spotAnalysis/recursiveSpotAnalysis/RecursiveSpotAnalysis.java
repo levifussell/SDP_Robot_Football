@@ -1,14 +1,17 @@
 package vision.spotAnalysis.recursiveSpotAnalysis;
 
+import vision.*;
 import vision.colorAnalysis.SDPColor;
 import vision.colorAnalysis.SDPColorInstance;
 import vision.colorAnalysis.SDPColors;
 import vision.constants.Constants;
 import vision.gui.Preview;
+import vision.multipleRegions.MultipleRegions;
 import vision.spotAnalysis.SpotAnalysisBase;
 import vision.spotAnalysis.approximatedSpotAnalysis.RegionFinder;
 import vision.spotAnalysis.approximatedSpotAnalysis.Spot;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
@@ -84,12 +87,33 @@ public class RecursiveSpotAnalysis extends SpotAnalysisBase{
         }
 
         XYCumulativeAverage average = new XYCumulativeAverage();
+
+
+        vision.Robot diag4 = DynamicWorld.aliases.get(RobotAlias.FRED);
         SDPColorInstance colorInstance;
+        HashMap<SDPColor, SDPColorInstance> multiple_region_color = new HashMap<SDPColor, SDPColorInstance>();
+        for(int i = 0; i < MultipleRegions.multipleRegions.checkbox_list.size();i++)
+        {
+            JPanel panel = MultipleRegions.multipleRegions.regions.get(MultipleRegions.multipleRegions.checkbox_list.get(i));
+            int x = Integer.valueOf(((JTextField)panel.getComponent(0)).getText());
+            int y = Integer.valueOf(((JTextField)panel.getComponent(1)).getText());
+            int w = x + Integer.valueOf(((JTextField)panel.getComponent(2)).getText());
+            int h = y + Integer.valueOf(((JTextField)panel.getComponent(3)).getText());
+            double robot_x = diag4.location.x;
+            double robot_y = diag4.location.y;
+            if(robot_x > x && robot_y > y && robot_x < w && robot_y < h)
+            {
+                multiple_region_color = MultipleRegions.multipleRegions.multiple_region_color.get(MultipleRegions.multipleRegions.checkbox_list.get(i));
+                break;
+            }
+        }
+
+
         for(int i = 0 ; i < Constants.INPUT_HEIGHT * Constants.INPUT_WIDTH; i++){
             this.found[i] = null;
         }
         for(SDPColor color : SDPColor.values()){
-            colorInstance = SDPColors.colors.get(color);
+            colorInstance = multiple_region_color.get(color);
             for(int y = 0; y < Constants.INPUT_HEIGHT; y++){
                 for(int x = 0; x < Constants.INPUT_WIDTH; x++){
                     this.processPixel(x, y, colorInstance, average, 200);
