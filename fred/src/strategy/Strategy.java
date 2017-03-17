@@ -224,7 +224,6 @@ public class Strategy implements VisionListener, PortListener, ActionListener {
      */
     public static void main(String[] args) {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-//        Mat image = new Mat(100, 100, 0);
         new Strategy(args);
     }
 

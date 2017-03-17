@@ -11,15 +11,14 @@ import java.util.List;
  * Created by jinhong on 09/03/2017.
  */
 public class ColourContain {
-    private List<String> colour_plate = new ArrayList<String>();
-    private Mat hsv = new Mat(),mask = new Mat(),thresh = new Mat(),nonZeroCoordinates = new Mat();
-    private List<MatOfPoint> cnts = new ArrayList<MatOfPoint>();
-    private List<Rect> position_circle = new ArrayList<Rect>();
     private HashMap<String,ArrayList<Scalar>> boundaries = new HashMap<String,ArrayList<Scalar>>();
     private List<String> color = new ArrayList<String>();
     private Scalar scalar = new Scalar(0,255,0);
-    private OpenCVGUI openCVGUI;
     private boolean Debug;
+    public Imshow imshow1 = new Imshow("red");
+    public Imshow imshow2 = new Imshow("yellow");
+    public Imshow imshow3 = new Imshow("blue");
+    public Imshow imshow4 = new Imshow("green");
 
     public ColourContain(boolean Debug)
     {
@@ -28,15 +27,18 @@ public class ColourContain {
         color.add("blue");
         color.add("green");
         this.Debug = Debug;
-        openCVGUI = new OpenCVGUI();
 
     }
 
     public List<String> colour_contain(Mat image)
     {
+        Mat hsv = new Mat(),mask = new Mat(),thresh = new Mat(),nonZeroCoordinates = new Mat();
+        List<String> colour_plate = new ArrayList<String>();
+        List<Rect> position_circle = new ArrayList<Rect>();
         getColourRange();
         for(int i = 0; i < boundaries.size(); i++)
         {
+            List<MatOfPoint> cnts = new ArrayList<MatOfPoint>();
             Imgproc.cvtColor(image,hsv,Imgproc.COLOR_BGR2HSV);
             Core.inRange(hsv,boundaries.get(color.get(i)).get(0),boundaries.get(color.get(i)).get(1),mask);
 
@@ -44,13 +46,14 @@ public class ColourContain {
 
             if(this.Debug)
             {
-                Imshow imshow = new Imshow("mask" + color.get(i));
-                imshow.showImage(thresh);
+                if(i == 2)
+                {
+                    imshow3.showImage(mask);
+                }
             }
-
             Imgproc.findContours(thresh,cnts,new Mat(),Imgproc.RETR_EXTERNAL,Imgproc.CHAIN_APPROX_SIMPLE);
-            Core.findNonZero(mask,nonZeroCoordinates);
-            if(nonZeroCoordinates.total()>40 && cnts.size() > 0)
+            int f = Core.countNonZero(mask);
+            if(f > 20 && cnts.size() > 0)
             {
                 if(cnts.size() > 1)
                 {
@@ -95,23 +98,23 @@ public class ColourContain {
     public void getColourRange()
     {
         ArrayList<Scalar> red = new ArrayList<Scalar>();
-        red.add(openCVGUI.getRedLower());
-        red.add(openCVGUI.getRedUpper());
+        red.add(OpenCVGUI.opencvGUI.getRedLower());
+        red.add(OpenCVGUI.opencvGUI.getRedUpper());
         boundaries.put("red",red);
 
         ArrayList<Scalar> yellow = new ArrayList<Scalar>();
-        yellow.add(openCVGUI.getYellowLower());
-        yellow.add(openCVGUI.getYellowUpper());
+        yellow.add(OpenCVGUI.opencvGUI.getYellowLower());
+        yellow.add(OpenCVGUI.opencvGUI.getYellowUpper());
         boundaries.put("yellow",yellow);
 
         ArrayList<Scalar> blue = new ArrayList<Scalar>();
-        blue.add(openCVGUI.getBlueLower());
-        blue.add(openCVGUI.getBlueUpper());
+        blue.add(OpenCVGUI.opencvGUI.getBlueLower());
+        blue.add(OpenCVGUI.opencvGUI.getBlueUpper());
         boundaries.put("blue",blue);
 
         ArrayList<Scalar> green = new ArrayList<Scalar>();
-        green.add(openCVGUI.getGreenLower());
-        green.add(openCVGUI.getGreenUpper());
+        green.add(OpenCVGUI.opencvGUI.getGreenLower());
+        green.add(OpenCVGUI.opencvGUI.getGreenUpper());
         boundaries.put("green",green);
     }
 

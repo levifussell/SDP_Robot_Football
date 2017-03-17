@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
+import java.util.Arrays;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -20,9 +21,11 @@ import au.edu.jcu.v4l4j.VideoDevice;
 import au.edu.jcu.v4l4j.VideoFrame;
 import au.edu.jcu.v4l4j.exceptions.StateException;
 import au.edu.jcu.v4l4j.exceptions.V4L4JException;
+import backgroundSub.Imshow;
 import backgroundSub.JinVision;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.Scalar;
 import vision.constants.Constants;
 import vision.gui.Preview;
 import vision.gui.SDPConsole;
@@ -45,6 +48,8 @@ public class LiveCameraInput extends AbstractRawInput implements CaptureCallback
 	private JComboBox<CameraChooser> choice;
 
 	private static boolean check = true;
+	private static int counter = 0;
+	private static Mat background = new Mat(480, 640, CvType.CV_8UC3, new Scalar(0,0,0));
 	private JinVision jinVision;
     
 	private CameraChooser choosers[] = {
@@ -142,6 +147,7 @@ public class LiveCameraInput extends AbstractRawInput implements CaptureCallback
 	}
 
 
+	public Imshow imshow = new Imshow("show");
 	@Override
 	public void nextFrame(VideoFrame frame) {
 		BufferedImage image = frame.getBufferedImage();
@@ -151,32 +157,42 @@ public class LiveCameraInput extends AbstractRawInput implements CaptureCallback
 			return;
 		}
 
-//		try {
-
-			System.out.print("test4");
-			Mat out = new Mat(image.getHeight(), image.getWidth(), CvType.CV_8UC3);
-			System.out.print("test1");
-			byte[] data = new byte[image.getWidth() * image.getHeight() * (int) out.elemSize()];
-			System.out.print("test2");
-			int[] dataBuff = image.getRGB(0, 0, image.getWidth(), image.getHeight(), null, 0, image.getWidth());
-			System.out.print("test3");
-			for (int i = 0; i < dataBuff.length; i++) {
-				data[i * 3] = (byte) ((dataBuff[i]));
-				data[i * 3 + 1] = (byte) ((dataBuff[i]));
-				data[i * 3 + 2] = (byte) ((dataBuff[i]));
+		Mat out = new Mat( image.getHeight(), image.getWidth(),CvType.CV_8UC3);
+		byte[] pixels = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
+		out.put(0, 0, pixels);
+		if (check == true && counter >10) {
+			jinVision = new JinVision(background);
+			check = false;
+		}
+		else
+		{
+			if(counter > 10)
+			{
+				jinVision.image_Processing(out);
 			}
-			out.put(0, 0, data);
-			if (check == true) {
-				System.out.print("test");
-				jinVision = new JinVision(out);
-				check = false;
+			else
+			{
+				if(counter == 0)
+				{
+					background = out;
+				}
+				else {
+					for (int i = 0; i < background.rows(); i++) {
+						for (int j = 0; j < background.cols(); j++) {
+							double row = (background.get(i,j)[0] + out.get(i,j)[0]) / 2;
+							double cols = (background.get(i,j)[1] + out.get(i,j)[1]) / 2;
+							double channel = (background.get(i,j)[2] + out.get(i,j)[2]) / 2;
+							double[] average_data = new double[3];
+							average_data[0] = row;
+							average_data[1] = cols;
+							average_data[2] = channel;
+							background.put(i,j,average_data);
+						}
+					}
+				}
+				counter ++;
 			}
-			jinVision.image_Processing(out);
-//		}
-//		catch(Exception e)
-//		{
-//			System.out.println("CAUGHT: " + e.toString());
-//		}
+		}
 		this.listener.nextFrame(image, frame.getCaptureTime());
 		frame.recycle();
 	}

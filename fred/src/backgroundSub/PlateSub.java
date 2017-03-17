@@ -14,11 +14,13 @@ public class PlateSub implements BackGroundSub {
     private Boolean DEBUG;
     private Mat originalImage = new Mat();
     private ColourContain cp = new ColourContain(true);
-    private List<String> colour_plate = new ArrayList<String>();
-    public Mat currentGray = new Mat(),backgroundGray = new Mat(),frameDelta = new Mat(),thresh = new Mat();
-    public List<MatOfPoint> cnts = new ArrayList<MatOfPoint>();
-    public List<Rect> position_plate = new ArrayList<Rect>();
     public Size size = new Size(1,1);
+    public Imshow imshow1 = new Imshow("CurrentGaussianBlur");
+    public Imshow imshow2 = new Imshow("BackGroundGaussianBlur");
+    public Imshow imshow3 = new Imshow("frameDelta");
+    public Imshow imshow4 = new Imshow("thresh1");
+    public Imshow imshow5 = new Imshow("thresh2");
+    public Imshow imshow6 = new Imshow("filter image");
 
     public PlateSub(Boolean DEBUG,Mat originalImage)
     {
@@ -28,6 +30,9 @@ public class PlateSub implements BackGroundSub {
 
     @Override
     public List<String> image_processing(Mat frame) {
+        Mat currentGray = new Mat(),backgroundGray = new Mat(),frameDelta = new Mat(),thresh = new Mat();
+        List<String> colour_plate = new ArrayList<String>();
+
         Mat filter_image = new Mat(30, 30, CvType.CV_8UC3, new Scalar(0,0,0));
 
         Mat resized_frame = new Mat();
@@ -41,8 +46,6 @@ public class PlateSub implements BackGroundSub {
         Imgproc.GaussianBlur(backgroundGray, backgroundGray, size, 0);
 
         if (this.DEBUG) {
-            Imshow imshow1 = new Imshow("CurrentGaussianBlur");
-            Imshow imshow2 = new Imshow("BackGroundGaussianBlur");
             imshow1.showImage(currentGray);
             imshow2.showImage(backgroundGray);
         }
@@ -52,21 +55,18 @@ public class PlateSub implements BackGroundSub {
         Core.absdiff(backgroundGray, currentGray, frameDelta);
 
         if (this.DEBUG) {
-            Imshow imshow3 = new Imshow("frameDelta");
             imshow3.showImage(frameDelta);
         }
 
         Imgproc.threshold(frameDelta, thresh, 50, 255, Imgproc.THRESH_BINARY);
 
         if (this.DEBUG) {
-            Imshow imshow4 = new Imshow("thresh1");
             imshow4.showImage(thresh);
         }
 
         Imgproc.dilate(thresh, thresh, new Mat(), new Point(-1, -1), 1);
 
         if (this.DEBUG) {
-            Imshow imshow5 = new Imshow("thresh2");
             imshow5.showImage(thresh);
         }
 
@@ -82,10 +82,8 @@ public class PlateSub implements BackGroundSub {
         }
         if(this.DEBUG)
         {
-            Imshow imshow6 = new Imshow("filter image");
             imshow6.showImage(filter_image);
         }
-
         colour_plate = cp.colour_contain(filter_image);
 
         return colour_plate;

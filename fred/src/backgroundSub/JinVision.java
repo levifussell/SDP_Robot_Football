@@ -2,8 +2,10 @@ package backgroundSub;
 
 import org.opencv.core.*;
 import org.opencv.imgcodecs.Imgcodecs;
+import vision.tools.DirectedPoint;
 
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -14,39 +16,35 @@ public class JinVision {
     private Mat plate_Background = Imgcodecs.imread(getClass().getResource("img/plate.png").getPath());
     private FieldSub fieldSub;
     private PlateSub plateSub = new PlateSub(false,plate_Background);
-    private int counter = 0;
     private List<String> detected_robot;
+
+    public JinVision(){}
 
     public JinVision(Mat origin_Field)
     {
         this.origin_Field = origin_Field;
+        this.fieldSub = new FieldSub(false,this.origin_Field);
     }
 
     public void image_Processing(Mat frame)
     {
-        fieldSub = new FieldSub(false,origin_Field);
         List<Rect> plate_position = fieldSub.image_processing(frame);
+        List<DirectedPoint> locations = new ArrayList<DirectedPoint>();
+        List<List<String>> colour_plates = new ArrayList<List<String>>();
         for(int i = 0; i < plate_position.size(); i++)
         {
+            double x = (plate_position.get(i).br().x + plate_position.get(i).tl().x) / 2 ;
+            double y = (plate_position.get(i).br().y + plate_position.get(i).tl().y) / 2 ;
+            DirectedPoint location = new DirectedPoint(x,y,0);
             Mat plate_image = new Mat(frame,plate_position.get(i));
             detected_robot = plateSub.image_processing(plate_image);
+            if(!detected_robot.isEmpty())
+            {
+                locations.add(location);
+                colour_plates.add(detected_robot);
+            }
         }
-        System.out.print(detected_robot);
-    }
-    public static Mat bufferImg2Mat(BufferedImage in)
-    {
-        Mat out = new Mat(in.getHeight(), in.getWidth(), CvType.CV_8UC3);
-        System.out.print("test1");
-        byte[] data = new byte[in.getWidth() * in.getHeight() * (int) out.elemSize()];
-        System.out.print("test2");
-        int[] dataBuff = in.getRGB(0, 0, in.getWidth(), in.getHeight(), null, 0, in.getWidth());
-        System.out.print("test3");
-        for (int i = 0; i < dataBuff.length; i++) {
-            data[i * 3] = (byte) ((dataBuff[i]));
-            data[i * 3 + 1] = (byte) ((dataBuff[i]));
-            data[i * 3 + 2] = (byte) ((dataBuff[i]));
-        }
-        out.put(0, 0, data);
-        return out;
+        RobotAnalysis.robot_Analysis.robotAnalysis(locations,colour_plates);
+        System.out.println(RobotAnalysis.robot_Analysis.robots);
     }
 }
