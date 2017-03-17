@@ -24,7 +24,6 @@ public class RobotAnalysis {
 
     public void teamAnalysis(List<Robot> robot, List<List<String>> plate_color)
     {
-        if(robot.size() != plate_color.size()) return;
         if(robot.size() > 4 || plate_color.size() > 4) return;
         for(int i =0; i < robot.size(); i++)
         {

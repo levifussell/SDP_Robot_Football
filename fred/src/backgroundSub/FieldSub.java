@@ -42,6 +42,7 @@ public class FieldSub implements BackGroundSub {
          Mat currentGray = new Mat(),backgroundGray = new Mat(),frameDelta = new Mat(),thresh = new Mat();
          cnts = new ArrayList<MatOfPoint>();
          position_plate = new ArrayList<Rect>();
+
          Imgproc.cvtColor(frame,currentGray,Imgproc.COLOR_BGR2GRAY);
          Imgproc.GaussianBlur(currentGray,currentGray,size,0);
 

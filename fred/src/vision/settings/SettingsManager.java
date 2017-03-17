@@ -38,9 +38,13 @@ public class SettingsManager {
 
 			writer.write("^JIN_VISION\r\n");
 			writer.write(OpenCVGUI.opencvGUI.saveSettings() + "\r\n");
+<<<<<<< HEAD
 
+=======
+>>>>>>> fb8cd6e3e4d8084ddf0d6c233d3147d8da002d51
 			writer.write("^END");
 			writer.close();
+
 		}
 	}
 	
@@ -71,7 +75,11 @@ public class SettingsManager {
 			}
 			next = r.readLine();
 			OpenCVGUI.opencvGUI.loadSettings(next);
+<<<<<<< HEAD
 			
+=======
+
+>>>>>>> fb8cd6e3e4d8084ddf0d6c233d3147d8da002d51
 			while(!next.equals("^END")) next = r.readLine();
 			r.close();
 		}

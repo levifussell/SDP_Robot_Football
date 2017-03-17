@@ -3,8 +3,6 @@ package backgroundSub;
 import org.opencv.core.*;
 import org.opencv.imgcodecs.Imgcodecs;
 import vision.tools.DirectedPoint;
-
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -55,7 +55,7 @@ public class ColourContain {
             int f = Core.countNonZero(mask);
             if(f > 20 && cnts.size() > 0)
             {
-                if(cnts.size() > 1)
+                if(cnts.size() > 2)
                 {
                     colour_plate.add(color.get(i) + "3");
                 }
@@ -86,7 +86,7 @@ public class ColourContain {
                     {
                         int x = (int)image.size().width / 2;
                         int y = (int)image.size().height / 2;
-                        Imgproc.line(image,position_circle.get(0).tl(),new Point(x,y),scalar,2);
+                        //Imgproc.line(image,position_circle.get(0).tl(),new Point(x,y),scalar,2);
                     }
                 }
             }
