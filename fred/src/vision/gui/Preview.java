@@ -74,13 +74,14 @@ public class Preview extends JFrame implements RawInputListener{
 	}
 	
 	public void nextFrame(BufferedImage bi, long time){
+		BufferedImage bi2 = deepCopy(bi);
 		Graphics2D g2 = bi.createGraphics();
 		for(JPanel p : MultipleRegions.multipleRegions.regions.values())
 		{
 			g2.drawRoundRect(Integer.parseInt(((JTextField)p.getComponent(0)).getText()),Integer.parseInt(((JTextField)p.getComponent(1)).getText()),Integer.parseInt(((JTextField)p.getComponent(2)).getText()),Integer.parseInt(((JTextField)p.getComponent(3)).getText()),2,2);
 			g2.setColor(Color.RED);
 		}
-		Preview.preview.originalImage = bi;
+		Preview.preview.originalImage = bi2;
 		Preview.preview.drawnImage = deepCopy(bi);
 	}
 	

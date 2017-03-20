@@ -1,6 +1,7 @@
 package vision.spotAnalysis.recursiveSpotAnalysis;
 
 import vision.*;
+import vision.Robot;
 import vision.colorAnalysis.SDPColor;
 import vision.colorAnalysis.SDPColorInstance;
 import vision.colorAnalysis.SDPColors;
@@ -89,44 +90,106 @@ public class RecursiveSpotAnalysis extends SpotAnalysisBase{
         XYCumulativeAverage average = new XYCumulativeAverage();
 
 
-        vision.Robot diag4 = DynamicWorld.aliases.get(RobotAlias.FRED);
+        Robot diag4;
         SDPColorInstance colorInstance;
         HashMap<SDPColor, SDPColorInstance> multiple_region_color = new HashMap<SDPColor, SDPColorInstance>();
-        for(int i = 0; i < MultipleRegions.multipleRegions.checkbox_list.size();i++)
+        if(DynamicWorld.aliases != null && DynamicWorld.aliases.get(RobotAlias.FRED) != null)
         {
-            JPanel panel = MultipleRegions.multipleRegions.regions.get(MultipleRegions.multipleRegions.checkbox_list.get(i));
-            int x = Integer.valueOf(((JTextField)panel.getComponent(0)).getText());
-            int y = Integer.valueOf(((JTextField)panel.getComponent(1)).getText());
-            int w = x + Integer.valueOf(((JTextField)panel.getComponent(2)).getText());
-            int h = y + Integer.valueOf(((JTextField)panel.getComponent(3)).getText());
-            double robot_x = diag4.location.x;
-            double robot_y = diag4.location.y;
-            if(robot_x > x && robot_y > y && robot_x < w && robot_y < h)
+            diag4 = DynamicWorld.aliases.get(RobotAlias.FRED);
+            for(int i = 0; i < MultipleRegions.multipleRegions.checkbox_list.size();i++)
             {
-                multiple_region_color = MultipleRegions.multipleRegions.multiple_region_color.get(MultipleRegions.multipleRegions.checkbox_list.get(i));
-                break;
-            }
-        }
-
-
-        for(int i = 0 ; i < Constants.INPUT_HEIGHT * Constants.INPUT_WIDTH; i++){
-            this.found[i] = null;
-        }
-        for(SDPColor color : SDPColor.values()){
-            colorInstance = multiple_region_color.get(color);
-            for(int y = 0; y < Constants.INPUT_HEIGHT; y++){
-                for(int x = 0; x < Constants.INPUT_WIDTH; x++){
-                    this.processPixel(x, y, colorInstance, average, 200);
-                    if(average.getCount() > 5){
-                        spots.get(color).add(new Spot(average.getXAverage(), average.getYAverage(), average.getCount(), color));
-                    }
-                    average.reset();
+                JPanel panel = MultipleRegions.multipleRegions.regions.get(MultipleRegions.multipleRegions.checkbox_list.get(i));
+                double x = Integer.valueOf(((JTextField)panel.getComponent(0)).getText()) * 0.47 -  150;
+                double y = 110 - (Integer.valueOf(((JTextField)panel.getComponent(1)).getText()) * 0.45);
+                double w = Integer.valueOf(((JTextField)panel.getComponent(2)).getText()) * 0.47 ;
+                double h = Integer.valueOf(((JTextField)panel.getComponent(3)).getText()) * 0.45 ;
+                double robot_x = diag4.location.x;
+                double robot_y = diag4.location.y;
+                if(this.contains(x,y,w,h,robot_x,robot_y))
+                {
+                    multiple_region_color = MultipleRegions.multipleRegions.multiple_region_color.get(MultipleRegions.multipleRegions.checkbox_list.get(i));
+//                    System.out.println(multiple_region_color);
+                    System.out.print(" we are in region: " + i);
+                    break;
                 }
             }
-            Collections.sort(spots.get(color));
+
+            for(int i = 0 ; i < Constants.INPUT_HEIGHT * Constants.INPUT_WIDTH; i++){
+                this.found[i] = null;
+            }
+            for(SDPColor color : SDPColor.values()){
+                if(multiple_region_color.isEmpty())
+                {
+//                    System.out.println("test1");
+                    colorInstance = SDPColors.sdpColors.colors.get(color);
+                }
+                else
+                {
+//                    System.out.println("test2");
+                    colorInstance = multiple_region_color.get(color);
+                }
+                for(int y = 0; y < Constants.INPUT_HEIGHT; y++){
+                    for(int x = 0; x < Constants.INPUT_WIDTH; x++){
+                        this.processPixel(x, y, colorInstance, average, 200);
+                        if(average.getCount() > 5){
+                            spots.get(color).add(new Spot(average.getXAverage(), average.getYAverage(), average.getCount(), color));
+                        }
+                        average.reset();
+                    }
+                }
+                Collections.sort(spots.get(color));
+            }
         }
+        else
+        {
+            for(int i = 0 ; i < Constants.INPUT_HEIGHT * Constants.INPUT_WIDTH; i++){
+                this.found[i] = null;
+            }
+            if(MultipleRegions.multipleRegions.jCheckBox.isSelected())
+            {
+
+                multiple_region_color = MultipleRegions.multipleRegions.multiple_region_color.get(MultipleRegions.multipleRegions.jCheckBox);
+                for(SDPColor color : SDPColor.values()){
+                    colorInstance = multiple_region_color.get(color);
+                    for(int y = 0; y < Constants.INPUT_HEIGHT; y++){
+                        for(int x = 0; x < Constants.INPUT_WIDTH; x++){
+                            this.processPixel(x, y, colorInstance, average, 200);
+                            if(average.getCount() > 5){
+                                spots.get(color).add(new Spot(average.getXAverage(), average.getYAverage(), average.getCount(), color));
+                            }
+                            average.reset();
+                        }
+                    }
+                    Collections.sort(spots.get(color));
+                }
+            }
+            else
+            {
+                for(SDPColor color : SDPColor.values()){
+                    colorInstance = SDPColors.sdpColors.colors.get(color);
+                    for(int y = 0; y < Constants.INPUT_HEIGHT; y++){
+                        for(int x = 0; x < Constants.INPUT_WIDTH; x++){
+                            this.processPixel(x, y, colorInstance, average, 200);
+                            if(average.getCount() > 5){
+                                spots.get(color).add(new Spot(average.getXAverage(), average.getYAverage(), average.getCount(), color));
+                            }
+                            average.reset();
+                        }
+                    }
+                    Collections.sort(spots.get(color));
+                }
+
+            }
+        }
+
+
         this.informListeners(spots, time);
         Preview.flushToLabel();
 
+    }
+
+    public boolean contains(double x, double y, double w, double h, double robot_x, double robot_y)
+    {
+        return robot_x < (x + w) && robot_x > x && robot_y > (y + h) && robot_y < y;
     }
 }

@@ -44,10 +44,12 @@ public class ColorCalibration extends JPanel implements ActionListener{
 				MultipleRegions.multipleRegions.multiple_region_color.get(MultipleRegions.multipleRegions.jCheckBox).get(SDPColor.valueOf(selected)).transferFocus();
 				//SDPColors.colors.get(SDPColor.valueOf(selected)).setVisible(true);
 				//SDPColors.colors.get(SDPColor.valueOf(selected)).transferFocus();
-				MultipleRegions.multipleRegions.multiple_region_color.put(MultipleRegions.multipleRegions.jCheckBox,SDPColors.colors);
+				MultipleRegions.multipleRegions.multiple_region_color.put(MultipleRegions.multipleRegions.jCheckBox,MultipleRegions.multipleRegions.multiple_region_color.get(MultipleRegions.multipleRegions.jCheckBox));
 			}
 			else
 			{
+				SDPColors.sdpColors.colors.get(SDPColor.valueOf(selected)).setVisible(true);
+				SDPColors.sdpColors.colors.get(SDPColor.valueOf(selected)).setVisible(true);
 				System.out.println("No specific region is selected");
 			}
 
