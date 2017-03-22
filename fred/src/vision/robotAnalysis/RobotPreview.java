@@ -1,19 +1,19 @@
 package vision.robotAnalysis;
 
-import java.awt.Color;
-import java.awt.Graphics;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import javax.swing.JFrame;
-import javax.swing.JLabel;
+import javax.swing.*;
 
 import vision.*;
+import vision.Robot;
 import vision.colorAnalysis.SDPColor;
 import vision.colorAnalysis.SDPColors;
 import vision.constants.Constants;
 import vision.distortion.DistortionListener;
+import vision.multipleRegions.MultipleRegions;
 import vision.spotAnalysis.approximatedSpotAnalysis.Spot;
 /**
  * Created by Simon Rovder
@@ -59,6 +59,19 @@ public class RobotPreview extends JFrame implements DistortionListener, DynamicW
 				g.drawArc((int)spot.x - 2 + Constants.PITCH_WIDTH/2 + bounds, - (int)spot.y - 2 + Constants.PITCH_HEIGHT/2 + bounds, 4, 4, 0, 360);
 			}
 		}
+
+		Graphics2D g2 = this.image.createGraphics();
+		for(JPanel p : MultipleRegions.multipleRegions.regions.values())
+		{
+			g.drawRoundRect((int)(Integer.parseInt(((JTextField)p.getComponent(0)).getText())*0.47),
+					(int)(Integer.parseInt(((JTextField)p.getComponent(1)).getText())*0.45),
+					(int)(Integer.parseInt(((JTextField)p.getComponent(2)).getText())*0.47),
+					(int)(Integer.parseInt(((JTextField)p.getComponent(3)).getText())*0.45),
+					2,
+					2);
+			g.setColor(Color.RED);
+		}
+
 		this.previewLabel.getGraphics().drawImage(this.image, 0, 0, null);
 	}
 

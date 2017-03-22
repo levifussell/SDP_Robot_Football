@@ -10,6 +10,10 @@ import vision.colorAnalysis.SDPColors;
 import vision.distortion.Distortion;
 import vision.gui.MiscellaneousSettings;
 import vision.gui.SDPConsole;
+import vision.multipleRegions.MultipleRegions;
+
+import javax.swing.*;
+
 /**
  * Created by Simon Rovder
  *
@@ -34,6 +38,19 @@ public class SettingsManager {
 
 			writer.write("^DISTORTION\r\n");
 			writer.write(Distortion.distortion.saveSettings() + "\r\n");
+
+			writer.write("^MULTIPLE_REGION\r\n");
+			writer.write(MultipleRegions.multipleRegions.saveSettings() + "\r\n");
+			writer.write("^MULTIPLE_REGION_COLOR\r\n");
+			for(JCheckBox checkbox : MultipleRegions.multipleRegions.checkbox_list)
+			{
+				for(SDPColor key : SDPColor.values())
+				{
+					writer.write(key.toString()+"\r\n");
+					writer.write(MultipleRegions.multipleRegions.multiple_region_color.get(checkbox).get(key).saveSettings()+ "\r\n");
+				}
+			}
+
 			writer.write("^END");
 			writer.close();
 		}
@@ -57,8 +74,27 @@ public class SettingsManager {
 				next = r.readLine();
 			}
 			next = r.readLine();
-			Distortion.distortion.loadSettings(next);
-			while(!next.equals("^END")) next = r.readLine();
+			while(!next.equals("^MULTIPLE_REGION"))
+			{
+				Distortion.distortion.loadSettings(next);
+				next = r.readLine();
+			}
+			next = r.readLine();
+			while(!next.equals("^MULTIPLE_REGION_COLOR")){
+				MultipleRegions.multipleRegions.loadSettings(next);
+				next = r.readLine();
+			}
+			next = r.readLine();
+			while(!next.equals("^END")){
+				for(JCheckBox checkBox : MultipleRegions.multipleRegions.checkbox_list)
+				{
+					for(SDPColor key : SDPColor.values())
+					{
+						MultipleRegions.multipleRegions.multiple_region_color.get(checkBox).get(SDPColor.valueOf(next)).loadSettings(r.readLine());
+						next = r.readLine();
+					}
+				}
+			}
 			r.close();
 		}
 	}

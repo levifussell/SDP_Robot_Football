@@ -60,6 +60,7 @@ public class HorizVertSimpleDrive implements DriveInterface {
 
     private RobotPort commandPort;
 
+
     public RobotInPathState robotInPath(PolarCoordinate[] robots, double ourRadius,
                                         double ourAngle, double targetRadius, double targetAngle) {
 
@@ -115,8 +116,24 @@ public class HorizVertSimpleDrive implements DriveInterface {
 //    System.out.println("DIFF RADIUS: " + radiusDiff);
 
         //CONSTANTS TODO---------------------
-        final double radiusThreshold = 30.0;
-        final double radiusOffset = 10.0;
+//<<<<<<< HEAD
+//        final double radiusThreshold = 30.0;
+//        final double radiusOffset = 10.0;
+//=======
+        double radiusThreshold = 0.0;
+        double radiusOffset = 10.0;
+//        double angleBall = ImportantPoints.getBallPolar().getAngle();
+//        double radiusBall = ImportantPoints.getBallPolar().getRadius();
+//
+//        System.out.println("BALL RADIUS: " + ImportantPoints.getBallPolar().getAngle());
+//        if (ImportantPoints.getBallPolar().getRadius() < 120) {
+//            radiusThreshold = 100.0;
+//            radiusOffset = -100.0;
+//        } else {
+//            radiusThreshold = 30.0;
+//            radiusOffset = 0.0;
+//        }
+
 //    final double angleThreshold = Math.PI / 10;
         final double angleThreshold2 = Math.PI / 40;
         //-----------------------------------

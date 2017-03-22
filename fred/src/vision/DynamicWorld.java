@@ -16,7 +16,7 @@ import java.util.HashMap;
 public class DynamicWorld {
     // This HashMap contains the detected robots.
     private HashMap<RobotType, Robot> robots;
-    private HashMap<RobotAlias, Robot> aliases;
+    public static HashMap<RobotAlias, Robot> aliases;
 
     // The location of the ball.
     private Ball ball;
