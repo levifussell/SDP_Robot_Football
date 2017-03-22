@@ -81,7 +81,7 @@ public class MultipleRegions extends JPanel implements ActionListener,SaveLoadCa
             JPanel p;
             p = addRegion();
             y = y + 50;
-            multiple_region_color.put(checkBox, sdpColors.colors);
+            multiple_region_color.put(checkBox, sdpColors.colors );
             checkbox_list.add(checkBox);
             regions.put(checkBox,p);
         }

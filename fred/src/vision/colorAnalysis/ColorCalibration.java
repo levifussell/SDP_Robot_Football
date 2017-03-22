@@ -49,7 +49,7 @@ public class ColorCalibration extends JPanel implements ActionListener{
 			else
 			{
 				SDPColors.sdpColors.colors.get(SDPColor.valueOf(selected)).setVisible(true);
-				SDPColors.sdpColors.colors.get(SDPColor.valueOf(selected)).setVisible(true);
+				SDPColors.sdpColors.colors.get(SDPColor.valueOf(selected)).transferFocus();
 				System.out.println("No specific region is selected");
 			}
 
