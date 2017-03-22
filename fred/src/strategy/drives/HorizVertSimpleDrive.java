@@ -105,7 +105,7 @@ public class HorizVertSimpleDrive implements DriveInterface {
 
         //CONSTANTS TODO---------------------
         final double radiusThreshold = 30.0;
-        final double radiusOffset = 10.0;
+        final double radiusOffset = 0.0;
 //    final double angleThreshold = Math.PI / 10;
         final double angleThreshold2 = Math.PI / 40;
         //-----------------------------------
@@ -153,11 +153,21 @@ public class HorizVertSimpleDrive implements DriveInterface {
           the ball */
             } else if (player.getState().equals("Behind")) {
                 System.out.println("Foe is in behind");
-                System.out.println("GOING BEHIND BALL");
-                double actionTargetRadius = ballPolarCoords.getRadius() + radiusThreshold;
-                double actionTargetAngle = ballPolarCoords.getAngle();
-                polarNavigator.SetTargetState((float) actionTargetRadius, (float) actionTargetAngle);
-                return BallTrackState.GO_BEHIND_BALL;
+                if (player.getPlayer().getRadius() < (ballPolarCoords.getRadius() - 20)) {
+                    System.out.println("GOING TO THE BALL");
+                    double actionTargetRadius = targetRadius;
+                    double actionTargetAngle = targetAngle;
+                    polarNavigator.SetTargetState((float) actionTargetRadius, (float) actionTargetAngle);
+                    return BallTrackState.GO_TO_BALL;
+
+                } else {
+                    System.out.println("GOING BEHIND BALL");
+                    double actionTargetRadius = ballPolarCoords.getRadius() + radiusThreshold;
+                    double actionTargetAngle = ballPolarCoords.getAngle();
+                    polarNavigator.SetTargetState((float) actionTargetRadius, (float) actionTargetAngle);
+                    return BallTrackState.GO_BEHIND_BALL;
+                }
+
                 // if we reach this stage path is clear
             } else {
                 System.out.println("Foe is nowhere");
