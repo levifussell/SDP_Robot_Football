@@ -24,12 +24,23 @@ public class HorizVertSimpleDrive implements DriveInterface {
         UNKNOWN
     }
 
+    public enum RobotInPathStates
+    {
+        IN_FRONT,
+        BEHIND,
+        NOWHERE
+    }
+
+    /**
+     * Stores the state of a robot in relation to its
+     * "path" in front of our robot
+     */
     public class RobotInPathState {
 
         private PolarCoordinate player;
-        private String whereIsTheRobot;
+        private RobotInPathStates whereIsTheRobot;
 
-        public RobotInPathState(PolarCoordinate player, String whereIsTheRobot) {
+        public RobotInPathState(PolarCoordinate player, RobotInPathStates whereIsTheRobot) {
             this.player = player;
             this.whereIsTheRobot = whereIsTheRobot;
         }
@@ -38,7 +49,7 @@ public class HorizVertSimpleDrive implements DriveInterface {
             return this.player;
         }
 
-        public String getState() {
+        public RobotInPathStates getState() {
             return this.whereIsTheRobot;
         }
     }
@@ -53,26 +64,26 @@ public class HorizVertSimpleDrive implements DriveInterface {
                                         double ourAngle, double targetRadius, double targetAngle) {
 
         // check if robot is in the destination path of diag4 and where
-        RobotInPathState state = new RobotInPathState(null, "Nowhere");
+        RobotInPathState state = new RobotInPathState(null, RobotInPathStates.NOWHERE);
         final double angleThreshold = Math.PI / 40;
 
         for (PolarCoordinate robot : robots) {
             if (robot == null) {
-                state = new RobotInPathState(null, "Nowhere");
+                state = new RobotInPathState(null, RobotInPathStates.NOWHERE);
             } else {
                 double targetAngleDiff = Math.abs(robot.getAngle() - targetAngle);
                 double robotsAngleDiff = Math.abs(robot.getAngle() - ourAngle);
                 if (targetAngleDiff <= angleThreshold && robotsAngleDiff <= angleThreshold) {
                     if (robot.getRadius() < ourRadius && robot.getRadius() >= targetRadius) {
-                        state = new RobotInPathState(robot, "In front");
+                        state = new RobotInPathState(robot, RobotInPathStates.IN_FRONT);
                         return state;
                     } else if (robot.getRadius() < targetRadius) {
-                        state = new RobotInPathState(robot, "Behind");
+                        state = new RobotInPathState(robot, RobotInPathStates.BEHIND);
                         return state;
                     }
                 } else if (robot.getAngle() < Math.max(ourAngle, targetAngle) && robot.getAngle() > Math.min(ourAngle, targetAngle)) {
                     if (robot.getRadius() >= targetRadius && robot.getRadius() < ourRadius) {
-                        state = new RobotInPathState(robot, "In front");
+                        state = new RobotInPathState(robot, RobotInPathStates.IN_FRONT);
                         return state;
                     }
                 }
@@ -132,7 +143,7 @@ public class HorizVertSimpleDrive implements DriveInterface {
             polarNavigator.SetTargetState((float) targetRadius, (float) targetAngle);
             RobotInPathState player = robotInPath(players, diag4PolarCoords.getRadius(), diag4PolarCoords.getAngle(), targetRadius, targetAngle);
             // if robot in the middle of diag4's path move next to the ball
-            if (player.getState().equals("In front")) {
+            if (player.getState() == RobotInPathStates.IN_FRONT) {
                 System.out.println("Foe is in front");
                 if (player.getPlayer().getRadius() > (ballPolarCoords.getRadius() + 40)) {
                     System.out.println("GOING NEXT TO THE BALL");
@@ -151,7 +162,7 @@ public class HorizVertSimpleDrive implements DriveInterface {
 
 	  /* if robot in the middle of ball and enemy goal, block any passes by staying behind
           the ball */
-            } else if (player.getState().equals("Behind")) {
+            } else if (player.getState() == RobotInPathStates.BEHIND) {
                 System.out.println("Foe is in behind");
                 System.out.println("GOING BEHIND BALL");
                 double actionTargetRadius = ballPolarCoords.getRadius() + radiusThreshold;
@@ -171,7 +182,7 @@ public class HorizVertSimpleDrive implements DriveInterface {
             double actionTargetRadius = ballPolarCoords.getRadius() + radiusThreshold;
             double actionTargetAngle = ballPolarCoords.getAngle();
             if (robotInPath(players, diag4PolarCoords.getRadius(),
-                    diag4PolarCoords.getAngle(), actionTargetRadius, actionTargetAngle).getState().equals("In front")) {
+                    diag4PolarCoords.getAngle(), actionTargetRadius, actionTargetAngle).getState() == RobotInPathStates.IN_FRONT) {
                 System.out.println("Foe is in front");
                 System.out.println("GOING NEXT TO THE BALL");
                 actionTargetRadius = ballPolarCoords.getRadius();
