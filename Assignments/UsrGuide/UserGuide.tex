@@ -1,0 +1,47 @@
+\documentclass[10pt]{article}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    filecolor=magenta,      
+    urlcolor=blue,
+}
+
+\begin{document}
+\title{User Guide}
+\author{Luca Guadalupe McArthur s1442231 \\ Levi Fussell \\ Adam Harper \\ Siim Sammul \\ Jin Hong \\ sdp Elijah}
+\maketitle
+
+\newpage
+
+\tableofcontents
+
+\pagebreak
+
+\section{Setting up}
+The software for diag4 can be found in \url{https://github.com/levifussell/SDP_Robot_Football/tree/POLAR_DRIVE_FINAL} Once downloaded or cloned you should open the project with Intellij IDEA, select jscc.jar and v4l4j.jar and add them as libraries in the right click panel. Following that, find src/strategy and right click on Strategy.java and run Strategy.main(). By doing this you will be able to access the configurations of the class on the top right hand corner. We will want to add the library path to the environment variables, to do so right click on libs and copy path; then click on edit configurations on Strategy mentioned above and paste the library path as a new environment variable with the name LD\_LIBRARY\_PATH. Apply the changes and the set up process is complete.
+
+\section{Hardware overview}
+\section{Software overview}
+Strategy: Main program that is run. Captures the inputs from the strategy terminal and passes them to their corresponding performing actions. \\
+HorizVertSimpleDrive: Driving class. Comprises capturing the robots from the vision system and their respective conversion to Polar Coordinates, navigation towards the ball, kicking and obstacle avoidance. \\
+PolarNavigator: Transformation of pitch coordinates into a polar coordinate system, starting at the enemy goal.
+\section{Usage}
+Before using the robot, make sure:
+\begin{itemize}
+  \item The RF stick is plugged in to one of the USB ports of the dice machine you are using.
+  \item All the batteries in the battery pack have been fully charged, correctly placed inside the battery slot of the robot and connected to the arduino board.
+  \item All the motors are correctly connected to the arduino board following the specifications of the program
+  \item Assert the arduino board has a flashing red light
+\end{itemize}
+
+Then you can begin by running Strategy.main() from Intellij IDEA or from the command line if the project has been exported as a jar file. Then follow these steps:
+\subsection{Video Calibration}
+Press the start feed option and calibrate each colour in the settings until they are clear and visible in the robot preview feed. To do so, select the colour to calibrate, press the calibrate option and click on the respective colour on the Preview window, while checking on the robot preview the quality of the calibration.
+\subsection{Vision Settings}
+Select the appropriate option in Misc Settings regarding the orientation of the pitch and the colour of the teams. A possible and useful option is to save the settings to ease the job at calibrating in the next session. 
+\subsection{Strategy input}
+If the calibration has been properly done and the SDP console has successfully found diag4, you can input the corresponding keyword for the robot to perform on the pitch. By default, if anything goes wrong in the pitch, the letter 'h' should be presses as it corresponds to a waiting state.
+\section{Troubleshooting}
+
+\end{document}
