@@ -10,6 +10,9 @@ import vision.RobotType;
 public class GoingToBallState extends State {
 
     @Override
+    public String getName() { return "GoingToBall"; }
+    
+    @Override
     public double getRadius() {
         return ImportantPoints.getBallPolar().getRadius();
     }
