@@ -16,6 +16,7 @@ public class GUI extends JFrame implements KeyListener{
     public JTextField action;
     public JTextField searchType;
     public JTextField behaviour;
+    public static String initialise;
     private JTextField r;
     private JTextField maxSpeed;
     private JTextField turnSpeed;
@@ -128,7 +129,19 @@ public class GUI extends JFrame implements KeyListener{
             this.robot.port.sdpPort.commandSender("f");
             switch(e.getKeyChar()){
                 case 'k':
+                    for (int i = 0; i < 10; i++) {
+                        robot.port.sdpPort.commandSender("i");
+                    }
                     System.out.println("K clicked");
+                    initialise = "Standard";
+                    this.robot.setControllersActive(true);
+                    break;
+                case 'o' :
+                    for (int i = 0; i < 10; i++) {
+                        robot.port.sdpPort.commandSender("i");
+                    }
+                    System.out.println("O clicked");
+                    initialise = "Avoidance";
                     this.robot.setControllersActive(true);
                     break;
                 case 'h':

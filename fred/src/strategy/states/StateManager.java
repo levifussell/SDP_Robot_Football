@@ -1,5 +1,9 @@
 package strategy.states;
 
+import PolarCoordNavigation.Coordinates.PolarCoordinate;
+import strategy.points.ImportantPoints;
+import vision.RobotType;
+
 import java.util.ArrayList;
 
 /**
@@ -22,6 +26,8 @@ public class StateManager {
         for (State s: states) {
             if (s.isRealState()){
                 currentState = s;
+                System.out.println(currentState.getName());
+                break;
             }
         }
     }

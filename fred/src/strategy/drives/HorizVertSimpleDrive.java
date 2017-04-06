@@ -39,6 +39,7 @@ public class HorizVertSimpleDrive implements DriveInterface {
         StateManager.addState(new HoverBRStateAvoidance());
         StateManager.addState(new BBStateAvoidance());
         StateManager.addState(new NTBStateAvoidance());
+        StateManager.addState(new StallState());
     }
 
     PolarNavigator polarNavigator = new PolarNavigator();

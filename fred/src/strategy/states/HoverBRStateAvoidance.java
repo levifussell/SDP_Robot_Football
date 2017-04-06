@@ -36,13 +36,13 @@ public class HoverBRStateAvoidance extends State{
 
         boolean realState = false;
 
-        PolarCoordinate friendPolarCoords = ImportantPoints.getRobotPolar(RobotType.FRIEND_1);
-        PolarCoordinate foe1PolarCoords = ImportantPoints.getRobotPolar(RobotType.FOE_1);
-        PolarCoordinate foe2PolarCoords = ImportantPoints.getRobotPolar(RobotType.FOE_2);
-
-        PolarCoordinate[] players = {friendPolarCoords, foe1PolarCoords, foe2PolarCoords};
+//        PolarCoordinate friendPolarCoords = ImportantPoints.getRobotPolar(RobotType.FRIEND_1);
+//        PolarCoordinate foe1PolarCoords = ImportantPoints.getRobotPolar(RobotType.FOE_1);
+//        PolarCoordinate foe2PolarCoords = ImportantPoints.getRobotPolar(RobotType.FOE_2);
+//
+//        PolarCoordinate[] players = {friendPolarCoords, foe1PolarCoords, foe2PolarCoords};
         RobotInPathState player = new RobotInPathState(null,"Nowhere");
-        player.robotInPath(players, ImportantPoints.getRobotPolar(RobotType.FRIEND_2).getRadius(),
+        player.robotInPath(ImportantPoints.getRobotPolar(RobotType.FRIEND_2).getRadius(),
                 ImportantPoints.getRobotPolar(RobotType.FRIEND_2).getAngle(), getRadius(), getAngle());
 
         boolean checkBehind = (ImportantPoints.getRobotPolar(RobotType.FRIEND_2).getRadius()
@@ -54,7 +54,7 @@ public class HoverBRStateAvoidance extends State{
         System.out.println(player.getState());
 
         if (!player.getState().equals("Nowhere")) {
-            distance = 20 + player.getPlayer().getRadius();
+            distance = 30 + player.getPlayer().getRadius();
             realState = checkBehind && checkRobot1;
         }
 

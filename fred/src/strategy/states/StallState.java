@@ -11,7 +11,7 @@ public class StallState extends State {
 
     @Override
     public String getName() { return "Stalling"; }
-    
+
     @Override
     public double getRadius() {
         return ImportantPoints.getRobotPolar(RobotType.FRIEND_2).getRadius();

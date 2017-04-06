@@ -11,7 +11,7 @@ public class NextToBallState extends State {
 
     @Override
     public String getName() { return "NextToBall"; }
-    
+
     @Override
     public double getRadius() {
         return ImportantPoints.getBallPolar().getRadius();

@@ -34,13 +34,13 @@ public class GTBStateAvoidance extends State {
 
         boolean realState = false;
 
-        PolarCoordinate friendPolarCoords = ImportantPoints.getRobotPolar(RobotType.FRIEND_1);
-        PolarCoordinate foe1PolarCoords = ImportantPoints.getRobotPolar(RobotType.FOE_1);
-        PolarCoordinate foe2PolarCoords = ImportantPoints.getRobotPolar(RobotType.FOE_2);
-
-        PolarCoordinate[] players = {friendPolarCoords, foe1PolarCoords, foe2PolarCoords};
+//        PolarCoordinate friendPolarCoords = ImportantPoints.getRobotPolar(RobotType.FRIEND_1);
+//        PolarCoordinate foe1PolarCoords = ImportantPoints.getRobotPolar(RobotType.FOE_1);
+//        PolarCoordinate foe2PolarCoords = ImportantPoints.getRobotPolar(RobotType.FOE_2);
+//
+//        PolarCoordinate[] players = {friendPolarCoords, foe1PolarCoords, foe2PolarCoords};
         RobotInPathState player = new RobotInPathState(null,"Nowhere");
-        player.robotInPath(players, ImportantPoints.getRobotPolar(RobotType.FRIEND_2).getRadius(),
+        player.robotInPath(ImportantPoints.getRobotPolar(RobotType.FRIEND_2).getRadius(),
                 ImportantPoints.getRobotPolar(RobotType.FRIEND_2).getAngle(), getRadius(), getAngle());
 
         double angleDiff = ImportantPoints.getBallPolar().getAngle() -
