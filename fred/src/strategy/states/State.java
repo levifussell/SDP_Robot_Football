@@ -8,6 +8,8 @@ import strategy.drives.HorizVertSimpleDrive;
 public abstract class State {
 
     public State() {}
+    
+    public abstract String getName();
 
     public abstract double getRadius();
 
