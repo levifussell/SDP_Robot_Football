@@ -10,6 +10,9 @@ import vision.RobotType;
 public class BehindBallState extends State {
 
     @Override
+    public String getName() { return "BehindBall"; }
+    
+    @Override
     public double getRadius() {
         return ImportantPoints.getBallPolar().getRadius() + 30;
     }
